@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import utn.ddsi.agregador.repository.RepositoryHechos;
 
+import static java.util.Collections.addAll;
+
 public class ServicioAgregador {
     private List<Loader> loaders;
     private RepositoryHechos repository;
@@ -18,10 +20,11 @@ public class ServicioAgregador {
     }
     public void depurarHechos(){
         var hora = LocalDate.now().minusDays(1);
-        var hechosRecibidos= new ArrayList<Hecho>();
-        loaders.forEach(loader -> loader.obtenerHechos(hora));
-        normalizador.normalizar(hechosRecibidos);
-        gestorSolicitudes.procesarTodasLasSolicitudes(); //y como lo relaciono con los hechosRecibidos?????
-        repository.saveAll(hechosRecibidos);
+        List<Hecho> todosLosHechos = loaders.stream()
+                .flatMap(loader -> loader.obtenerHechos(hora).stream())
+                .toList();
+        normalizador.normalizar(todosLosHechos);
+        gestorSolicitudes.procesarTodasLasSolicitudes();
+        repository.saveAll(todosLosHechos);
     }
 }
