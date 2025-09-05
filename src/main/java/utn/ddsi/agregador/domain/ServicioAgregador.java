@@ -20,8 +20,8 @@ public class ServicioAgregador {
         var hora = LocalDate.now().minusDays(1);
         var hechosRecibidos= new ArrayList<Hecho>();
         loaders.forEach(loader -> loader.obtenerHechos(hora));
-
         normalizador.normalizar(hechosRecibidos);
-
+        gestorSolicitudes.procesarTodasLasSolicitudes(); //y como lo relaciono con los hechosRecibidos?????
+        repository.saveAll(hechosRecibidos);
     }
 }
