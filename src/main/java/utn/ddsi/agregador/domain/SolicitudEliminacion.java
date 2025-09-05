@@ -18,5 +18,6 @@ public class SolicitudEliminacion {
         this.hecho = hecho;
         this.fecha = fecha;
         this.motivo = motivo;
+        this.estado = EnumEstadoSol.PENDIENTE;
     }
 }

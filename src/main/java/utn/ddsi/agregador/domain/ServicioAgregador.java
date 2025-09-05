@@ -1,11 +1,8 @@
 package utn.ddsi.agregador.domain;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import utn.ddsi.agregador.repository.RepositoryHechos;
-
-import static java.util.Collections.addAll;
 
 public class ServicioAgregador {
     private List<Loader> loaders;

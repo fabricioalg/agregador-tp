@@ -20,12 +20,13 @@ public class Hecho {
     private Ubicacion lugarDeOcurrencia;
     private Etiqueta etiqueta;
 
-    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha) {
+    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha, Fuente fuente) {
         this.Titulo = titulo;
         this.descripcion = descripcion;
         this.categoria = categoria;
         this.lugarDeOcurrencia = lugarDeOcurrencia;
         this.fecha = fecha;
         this.etiqueta = null;
+        this.origen = fuente;
     }
 }

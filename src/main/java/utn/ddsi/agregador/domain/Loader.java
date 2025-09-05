@@ -1,27 +1,19 @@
 package utn.ddsi.agregador.domain;
-
-import lombok.Getter;
-import lombok.Setter;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.time.LocalDate;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
 public class Loader {
     private URL url;
-
     public Loader(URL url) {
         this.url = url;
     }
-
     public List<Hecho> obtenerHechos(LocalDate fechaLimite) {
         try (InputStream in = url.openStream()) {
             ObjectMapper mapper = new ObjectMapper();

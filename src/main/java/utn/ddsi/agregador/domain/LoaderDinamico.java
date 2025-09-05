@@ -1,10 +1,17 @@
 package utn.ddsi.agregador.domain;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class LoaderDinamico extends Loader{
+public class LoaderDinamico extends Loader {
+    private URL url;
     public LoaderDinamico(URL url) {
         super(url);
     }
