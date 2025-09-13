@@ -3,18 +3,18 @@ package utn.ddsi.agregador.repository;
 import utn.ddsi.agregador.domain.Coleccion;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
+
 
 @Getter
 @Setter
 public class RepositoryColecciones {
-    private List<Coleccion> colecciones;
+    private Map<String, Coleccion> colecciones = new HashMap<>();
 
-    public RepositoryColecciones() {
-        this.colecciones = new ArrayList<Coleccion>();
-    }
-    public void save(Coleccion coleccion) {colecciones.add(coleccion);}
-    public void saveAll(List<Coleccion> newColecciones) {colecciones.addAll(newColecciones);}
+    public void save(Coleccion coleccion) {colecciones.put(coleccion.getTitulo(), coleccion);}
     public void delete(Coleccion coleccion){colecciones.remove(coleccion);}
+    public Optional<Coleccion> buscarPorNombre(String titulo) {
+        return Optional.ofNullable(colecciones.get(titulo));
+    }
 }

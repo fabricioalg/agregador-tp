@@ -22,8 +22,14 @@ public class ServicioAgregador {
                 .toList();
         normalizador.normalizar(todosLosHechos);
         gestorSolicitudes.procesarTodasLasSolicitudes();
+        agregarHechos("coleccion", todosLosHechos);
+    }
 
-        //repository get coleccion add
-        //repository.saveAll(todosLosHechos);
+    //esto, NO esta bien, tendria que hacerlo por fuente y no por el titulo
+    public void agregarHechos(String tituloColeccion, List<Hecho> nuevosHechos) {
+        Coleccion coleccion = repository.buscarPorNombre(tituloColeccion)
+                .orElseThrow(() -> new RuntimeException("Colección no encontrada"));
+        coleccion.agregarHechos(nuevosHechos);
+        repository.save(coleccion);
     }
 }

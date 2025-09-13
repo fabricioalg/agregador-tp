@@ -35,5 +35,7 @@ public class Coleccion {
         List<Fuente> fuentes = this.hechos.stream().map(Hecho::getFuente).distinct().collect(Collectors.toList());
         return fuentes;
     }
-    public void agregarHecho(Hecho h) {hechos.add(h);}
+    public void agregarHechos(List<Hecho> nuevosHechos) {
+        hechos.addAll(nuevosHechos);
+    }
 }
