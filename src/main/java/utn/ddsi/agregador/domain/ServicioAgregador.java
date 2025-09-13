@@ -22,7 +22,8 @@ public class ServicioAgregador {
                 .toList();
         normalizador.normalizar(todosLosHechos);
         gestorSolicitudes.procesarTodasLasSolicitudes();
-        //insertarlos a las colecciones? 
+
+        //repository get coleccion add
         //repository.saveAll(todosLosHechos);
     }
 }
