@@ -2,16 +2,16 @@ package utn.ddsi.agregador.domain;
 
 import java.time.LocalDate;
 import java.util.List;
-import utn.ddsi.agregador.repository.RepositoryHechos;
+import utn.ddsi.agregador.repository.RepositoryColecciones;
 
 public class ServicioAgregador {
     private List<Loader> loaders;
-    private RepositoryHechos repository;
+    private RepositoryColecciones repository;
     private Normalizador normalizador;
     private GestorDeSolicitudes gestorSolicitudes;
 
     public ServicioAgregador() {
-        repository = new RepositoryHechos();
+        repository = new RepositoryColecciones();
         gestorSolicitudes = new GestorDeSolicitudes();
         normalizador = new Normalizador();
     }
@@ -22,6 +22,7 @@ public class ServicioAgregador {
                 .toList();
         normalizador.normalizar(todosLosHechos);
         gestorSolicitudes.procesarTodasLasSolicitudes();
-        repository.saveAll(todosLosHechos);
+        //insertarlos a las colecciones? 
+        //repository.saveAll(todosLosHechos);
     }
 }

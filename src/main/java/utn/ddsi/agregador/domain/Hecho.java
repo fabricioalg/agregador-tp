@@ -29,4 +29,6 @@ public class Hecho {
         this.etiqueta = null;
         this.origen = fuente;
     }
+    public Fuente getFuente() {return origen;}
+    public void setFuente(Fuente fuente) {this.origen = fuente;}
 }
