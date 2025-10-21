@@ -15,6 +15,7 @@ public class Coleccion {
     private List<Fuente> fuentes;
     private List<Hecho> hechos;
     private String handle;
+    private List<InterfaceCondicion> criterioDePertenencia;
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
     public Coleccion(String titulo, String descripcion, List<Fuente> fuentes) {
@@ -38,4 +39,8 @@ public class Coleccion {
     public void agregarHechos(List<Hecho> nuevosHechos) {
         hechos.addAll(nuevosHechos);
     }
+    public void cambiarCriterioDePertenencia(List<InterfaceCondicion> criterio) {
+        criterioDePertenencia = criterio;
+    }
+
 }
