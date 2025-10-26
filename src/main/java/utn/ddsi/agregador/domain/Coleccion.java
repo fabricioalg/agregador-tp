@@ -5,17 +5,23 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.*;
 
 @Getter
 @Setter
+@Entity
 public class Coleccion {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String titulo;
     private String descripcion;
     private List<Fuente> fuentes;
     private List<Hecho> hechos;
     private String handle;
     private List<InterfaceCondicion> criterioDePertenencia;
+    @Transient //para arreglar un error
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
     public Coleccion(String titulo, String descripcion, List<Fuente> fuentes) {
@@ -24,7 +30,7 @@ public class Coleccion {
         this.fuentes = fuentes;
         this.hechos = new ArrayList<>();
     }
-
+    public Coleccion() {}
     public void setearFuente() {
         this.hechos.forEach((h) -> h.setFuente(this.fuentes.get(0)));
     }
