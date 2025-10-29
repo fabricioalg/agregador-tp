@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import utn.ddsi.agregador.domain.Coleccion;
 import utn.ddsi.agregador.domain.Hecho;
 import utn.ddsi.agregador.repository.RepositoryColecciones;
@@ -12,7 +13,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/colecciones")
 public class ControllerColecciones {
+    @Autowired
     private ServiceColecciones service;
+    @PutMapping
     public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
         service.cargarColeccionConHechos(coleccion,hechos);
     }
@@ -28,12 +31,12 @@ public class ControllerColecciones {
     }
 
     @GetMapping("/{titulo}")
-    public Optional<Coleccion> buscarPorNombre(String titulo) {
+    public Optional<Coleccion> buscarPorNombre(@RequestParam String titulo) {
         return service.buscarPorNombre(titulo);
     }
 
     @DeleteMapping("/{titulo}")
-    public void eliminarColeccion(@PathVariable String titulo) {
+    public void eliminarColeccion(@RequestParam String titulo) {
         service.eliminarColeccion(titulo);
     }
 

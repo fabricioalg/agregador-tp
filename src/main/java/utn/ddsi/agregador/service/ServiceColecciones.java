@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import utn.ddsi.agregador.domain.*;
 import utn.ddsi.agregador.repository.RepositoryColecciones;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 public class ServiceColecciones {
+    @Autowired
     private RepositoryColecciones repositoryColecciones;
 
     public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
