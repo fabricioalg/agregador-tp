@@ -8,7 +8,7 @@ import java.util.*;
 @Repository
 public class RepositoryColecciones {
     private Map<String, Coleccion> colecciones = new HashMap<>();
-
+    //cambiar titulo por id
     public void save(Coleccion coleccion) {colecciones.put(coleccion.getTitulo(), coleccion);}
     public void delete(Coleccion coleccion){colecciones.remove(coleccion);}
     public Optional<Coleccion> buscarPorNombre(String titulo) {

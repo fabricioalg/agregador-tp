@@ -1,34 +1,43 @@
 package utn.ddsi.agregador.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Table(name="coleccion")
 public class Coleccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idColeccion;
+    @Column(nullable = false)
     private String titulo;
+    @Column(length = 1000)
     private String descripcion;
+    @OneToMany(mappedBy = "idFuente")
     private List<Fuente> fuentes;
+    @OneToMany(mappedBy = "idHecho")
     private List<Hecho> hechos;
+    @Column(nullable = false)
     private String handle;
+    @Transient
     private List<InterfaceCondicion> criterioDePertenencia;
-    @Transient //para arreglar un error
+    @Transient //va a quedar asi por un rato
     private AlgoritmoDeConsenso algoritmoDeConsenso;
 
-    public Coleccion(String titulo, String descripcion, List<Fuente> fuentes) {
+    public Coleccion(String titulo, String descripcion, List<Fuente> fuentes, String handle) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuentes = fuentes;
         this.hechos = new ArrayList<>();
+        this.criterioDePertenencia = new ArrayList<>();
+        this.algoritmoDeConsenso = new ConsensoDefault();
     }
     public Coleccion() {}
     public void setearFuente() {

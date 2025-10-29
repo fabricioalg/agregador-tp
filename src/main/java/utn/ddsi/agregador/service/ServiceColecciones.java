@@ -22,8 +22,8 @@ public class ServiceColecciones {
             throw new RuntimeException("no se encontró la coleccion");
         }
     }
-    public void crearColeccion(String titulo, String descripcion, List<Fuente> fuentes) {
-        Coleccion nuevaCole = new Coleccion(titulo,descripcion,fuentes);
+    public void crearColeccion(String titulo, String descripcion, List<Fuente> fuentes, String handle) {
+        Coleccion nuevaCole = new Coleccion(titulo,descripcion,fuentes,handle);
         repositoryColecciones.save(nuevaCole);
     }
     public List<Coleccion> obtenerTodasLasColecciones(){

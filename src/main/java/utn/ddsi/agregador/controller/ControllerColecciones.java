@@ -19,7 +19,7 @@ public class ControllerColecciones {
 
     @PostMapping
     public void crearColeccion(@RequestBody Coleccion coleccion) {
-        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes());
+        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes(), coleccion.getHandle());
     }
 
     @GetMapping

@@ -1,17 +1,28 @@
 package utn.ddsi.agregador.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "Solicitud")
+@NoArgsConstructor
 public class SolicitudEliminacion {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idSolicitud;
+    @OneToOne
     private Hecho hecho;
+    @Column(nullable = false)
     private LocalDate fecha;
+    @Column(length = 200)
     private String motivo;
+    @Column(nullable = false)
     private EnumEstadoSol estado;
 
     public SolicitudEliminacion(Hecho hecho, LocalDate fecha, String motivo) {
