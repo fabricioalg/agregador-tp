@@ -1,8 +1,8 @@
 package utn.ddsi.agregador.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import utn.ddsi.agregador.domain.*;
+import utn.ddsi.agregador.domain.coleccion.Coleccion;
+import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.repository.RepositoryColecciones;
 import org.springframework.stereotype.Service;
 

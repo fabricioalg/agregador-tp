@@ -1,9 +1,8 @@
 package utn.ddsi.agregador.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import utn.ddsi.agregador.domain.Coleccion;
-import utn.ddsi.agregador.domain.Hecho;
-import utn.ddsi.agregador.repository.RepositoryColecciones;
+import utn.ddsi.agregador.domain.coleccion.Coleccion;
+import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.service.ServiceColecciones;
 import org.springframework.web.bind.annotation.*;
 
