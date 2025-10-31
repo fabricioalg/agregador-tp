@@ -1,6 +1,6 @@
 package utn.ddsi.agregador.domain.agregador;
 
-import utn.ddsi.agregador.domain.entities.condicion.InterfaceCondicion;
+import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
 import java.util.ArrayList;

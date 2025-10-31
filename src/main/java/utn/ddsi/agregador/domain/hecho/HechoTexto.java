@@ -1,6 +1,6 @@
 package utn.ddsi.agregador.domain.hecho;
 
-import utn.ddsi.agregador.domain.entities.condicion.fuentes.Fuente;
+import utn.ddsi.agregador.domain.fuentes.Fuente;
 
 import java.time.LocalDate;
 

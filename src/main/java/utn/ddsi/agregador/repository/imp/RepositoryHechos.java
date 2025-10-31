@@ -1,29 +1,17 @@
-package utn.ddsi.agregador.repository;
+package utn.ddsi.agregador.repository.imp;
 
-import jakarta.persistence.TypedQuery;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Repository;
-import utn.ddsi.agregador.domain.models.fuentes.Fuente;
-import utn.ddsi.agregador.domain.models.hecho.Categoria;
-import utn.ddsi.agregador.domain.models.hecho.Etiqueta;
-import utn.ddsi.agregador.domain.models.hecho.Hecho;
-import utn.ddsi.agregador.domain.models.hecho.Ubicacion;
-import utn.ddsi.agregador.domain.schemas.*;
-import utn.ddsi.agregador.utils.BDUtils;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.util.*;
 
 @Getter
 @Setter
 @Repository
 public class RepositoryHechos {
 
-    private final EntityManager em = BDUtils.getEntityManager();
-
-    @Transactional
+   /* @Transactional
     public Hecho save(Hecho hecho) {
         HechoSchema hechoSchema = fromDTO(hecho);
         em.persist(hechoSchema);
@@ -43,7 +31,7 @@ public class RepositoryHechos {
         return toDTOs(q);
     }
 
-    private List<Hecho> toDTOs(List<HechoSchema> schemas) {
+    /*private List<Hecho> toDTOs(List<HechoSchema> schemas) {
         List<Hecho> hechos = new ArrayList<>();
         for (HechoSchema schema : schemas) {
             hechos.add(toDTO(schema));
@@ -158,6 +146,6 @@ public class RepositoryHechos {
         }
 
         return schema;
-    }
+    }*/
 
 }

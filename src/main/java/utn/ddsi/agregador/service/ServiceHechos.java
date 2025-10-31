@@ -3,10 +3,9 @@ package utn.ddsi.agregador.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-import utn.ddsi.agregador.domain.Coleccion;
-import utn.ddsi.agregador.domain.Fuente;
-import utn.ddsi.agregador.domain.Hecho;
-import utn.ddsi.agregador.repository.RepositoryHechos;
+
+import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.repository.imp.RepositoryHechos;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,7 @@ public class ServiceHechos {
         this.repository = repository;
     }
 
-    public Hecho agregarHecho(Hecho hecho) {
+    /*public Hecho agregarHecho(Hecho hecho) {
         return repository.save(hecho);
     }
 
@@ -33,6 +32,6 @@ public class ServiceHechos {
 
     public List<Hecho> obtenerTodos() {
         return repository.findAll();
-    }
+    }*/
 
 }

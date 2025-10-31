@@ -1,13 +1,12 @@
 package utn.ddsi.agregador.adapter;
 
 import org.springframework.stereotype.Component;
-import utn.ddsi.agregador.domain.models.fuentes.Fuente;
-import utn.ddsi.agregador.domain.models.hecho.*;
+import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.domain.hecho.*;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 

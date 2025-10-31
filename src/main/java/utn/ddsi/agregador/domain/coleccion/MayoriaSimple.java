@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MayoriaSimple implements AlgoritmoDeConsenso {
+public class MayoriaSimple extends AlgoritmoDeConsenso {
     @Override
     public List<Hecho> aplicar(List<Hecho>hechos, List<Fuente> fuentes){        // Mapa para contar las menciones de cada hecho
         Map<Hecho, Integer> mapa = new HashMap<>();

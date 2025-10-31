@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utn.ddsi.agregador.domain.entities.condicion.hecho.Hecho;
+import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.utils.EnumEstadoSol;
 
 import java.time.LocalDate;
@@ -24,6 +24,7 @@ public class SolicitudEliminacion {
     private LocalDate fecha;
     @Column(length = 200)
     private String motivo;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumEstadoSol estado;
 

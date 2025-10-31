@@ -2,7 +2,7 @@ package utn.ddsi.agregador.domain.condicion;
 
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
-public class CondicionTitulo implements InterfaceCondicion {
+public class CondicionTitulo extends InterfaceCondicion {
     private String titulo;
 
     @Override

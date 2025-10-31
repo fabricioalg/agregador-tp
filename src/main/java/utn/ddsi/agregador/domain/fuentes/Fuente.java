@@ -15,26 +15,26 @@ import java.net.URL;
 @Entity
 @NoArgsConstructor
 @Table(name = "fuente")
-@JsonTypeInfo(
+/*@JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         property = "tipo")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = FuenteAPI.class, name = "API")
-})
-public abstract class Fuente {
+})*/
+public class Fuente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idFuente;
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
-    private URL url;
+    private String url;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumTipoFuente tipoFuente;
 
-    public Fuente(long id, String nombre, URL url, EnumTipoFuente tipoFuente) {
+    public Fuente(long id, String nombre, String url, EnumTipoFuente tipoFuente) {
         this.idFuente = id;
         this.nombre = nombre;
         this.url = url;

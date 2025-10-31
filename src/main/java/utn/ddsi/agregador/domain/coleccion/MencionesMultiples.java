@@ -5,7 +5,7 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 
 import java.util.*;
 
-public class MencionesMultiples implements AlgoritmoDeConsenso {
+public class MencionesMultiples extends AlgoritmoDeConsenso {
     @Override
     public List<Hecho> aplicar(List<Hecho>hechos, List<Fuente> fuentes){        // Mapa para contar las menciones de cada hecho
         Map<Hecho, Integer> mapa = new HashMap<>();

@@ -1,4 +1,4 @@
-package utn.ddsi.agregador.repository.imp;
+package utn.ddsi.agregador.repository;
 
 public interface IRepositoryTipoFuente {
 }

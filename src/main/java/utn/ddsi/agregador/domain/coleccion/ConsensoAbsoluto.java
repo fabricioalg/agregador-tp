@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 //MODIFICAR ESTO, no son las mismas fuentes del metamapa
-public class ConsensoAbsoluto implements AlgoritmoDeConsenso {
+public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
 
     @Override
     public List<Hecho> aplicar(List<Hecho> hechos, List<Fuente> fuentes) {        // Mapa para contar las menciones de cada hecho

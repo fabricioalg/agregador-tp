@@ -1,54 +1,50 @@
 package utn.ddsi.agregador.domain.hecho;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utn.ddsi.agregador.domain.entities.condicion.fuentes.Fuente;
+import utn.ddsi.agregador.domain.fuentes.Fuente;
 
 import java.time.LocalDate;
 
-@Getter
 @Setter
+@Getter
 @Entity
 @NoArgsConstructor
 @Table(name = "hecho")
 public class Hecho {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idHecho;
+    private Long id_hecho;
     //getters y setters
     @Column(name = "titulo")
     private String titulo;
     @Column(name="descripcion",length = 1000)
     private String descripcion;
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name="nombre", column=@Column(name="categoria_nombre"))
-    })
+    @ManyToOne
     private Categoria categoria;
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     @Column(name = "fechaCarga", nullable = false)
     private LocalDate fechaDeCarga;
     @OneToOne(cascade = CascadeType.ALL)
-    private Fuente origen;
-    @Embedded
-    private Ubicacion lugarDeOcurrencia;
-    @Embedded
+    private Fuente fuente;
+    @ManyToOne
+    private Ubicacion ubicacion;
+    @ManyToOne
     private Etiqueta etiqueta;
 
-    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion lugarDeOcurrencia, LocalDate fecha, Fuente fuente) {
+    public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion ubicacion, LocalDate fecha, Fuente fuente) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.categoria = categoria;
-        this.lugarDeOcurrencia = lugarDeOcurrencia;
+        this.ubicacion = ubicacion;
         this.fecha = fecha;
         this.fechaDeCarga = LocalDate.now();
         this.etiqueta = null;
-        this.origen = fuente;
+        this.fuente = fuente;
     }
 
-    public Fuente getFuente() {return origen;}
-    public void setFuente(Fuente fuente) {this.origen = fuente;}
 }

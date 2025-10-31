@@ -1,17 +1,18 @@
 package utn.ddsi.agregador.domain.hecho;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Embeddable
 @NoArgsConstructor
 public class Ubicacion {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private float latitud;
     private float longitud;
 
@@ -25,9 +26,4 @@ public class Ubicacion {
         this.longitud = newLongitud;
     }
 
-    public float getLatitud() {return this.latitud;}
-
-    public float getLongitud() {
-        return longitud;
-    }
 }

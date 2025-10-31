@@ -1,6 +1,6 @@
 package utn.ddsi.agregador.domain.solicitudEliminacion;
 
-import utn.ddsi.agregador.repository.RepositorySolicitudes;
+import utn.ddsi.agregador.repository.imp.RepositorySolicitudes;
 
 public class GestorDeSolicitudes {
     private DetectorDeSpam detector;
@@ -10,7 +10,7 @@ public class GestorDeSolicitudes {
         this.detector = new DetectorBasicoDeSpam();
         this.repository = new RepositorySolicitudes();
     }
-
+/*
     public void procesarTodasLasSolicitudes(){
         repository.getSolicitudes().forEach(solicitud -> this.procesarSolicitud(solicitud.getMotivo()));
 
@@ -21,5 +21,5 @@ public class GestorDeSolicitudes {
         } else {
             System.out.println("✅ Solicitud válida. Pasará a revisión.");
         }
-    }
+    }*/
 }

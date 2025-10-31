@@ -1,4 +1,4 @@
 package utn.ddsi.agregador.repository;
 
-public class IRepositoryHechos {
+public interface IRepositoryHechos {
 }

@@ -14,29 +14,29 @@ import java.util.Optional;
 public class ControllerColecciones {
     @Autowired
     private ServiceColecciones service;
-    @PutMapping
-    public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
-        service.cargarColeccionConHechos(coleccion,hechos);
-    }
-
-    @PostMapping
-    public void crearColeccion(@RequestBody Coleccion coleccion) {
-        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes(), coleccion.getHandle());
-    }
-
-    @GetMapping
-    public List<Coleccion> obtenerTodasLasColecciones() {
-        return service.obtenerTodasLasColecciones();
-    }
-
-    @GetMapping("/{titulo}")
-    public Optional<Coleccion> buscarPorNombre(@RequestParam String titulo) {
-        return service.buscarPorNombre(titulo);
-    }
-
-    @DeleteMapping("/{titulo}")
-    public void eliminarColeccion(@RequestParam String titulo) {
-        service.eliminarColeccion(titulo);
-    }
+//    @PutMapping
+//    public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
+//        service.cargarColeccionConHechos(coleccion,hechos);
+//    }
+//
+//    @PostMapping
+//    public void crearColeccion(@RequestBody Coleccion coleccion) {
+//        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes(), coleccion.getHandle());
+//    }
+//
+//    @GetMapping
+//    public List<Coleccion> obtenerTodasLasColecciones() {
+//        return service.obtenerTodasLasColecciones();
+//    }
+//
+//    @GetMapping("/{titulo}")
+//    public Optional<Coleccion> buscarPorNombre(@RequestParam String titulo) {
+//        return service.buscarPorNombre(titulo);
+//    }
+//
+//    @DeleteMapping("/{titulo}")
+//    public void eliminarColeccion(@RequestParam String titulo) {
+//        service.eliminarColeccion(titulo);
+//    }
 
 }
