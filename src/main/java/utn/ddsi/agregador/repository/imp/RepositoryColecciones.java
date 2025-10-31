@@ -1,12 +1,9 @@
 package utn.ddsi.agregador.repository.imp;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import utn.ddsi.agregador.domain.coleccion.Coleccion;
 
 @Repository
-public class RepositoryColecciones {
-
-   // public Optional<Coleccion> buscarPorNombre(String titulo) {
-        //return Optional.ofNullable(colecciones.get(titulo));
-    //}
-
+public class RepositoryColecciones extends JpaRepository<Coleccion, Long> {
 }

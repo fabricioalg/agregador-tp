@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.repository.IRepositoryHechos;
 import utn.ddsi.agregador.repository.imp.RepositoryHechos;
 
 import java.util.List;
@@ -13,13 +14,13 @@ import java.util.Optional;
 @Service
 public class ServiceHechos {
     @Autowired
-    private final RepositoryHechos repository;
+    private final IRepositoryHechos repository;
 
-    public ServiceHechos(RepositoryHechos repository) {
+    public ServiceHechos(IRepositoryHechos repository) {
         this.repository = repository;
     }
 
-    /*public Hecho agregarHecho(Hecho hecho) {
+    public Hecho agregarHecho(Hecho hecho) {
         return repository.save(hecho);
     }
 
@@ -27,12 +28,15 @@ public class ServiceHechos {
         return repository.findById(id);
     }
 
-    public Optional<Hecho> buscarPorTitulo(String titulo) {
-        return repository.findByTitulo(titulo);
+    public List<Hecho> buscarPorTitulo(String titulo) {
+        List<Hecho> hechos =repository.findAll();
+        return hechos.stream()
+                .filter(hecho -> hecho.getTitulo().equalsIgnoreCase(titulo))
+                .toList();
     }
 
     public List<Hecho> obtenerTodos() {
         return repository.findAll();
-    }*/
+    }
 
 }
