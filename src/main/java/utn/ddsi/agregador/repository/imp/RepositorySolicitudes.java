@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.EntityManager;
+
 
 @Getter
 @Setter

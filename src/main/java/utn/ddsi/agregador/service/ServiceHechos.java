@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Service
 public class ServiceHechos {
+    @Autowired
     private final RepositoryHechos repository;
 
     public ServiceHechos(RepositoryHechos repository) {

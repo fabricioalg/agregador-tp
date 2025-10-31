@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class HechoFuenteEstaticaDTO {
     private String titulo;
     private String descripcion;

@@ -1,8 +1,8 @@
 package utn.ddsi.agregador.repository.imp;
 
-import javax.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public class RepositoryColecciones {
 
    // public Optional<Coleccion> buscarPorNombre(String titulo) {
