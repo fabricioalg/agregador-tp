@@ -17,8 +17,8 @@ import java.time.LocalDate;
 public class SolicitudEliminacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSolicitud;
-    @OneToOne
+    private Long id_solicitud;
+    @ManyToOne
     private Hecho hecho;
     @Column(nullable = false)
     private LocalDate fecha;

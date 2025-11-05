@@ -7,6 +7,7 @@ import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Coleccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String handle;
+    private Long id_coleccion; //cambiar a todos y al DC
     @Column(nullable = false)
     private String titulo;
     @Column(length = 1000)
@@ -37,25 +38,30 @@ public class Coleccion {
             joinColumns = @JoinColumn(name = "id_coleccion"),
             inverseJoinColumns = @JoinColumn(name = "id_hecho")
     )
-    private List<Hecho> hechos;
-
+    private List<Hecho> hechos; //averiguar map de hechos
     @ManyToMany
     @JoinTable(
             name = "criterio_x_coleccion",
             joinColumns = @JoinColumn(name = "id_coleccion"),
             inverseJoinColumns = @JoinColumn(name = "id_criterio")
     )
-    private List<InterfaceCondicion> criterioDePertenencia;
-    @ManyToOne //va a quedar asi por un rato
+    private List<InterfaceCondicion> condicionDePertenencia;
+    @Transient
     private AlgoritmoDeConsenso algoritmoDeConsenso;
+    @Enumerated(EnumType.STRING)
+    private EnumTipoDeAlgoritmo tipoDeAlgoritmo;
 
-    public Coleccion(String titulo, String descripcion, List<Fuente> fuentes, String handle) {
+    public Coleccion(String titulo, String descripcion, List<Fuente> fuentes) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fuentes = fuentes;
         this.hechos = new ArrayList<>();
-        this.criterioDePertenencia = new ArrayList<>();
+        this.condicionDePertenencia = new ArrayList<>();
         this.algoritmoDeConsenso = new ConsensoDefault();
+    }
+
+    public Coleccion() {
+
     }
 
     public void setearFuente() {
@@ -75,7 +81,7 @@ public class Coleccion {
         hechos.addAll(nuevosHechos);
     }
     public void cambiarCriterioDePertenencia(List<InterfaceCondicion> criterio) {
-        criterioDePertenencia = criterio;
+        condicionDePertenencia = criterio;
     }
 
 }

@@ -18,8 +18,8 @@ public class ServiceColecciones {
     @Autowired
     private IRepositoryColecciones repositoryColecciones;
 
-    public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
-        Optional<Coleccion> coleccionConTitulo = repositoryColecciones.findById();
+    public void cargarColeccionConHechos(Long id, List<Hecho> hechos){
+        Optional<Coleccion> coleccionConTitulo = repositoryColecciones.findById(id);
         if(coleccionConTitulo.isPresent()){
             coleccionConTitulo.get().agregarHechos(hechos);
         }
@@ -27,8 +27,8 @@ public class ServiceColecciones {
             throw new RuntimeException("no se encontró la coleccion");
         }
     }
-    public void crearColeccion(String titulo, String descripcion, List<Fuente> fuentes, String handle) {
-        Coleccion nuevaCole = new Coleccion(titulo,descripcion,fuentes,handle);
+    public void crearColeccion(String titulo, String descripcion, List<Fuente> fuentes) {
+        Coleccion nuevaCole = new Coleccion(titulo,descripcion,fuentes);
         repositoryColecciones.save(nuevaCole);
     }
     public List<Coleccion> obtenerTodasLasColecciones(){

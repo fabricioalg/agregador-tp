@@ -2,8 +2,6 @@ package utn.ddsi.agregador.adapter;
 
 import org.junit.jupiter.api.Test;
 import utn.ddsi.agregador.domain.hecho.Hecho;
-import utn.ddsi.agregador.domain.hecho.HechoMultimedia;
-import utn.ddsi.agregador.domain.hecho.HechoTexto;
 import utn.ddsi.agregador.dto.AdjuntoDTO;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.UbicacionDTO;

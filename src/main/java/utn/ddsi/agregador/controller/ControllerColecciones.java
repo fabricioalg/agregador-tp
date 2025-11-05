@@ -15,13 +15,13 @@ public class ControllerColecciones {
     @Autowired
     private ServiceColecciones service;
     @PutMapping
-    public void cargarColeccionConHechos(String coleccion, List<Hecho> hechos){
-        service.cargarColeccionConHechos(coleccion,hechos);
+    public void cargarColeccionConHechos(Long id, List<Hecho> hechos){
+        service.cargarColeccionConHechos(id,hechos);
     }
 
     @PostMapping
     public void crearColeccion(@RequestBody Coleccion coleccion) {
-        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes(), coleccion.getHandle());
+        service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes());
     }
 
     @GetMapping

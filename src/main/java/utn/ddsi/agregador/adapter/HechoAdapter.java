@@ -33,7 +33,8 @@ public class HechoAdapter {
         Fuente fuente = crearFuenteDinamica();
 
         // determino si es multimedia o texto según tenga adjunto
-        Hecho hecho;
+        Hecho hecho= new Hecho(); //cargar de datos
+        /*
         if (dto.getAdjunto() != null && dto.getAdjunto().getUrl() != null && !dto.getAdjunto().getUrl().isEmpty()) {
             // Es multimedia
             HechoMultimedia hechoMultimedia = new HechoMultimedia(
@@ -59,7 +60,7 @@ public class HechoAdapter {
             hechoTexto.informacion = dto.getDescripcion();
             hecho = hechoTexto;
         }
-
+*/
 
         // Establecer la fecha de carga como la fecha actual (cuando se recibe)
         hecho.setFechaDeCarga(LocalDate.now());

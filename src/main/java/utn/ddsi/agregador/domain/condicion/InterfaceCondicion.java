@@ -6,8 +6,8 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 
 @Data
 @Entity
-@Table(name = "criterio")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "condicion")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)// DISCUTIR POR WHASATP
 @DiscriminatorColumn(name = "tipo") // columna automática en la BD
 public abstract class InterfaceCondicion {
     @Id

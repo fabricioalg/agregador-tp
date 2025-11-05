@@ -1,11 +1,12 @@
 package utn.ddsi.agregador.domain.hecho;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.List;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.utils.EnumTipoHecho;
 
 import java.time.LocalDate;
 
@@ -29,12 +30,16 @@ public class Hecho {
     private LocalDate fecha;
     @Column(name = "fechaCarga", nullable = false)
     private LocalDate fechaDeCarga;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Fuente fuente;
     @ManyToOne
     private Ubicacion ubicacion;
     @ManyToOne
     private Etiqueta etiqueta;
+    @Enumerated(EnumType.STRING)
+    private EnumTipoHecho tipoHecho;
+    @OneToMany
+    private List<Adjunto> adjuntos;
 
     public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion ubicacion, LocalDate fecha, Fuente fuente) {
         this.titulo = titulo;

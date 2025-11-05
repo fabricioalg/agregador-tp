@@ -6,7 +6,8 @@ import java.util.List;
 public class Normalizador {
     public List<Hecho> normalizar(List<Hecho> hechos) {
         /*
-        todo
+        to do:
+        recibe los hechos con latitud y longitud, en base a eso se agrega clase Provincia
         */
         return hechos;
     }
