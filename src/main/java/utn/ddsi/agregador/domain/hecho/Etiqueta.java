@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Etiqueta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_etiqueta;
     private String nombre;
     public Etiqueta(String nombre) {
         this.nombre = nombre;
