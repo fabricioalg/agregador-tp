@@ -2,8 +2,6 @@ package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
@@ -32,13 +30,8 @@ public class Coleccion {
             inverseJoinColumns = @JoinColumn(name = "id_fuente")
     )
     private List<Fuente> fuentes;
-    @ManyToMany
-    @JoinTable(
-            name = "hecho_x_coleccion",
-            joinColumns = @JoinColumn(name = "id_coleccion"),
-            inverseJoinColumns = @JoinColumn(name = "id_hecho")
-    )
-    private List<Hecho> hechos; //averiguar map de hechos
+    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HechoXColeccion> hechos;
     @ManyToMany
     @JoinTable(
             name = "criterio_x_coleccion",
@@ -64,24 +57,43 @@ public class Coleccion {
 
     }
 
-    public void setearFuente() {
-        this.hechos.forEach((h) -> h.setFuente(this.fuentes.get(0)));
-    }
+//    public void setearFuente() {
+//        this.hechos.forEach((hxc) -> hxc.getHecho().setFuente(this.fuentes.get(0)));
+//    }
     public List<Hecho> obtenerHechosConsensuados(List<Fuente> fuentes){ //hacer otro map 0 no consensuado 1 consensuado
         List<Hecho> hechosConsensuados=this.algoritmoDeConsenso.aplicar(this.hechos,fuentes);
         return hechosConsensuados;
     }
 
     public List<Fuente> obtenerFuentes() {
-        List<Fuente> fuentes = this.hechos.stream().map(Hecho::getFuente).distinct().collect(Collectors.toList());
+        List<Fuente> fuentes = this.hechos.stream().map(hxc -> hxc.getHecho().getFuente()).distinct().collect(Collectors.toList());
         return fuentes;
     }
 
     public void agregarHechos(List<Hecho> nuevosHechos) {
-        hechos.addAll(nuevosHechos);
+        nuevosHechos.forEach(hecho -> {
+            HechoXColeccion hxc = new HechoXColeccion(hecho, this, false);
+            hechos.add(hxc);
+        });
     }
+
     public void cambiarCriterioDePertenencia(List<InterfaceCondicion> criterio) {
         condicionDePertenencia = criterio;
+    }
+
+    // Método para obtener solo los hechos consensuados (para navegación curada)
+    public List<Hecho> obtenerSoloHechosConsensuados() {
+        return hechos.stream()
+                .filter(HechoXColeccion::getConsensuado)
+                .map(HechoXColeccion::getHecho)
+                .collect(Collectors.toList());
+    }
+    
+    // Método para obtener todos los hechos (para navegación no curada)
+    public List<Hecho> obtenerTodosLosHechos() {
+        return hechos.stream()
+                .map(HechoXColeccion::getHecho)
+                .collect(Collectors.toList());
     }
 
 }

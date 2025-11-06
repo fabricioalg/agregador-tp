@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
-import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.List;
 
@@ -20,8 +19,8 @@ public class AlgoritmoDeConsenso {
     private Long id_algoritmo;
 
 
-    List<Hecho> aplicar(List<Hecho>hechos, List<Fuente> fuentes){
+    List<Hecho> aplicar(List<HechoXColeccion> hechos, List<Fuente> fuentes){
         return null;
-    };
+    }
 
 }
