@@ -50,11 +50,36 @@ public class Coleccion {
         this.fuentes = fuentes;
         this.hechos = new ArrayList<>();
         this.condicionDePertenencia = new ArrayList<>();
+        this.tipoDeAlgoritmo = EnumTipoDeAlgoritmo.DEFAULT;
         this.algoritmoDeConsenso = new ConsensoDefault();
     }
 
     public Coleccion() {
 
+    }
+
+    @PostLoad
+    private void cargarAlgoritmoDeConsenso() {
+        if (tipoDeAlgoritmo != null) {
+            this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
+        } else {
+            this.algoritmoDeConsenso = new ConsensoDefault();
+        }
+    }
+
+    private AlgoritmoDeConsenso obtenerAlgoritmoPorTipo(EnumTipoDeAlgoritmo tipo) {
+        switch (tipo) {
+            case ABSOLUTA:
+                return new ConsensoAbsoluto();
+            case DEFAULT:
+            default:
+                return new ConsensoDefault();
+            // TODO: Implementar los otros tipos de consenso cuando estén disponibles
+            // case MULTIPLES_MENCIONES:
+            //     return new ConsensoMultiplesMenciones();
+            // case MAYORIA_SIMPLE:
+            //     return new ConsensoMayoriaSimple();
+        }
     }
 
 //    public void setearFuente() {
@@ -88,12 +113,18 @@ public class Coleccion {
                 .map(HechoXColeccion::getHecho)
                 .collect(Collectors.toList());
     }
-    
+
     // Método para obtener todos los hechos (para navegación no curada)
     public List<Hecho> obtenerTodosLosHechos() {
         return hechos.stream()
                 .map(HechoXColeccion::getHecho)
                 .collect(Collectors.toList());
+    }
+
+    // Método para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
+    public void setTipoDeAlgoritmo(EnumTipoDeAlgoritmo tipoDeAlgoritmo) {
+        this.tipoDeAlgoritmo = tipoDeAlgoritmo;
+        this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
     }
 
 }
