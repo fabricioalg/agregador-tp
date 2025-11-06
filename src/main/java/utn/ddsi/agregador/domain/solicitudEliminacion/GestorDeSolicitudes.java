@@ -1,19 +1,18 @@
 package utn.ddsi.agregador.domain.solicitudEliminacion;
 
-import utn.ddsi.agregador.repository.imp.RepositorySolicitudes;
+import utn.ddsi.agregador.repository.IRepositorySolicitudes;
 
 public class GestorDeSolicitudes {
     private DetectorDeSpam detector;
-    private RepositorySolicitudes repository;
+    private IRepositorySolicitudes repository;
 
-    public GestorDeSolicitudes() {
+    public GestorDeSolicitudes(IRepositorySolicitudes repository) {
+        this.repository = repository;
         this.detector = new DetectorBasicoDeSpam();
-        this.repository = new RepositorySolicitudes();
     }
-/*
-    public void procesarTodasLasSolicitudes(){
-        repository.getSolicitudes().forEach(solicitud -> this.procesarSolicitud(solicitud.getMotivo()));
 
+    public void procesarTodasLasSolicitudes(){
+        repository.findAll().forEach(solicitud -> this.procesarSolicitud(solicitud.getMotivo()));
     }
     public void procesarSolicitud(String textoSolicitud) {
         if (detector.esSpam(textoSolicitud)) {
@@ -21,5 +20,5 @@ public class GestorDeSolicitudes {
         } else {
             System.out.println("✅ Solicitud válida. Pasará a revisión.");
         }
-    }*/
+    }
 }

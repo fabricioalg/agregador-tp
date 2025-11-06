@@ -7,12 +7,12 @@ import java.util.*;
 
 public class MencionesMultiples extends AlgoritmoDeConsenso {
     @Override
-    public List<Hecho> aplicar(List<Hecho>hechos, List<Fuente> fuentes){        // Mapa para contar las menciones de cada hecho
+    public List<Hecho> aplicar(List<HechoXColeccion>hechos, List<Fuente> fuentes){        // Mapa para contar las menciones de cada hecho
         Map<Hecho, Integer> mapa = new HashMap<>();
         List<Hecho> hechosConsensuados = new ArrayList<>();
 
         // Contar menciones
-        for (Hecho h : hechos) {
+        for (HechoXColeccion h : hechos) {
             mapa.put(h, mapa.getOrDefault(h, 0) + 1);
         }
 

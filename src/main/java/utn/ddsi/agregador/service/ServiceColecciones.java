@@ -5,7 +5,6 @@ import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
-import utn.ddsi.agregador.repository.imp.RepositoryColecciones;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

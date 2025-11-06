@@ -20,6 +20,7 @@ public class LoaderEstatico extends Loader {
         super(url);
         this.adapter = new HechoAdapter();
     }
+    //TIENE QUE ESTAR HECHO POR FECHAA!!!!
     public List<Hecho> obtenerHechos(String ruta) {
         try{
             URL endpoint = new URL(url+"/"+ruta);

@@ -6,5 +6,6 @@ import utn.ddsi.agregador.domain.coleccion.Coleccion;
 
 import java.util.Optional;
 
+@Repository
 public interface IRepositoryColecciones extends JpaRepository<Coleccion, Long> {
 }

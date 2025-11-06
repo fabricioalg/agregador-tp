@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
-import utn.ddsi.agregador.repository.imp.RepositoryHechos;
 
 import java.util.List;
 import java.util.Optional;

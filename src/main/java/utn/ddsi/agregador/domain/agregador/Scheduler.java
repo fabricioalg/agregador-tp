@@ -1,9 +1,7 @@
 package utn.ddsi.agregador.domain.agregador;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 public class Scheduler {
-    private ServicioAgregador servicioAgregador;
+    private ActualizadorColecciones actualizador;
 
     /*
     @Scheduled(cron = "0 0 0 * * *")

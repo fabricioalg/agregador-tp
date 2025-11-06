@@ -2,6 +2,8 @@ package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@Getter
+@Setter
 @Entity
 @Table(name="coleccion")
 public class Coleccion {
