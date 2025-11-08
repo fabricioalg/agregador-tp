@@ -34,14 +34,14 @@ public class ActualizadorColecciones {
                 .toList();
         return todosLosHechos;
     }
-    public void depurarHechos(List<Hecho> hechos) {
+    public List<Hecho> depurarHechos() {
         List<Hecho> todosLosHechos = traerHechosDeLoaders();
         normalizador.normalizar(todosLosHechos);
         repositoryHechos.saveAll(todosLosHechos);
+        return todosLosHechos;
     }
-    public void actualizarColeccionesCon(){
-        List<Hecho> hechosNuevos = traerHechosDeLoaders();
-        depurarHechos(hechosNuevos);
+    public void actualizarColecciones(){
+        List<Hecho> hechosNuevos = depurarHechos();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
 
         colecciones.forEach(coleccion-> filtradorDeHechos.devolverHechosAPartirDe(

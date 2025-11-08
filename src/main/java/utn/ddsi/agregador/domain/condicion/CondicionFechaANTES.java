@@ -1,17 +1,27 @@
 package utn.ddsi.agregador.domain.condicion;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
 import java.time.LocalDate;
 
-/* podria variar si quiere: lo que paso antes de la fecha seleccionada, despues o el mismo dia */
+/* Se separa en dos clases para distinguir las condiciones*/
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@DiscriminatorValue("fechaAntes")
 public class CondicionFechaANTES extends InterfaceCondicion {
-    private LocalDate fecha;
-
-    //Por ahora 12/06 Pensado para que sea el mismo dia
+    private LocalDate fechaAntes;
 
     @Override
     public boolean cumpleCondicion(Hecho hecho) {
-        return this.fecha == hecho.getFecha();
+        return hecho.getFecha().isBefore(fechaAntes);
     }
 }

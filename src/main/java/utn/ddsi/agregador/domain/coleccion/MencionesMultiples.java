@@ -13,7 +13,7 @@ public class MencionesMultiples extends AlgoritmoDeConsenso {
 
         // Contar menciones
         for (HechoXColeccion h : hechos) {
-            mapa.put(h, mapa.getOrDefault(h, 0) + 1);
+            mapa.put(h.getHecho(), mapa.getOrDefault(h, 0) + 1);
         }
 
         // Filtrar por al menos 2 fuentes

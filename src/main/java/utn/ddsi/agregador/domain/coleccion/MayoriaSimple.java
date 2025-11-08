@@ -15,8 +15,8 @@ public class MayoriaSimple extends AlgoritmoDeConsenso {
         List<Hecho> hechosConsensuados = new ArrayList<>();
 
         // Contar menciones
-        for (Hecho h : hechos) {
-            mapa.put(h, mapa.getOrDefault(h, 0) + 1);
+        for (HechoXColeccion h : hechos) {
+            mapa.put(h.getHecho(), mapa.getOrDefault(h, 0) + 1);
         }
 
         // Filtrar por al menos la mitad de las fuentes
