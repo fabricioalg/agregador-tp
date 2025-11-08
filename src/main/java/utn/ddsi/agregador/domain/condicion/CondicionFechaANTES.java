@@ -5,7 +5,7 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 import java.time.LocalDate;
 
 /* podria variar si quiere: lo que paso antes de la fecha seleccionada, despues o el mismo dia */
-public class CondicionFecha extends InterfaceCondicion {
+public class CondicionFechaANTES extends InterfaceCondicion {
     private LocalDate fecha;
 
     //Por ahora 12/06 Pensado para que sea el mismo dia
