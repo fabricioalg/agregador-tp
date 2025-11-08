@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class Coleccion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_coleccion; //cambiar a todos y al DC
     @Column(nullable = false)
     private String titulo;
