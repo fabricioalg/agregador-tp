@@ -18,9 +18,8 @@ public class AlgoritmoDeConsenso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_algoritmo;
 
-
-    List<Hecho> aplicar(List<HechoXColeccion> hechos, List<Fuente> fuentes){
-        return null;
+    public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes){
+        return Boolean.FALSE;
     }
 
 }

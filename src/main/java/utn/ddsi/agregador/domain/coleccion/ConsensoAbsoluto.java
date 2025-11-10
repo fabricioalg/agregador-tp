@@ -11,27 +11,20 @@ import java.util.Map;
 public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
 
     @Override
-    public List<Hecho> aplicar(List<HechoXColeccion> hechos, List<Fuente> fuentes) {        // Mapa para contar las menciones de cada hecho
-        Map<Hecho, Integer> mapa = new HashMap<>();
-        List<Hecho> hechosConsensuados = new ArrayList<>();
-        for (HechoXColeccion hxc : hechos) {
-            Hecho h = hxc.getHecho();
-            mapa.put(h, mapa.getOrDefault(h, 0) + 1);
-        }
+    public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes) {
+        Hecho hecho = hechoEvaluado.getHecho();
+
+        // Contar cuántas veces aparece este hecho en la lista total
+        long cantidad = todos.stream()
+                .filter(hxc -> hxc.getHecho().equals(hecho))
+                .count();
+
         // Definir el mínimo: al menos la mitad de las fuentes
         int minimo = (int) Math.ceil(fuentes.size() / 2.0);
-            // Filtrar por al menos la mitad de las fuentes
-        for (Map.Entry<Hecho, Integer> entry : mapa.entrySet()) {
-            if (entry.getValue() > fuentes.size()) {
-                hechosConsensuados.add(entry.getKey());
-            }
-        }
-        // Marcar los hechos consensuados en el mapa HechoXColeccion
-        for (HechoXColeccion hxc : hechos) {
-            if (hechosConsensuados.contains(hxc.getHecho())) {
-                hxc.setConsensuado(true);
-            }
-        }
-        return hechosConsensuados;
+
+        // Determinar si es consensuado
+        boolean consensuado = cantidad >= minimo;
+
+        return consensuado;
     }
 }

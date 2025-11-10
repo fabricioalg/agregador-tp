@@ -78,21 +78,20 @@ public class Coleccion {
             case DEFAULT:
             default:
                 return new ConsensoDefault();
-            // TODO: Implementar los otros tipos de consenso cuando estén disponibles
-            // case MULTIPLES_MENCIONES:
-            //     return new ConsensoMultiplesMenciones();
-            // case MAYORIA_SIMPLE:
-            //     return new ConsensoMayoriaSimple();
+            case MULTIPLES_MENCIONES:
+                 return new MencionesMultiples();
+            case MAYORIA_SIMPLE:
+                return new MayoriaSimple();
         }
     }
 
 //    public void setearFuente() {
 //        this.hechos.forEach((hxc) -> hxc.getHecho().setFuente(this.fuentes.get(0)));
 //    }
-    public List<Hecho> obtenerHechosConsensuados(List<Fuente> fuentes){ //hacer otro map 0 no consensuado 1 consensuado
-        List<Hecho> hechosConsensuados=this.algoritmoDeConsenso.aplicar(this.hechos,fuentes);
-        return hechosConsensuados;
-    }
+//      public List<Hecho> obtenerHechosConsensuados(List<Fuente> fuentes){ //hacer otro map 0 no consensuado 1 consensuado
+//      List<Hecho> hechosConsensuados=this.algoritmoDeConsenso.aplicar(this.hechos,fuentes);
+//        return hechosConsensuados
+//  }
 
     public List<Fuente> obtenerFuentes() {
         List<Fuente> fuentes = this.hechos.stream().map(hxc -> hxc.getHecho().getFuente()).distinct().collect(Collectors.toList());
@@ -110,7 +109,7 @@ public class Coleccion {
         condicionDePertenencia = criterio;
     }
 
-    // Método para obtener solo los hechos consensuados (para navegación curada)
+    // Metodo para obtener solo los hechos consensuados (para navegación curada)
     public List<Hecho> obtenerSoloHechosConsensuados() {
         return hechos.stream()
                 .filter(HechoXColeccion::getConsensuado)
@@ -118,14 +117,23 @@ public class Coleccion {
                 .collect(Collectors.toList());
     }
 
-    // Método para obtener todos los hechos (para navegación no curada)
+    // Metodo para obtener todos los hechos (para navegación no curada)
     public List<Hecho> obtenerTodosLosHechos() {
         return hechos.stream()
                 .map(HechoXColeccion::getHecho)
                 .collect(Collectors.toList());
     }
 
-    // Método para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
+    public void aplicarConsensoAtodos(){
+        this.hechos.forEach(this::aplicarConsenso);
+    }
+    public void aplicarConsenso(HechoXColeccion hechoxcoleccion){
+        if(algoritmoDeConsenso.aplicar(hechoxcoleccion,hechos,fuentes)){
+            hechoxcoleccion.setConsensuado(true);
+        }
+    }
+
+    // Metodo para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
     public void setTipoDeAlgoritmo(EnumTipoDeAlgoritmo tipoDeAlgoritmo) {
         this.tipoDeAlgoritmo = tipoDeAlgoritmo;
         this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);

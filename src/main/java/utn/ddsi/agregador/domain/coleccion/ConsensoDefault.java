@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 public class ConsensoDefault extends AlgoritmoDeConsenso {
     @Override
-    public List<Hecho> aplicar(List<HechoXColeccion> hechos, List<Fuente> fuentes){
-        return hechos.stream().map(HechoXColeccion::getHecho).collect(Collectors.toList());
+    public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes) {
+        return true;
     }
-
 }
+// return hechos.stream().map(HechoXColeccion::getHecho).collect(Collectors.toList());
