@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.domain.agregador;
 
+import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Component
 public class FiltradorDeHechos {
     
 

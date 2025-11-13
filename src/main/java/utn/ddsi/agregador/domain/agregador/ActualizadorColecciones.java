@@ -3,6 +3,9 @@ package utn.ddsi.agregador.domain.agregador;
 import java.time.LocalDate;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
@@ -10,14 +13,15 @@ import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
+@Component
 public class ActualizadorColecciones {
 
     private List<Loader> loaders;
-    private IRepositoryColecciones repositoryColecciones;
-    private IRepositoryHechos repositoryHechos;
-    private Normalizador normalizador;
-    private GestorDeSolicitudes gestorSolicitudes;
-    public FiltradorDeHechos filtradorDeHechos;
+    private final IRepositoryColecciones repositoryColecciones;
+    private final IRepositoryHechos repositoryHechos;
+    private final Normalizador normalizador;
+    private final GestorDeSolicitudes gestorSolicitudes;
+    public final FiltradorDeHechos filtradorDeHechos;
 
     public ActualizadorColecciones(IRepositoryColecciones rcole, IRepositoryHechos rhechos, Normalizador normal, GestorDeSolicitudes gestor, List<Loader> loaders, FiltradorDeHechos filtrador) {
         this.repositoryColecciones = rcole;
@@ -29,10 +33,9 @@ public class ActualizadorColecciones {
     }
     public List<Hecho> traerHechosDeLoaders(){
         var hora = LocalDate.now().minusDays(1);
-        List<Hecho> todosLosHechos = loaders.stream()
+        return loaders.stream()
                 .flatMap(loader -> loader.obtenerHechos(hora).stream())
                 .toList();
-        return todosLosHechos;
     }
     public List<Hecho> depurarHechos() {
         List<Hecho> todosLosHechos = traerHechosDeLoaders();

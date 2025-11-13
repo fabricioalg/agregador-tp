@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.hecho.Adjunto;
 import utn.ddsi.agregador.domain.hecho.Categoria;
 import utn.ddsi.agregador.domain.hecho.Hecho;
@@ -25,6 +26,7 @@ import utn.ddsi.agregador.domain.hecho.Provincia;
 import utn.ddsi.agregador.domain.hecho.Ubicacion;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
+@Component
 public class Normalizador {
 
     private static final Pattern MULTIPLES_ESPACIOS = Pattern.compile("\\s+");

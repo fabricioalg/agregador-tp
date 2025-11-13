@@ -1,7 +1,9 @@
 package utn.ddsi.agregador.domain.solicitudEliminacion;
 
+import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.repository.IRepositorySolicitudes;
 
+@Component
 public class GestorDeSolicitudes {
     private DetectorDeSpam detector;
     private IRepositorySolicitudes repository;
