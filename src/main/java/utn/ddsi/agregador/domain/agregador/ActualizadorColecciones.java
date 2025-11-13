@@ -36,9 +36,9 @@ public class ActualizadorColecciones {
     }
     public List<Hecho> depurarHechos() {
         List<Hecho> todosLosHechos = traerHechosDeLoaders();
-        normalizador.normalizar(todosLosHechos);
-        repositoryHechos.saveAll(todosLosHechos);
-        return todosLosHechos;
+        List<Hecho> hechosNormalizados = normalizador.normalizar(todosLosHechos);
+        repositoryHechos.saveAll(hechosNormalizados);
+        return hechosNormalizados;
     }
     public void actualizarColecciones(){
         List<Hecho> hechosNuevos = depurarHechos();
