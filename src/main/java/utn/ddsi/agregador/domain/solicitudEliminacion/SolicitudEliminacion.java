@@ -34,7 +34,4 @@ public class SolicitudEliminacion {
         this.motivo = motivo;
         this.estado = EnumEstadoSol.PENDIENTE;
     }
-    public void get(){
-        getMotivo();
-    }
 }

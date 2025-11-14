@@ -2,11 +2,15 @@ package utn.ddsi.agregador.domain.fuentes;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 import java.net.URL;
 
+@Getter
+@Setter
 @Entity
 public class Fuente {
     @Id
@@ -21,7 +25,6 @@ public class Fuente {
     private EnumTipoFuente tipoFuente;
 
     public Fuente(long id, String nombre, String url, EnumTipoFuente tipoFuente) {
-        this.idFuente = id;
         this.nombre = nombre;
         this.url = url;
         this.tipoFuente = tipoFuente;

@@ -1,13 +1,24 @@
 package utn.ddsi.agregador.domain.agregador;
 
-public class Scheduler {
-    private ActualizadorColecciones actualizador;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-    /*
-    @Scheduled(cron = "0 0 0 * * *")
-    public void avisarAlAgregador(){
-        servicioAgregador.depurarHechos();
+@Component
+public class Scheduler {
+
+    private final ActualizadorColecciones actualizador;
+
+    public Scheduler(ActualizadorColecciones actualizador) {
+        this.actualizador = actualizador;
     }
 
-     */
+    // Ejecuta cada 30 minutos
+    @Scheduled(fixedRate = 30 * 60 * 1000)
+    public void ejecutarActualizacionPeriodica() {
+        try {
+            actualizador.actualizarColecciones();
+        } catch (Exception e) {
+            System.err.println("[Scheduler] Error en actualización: " + e.getMessage());
+        }
+    }
 }

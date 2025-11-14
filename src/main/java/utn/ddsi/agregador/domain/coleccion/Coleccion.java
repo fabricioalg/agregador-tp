@@ -61,6 +61,11 @@ public class Coleccion {
     public Coleccion() {
 
     }
+    public Coleccion(String titulo) {
+        this.titulo = titulo;
+        this.hechos = new ArrayList<>();
+        this.condicionDePertenencia = new ArrayList<>();
+    }
 
     @PostLoad
     private void cargarAlgoritmoDeConsenso() {
@@ -138,5 +143,4 @@ public class Coleccion {
         this.tipoDeAlgoritmo = tipoDeAlgoritmo;
         this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
     }
-
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
+import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
 import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
@@ -46,9 +47,14 @@ public class ActualizadorColecciones {
     public void actualizarColecciones(){
         List<Hecho> hechosNuevos = depurarHechos();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
+        for (Coleccion coleccion : colecciones) {
 
-        colecciones.forEach(coleccion-> filtradorDeHechos.devolverHechosAPartirDe(
-                coleccion.getCondicionDePertenencia(), hechosNuevos));
+            List<Hecho> hechosFiltrados =
+                    filtradorDeHechos.devolverHechosAPartirDe(
+                            coleccion.getCondicionDePertenencia(), hechosNuevos
+                    );
+            coleccion.agregarHechos(hechosFiltrados);
+        }
         repositoryColecciones.saveAll(colecciones);
     }
 }
