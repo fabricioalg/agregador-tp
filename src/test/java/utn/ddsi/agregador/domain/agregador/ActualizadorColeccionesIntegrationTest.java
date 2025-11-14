@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+// necesita los fakeloader
 class ActualizadorColeccionesIntegrationTest {
 
     @Autowired

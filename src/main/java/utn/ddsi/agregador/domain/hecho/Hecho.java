@@ -24,7 +24,7 @@ public class Hecho {
     private String titulo;
     @Column(name="descripcion",length = 1000)
     private String descripcion;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Categoria categoria;
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
@@ -32,13 +32,13 @@ public class Hecho {
     private LocalDate fechaDeCarga;
     @ManyToOne(cascade = CascadeType.ALL)
     private Fuente fuente;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Ubicacion ubicacion;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Etiqueta etiqueta;
     @Enumerated(EnumType.STRING)
     private EnumTipoHecho tipoHecho;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Adjunto> adjuntos;
 
     public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion ubicacion, LocalDate fecha, Fuente fuente) {
