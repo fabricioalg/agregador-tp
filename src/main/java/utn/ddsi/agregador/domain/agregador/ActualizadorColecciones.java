@@ -46,9 +46,17 @@ public class ActualizadorColecciones {
     }
     public void actualizarColecciones(){
         List<Hecho> hechosNuevos = depurarHechos();
+        List<Hecho> hechosTotales = repositoryHechos.findAll();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         for (Coleccion coleccion : colecciones) {
-
+            //OJO que puede ser que este vacio pero no necesariamente es nueva la coleccion
+            if(coleccion.getHechos() == null){
+                List<Hecho> hechosFiltrados =
+                        filtradorDeHechos.devolverHechosAPartirDe(
+                                coleccion.getCondicionDePertenencia(), hechosTotales
+                        );
+                coleccion.agregarHechos(hechosFiltrados);
+            }
             List<Hecho> hechosFiltrados =
                     filtradorDeHechos.devolverHechosAPartirDe(
                             coleccion.getCondicionDePertenencia(), hechosNuevos
