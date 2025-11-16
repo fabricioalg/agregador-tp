@@ -3,48 +3,58 @@ package utn.ddsi.agregador.domain.fuentes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import utn.ddsi.agregador.adapter.FuenteEstaticaAdapter;
 import utn.ddsi.agregador.adapter.HechoAdapter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class LoaderEstatico extends Loader {
-    private HechoAdapter adapter;
-    private URL url;
-    public LoaderEstatico(URL url) {
-        super(url);
-        this.adapter = new HechoAdapter();
+
+    private static final Logger logger = LoggerFactory.getLogger(LoaderEstatico.class);
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+    private String ruta;
+
+    public LoaderEstatico(@Value("${fuente.estatica.url}") String rutaUrl, RestTemplate restTemplate,ObjectMapper objectMapper) throws MalformedURLException {
+        super(new URL(rutaUrl));
+        this.ruta = rutaUrl;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
-    public List<Hecho> obtenerHechos(String ruta) {
+    public List<Hecho> obtenerHechos() {
+        logger.info("Inicio de flujo");
         try{
-            URL endpoint = new URL(url+"/"+ruta);
-            HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
+            ResponseEntity<String> response =
+                    restTemplate.exchange(
+                            ruta,
+                            HttpMethod.GET,
+                            null,
+                            String.class // <-- Pide el JSON como texto crudo
+                    );
 
-            if (connection.getResponseCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.registerModule(new JavaTimeModule());
+            String jsonBody = response.getBody();
+            logger.info("Respuesta JSON recibida: {}", jsonBody);
 
-                List<HechoFuenteEstaticaDTO> hechosDTO = mapper.readValue(
-                        connection.getInputStream(),
-                        new TypeReference<List<HechoFuenteEstaticaDTO>>() {
-                        });
-
-                List<Hecho> hechos = hechosDTO.stream()
-                        .map(dto -> adapter.adaptarDesdeFuenteEstatica(dto))
-                        .collect(Collectors.toList());
-                return hechos.stream().toList();
-            }else {
-                throw new RuntimeException("Error al obtener hechos: HTTP " + connection.getResponseCode());
-            }
+            return null;
         } catch (Exception e) {
-            throw new RuntimeException("Error al conectar con la fuente estática: " + url);
+            throw new RuntimeException("Error al obtener hechos desde " + ruta, e);
         }
     }
+
 }

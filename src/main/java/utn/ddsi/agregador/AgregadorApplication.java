@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import utn.ddsi.agregador.domain.agregador.ActualizadorColecciones;
+import utn.ddsi.agregador.domain.fuentes.LoaderEstatico;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
 import java.util.List;
@@ -16,8 +17,12 @@ import java.util.List;
 public class AgregadorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AgregadorApplication.class, args);
+        var context = SpringApplication.run(AgregadorApplication.class, args);
+
+        LoaderEstatico loader = context.getBean(LoaderEstatico.class);
+        loader.obtenerHechos();
         System.out.println("Funciona");
+
     }
 /*
     @Bean
