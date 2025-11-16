@@ -38,4 +38,6 @@ public class ServiceHechos {
         return repository.findAll();
     }
 
+    public void eliminarHecho(Long id) {repository.deleteById(id);}
+
 }

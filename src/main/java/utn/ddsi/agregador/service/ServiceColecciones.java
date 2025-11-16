@@ -33,10 +33,10 @@ public class ServiceColecciones {
     public List<Coleccion> obtenerTodasLasColecciones(){
         return repositoryColecciones.findAll();
     }
-    public List<Coleccion> buscarPorNombre(String titulo) {
+    public List<Coleccion> buscarPorID(Long id) {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         List<Coleccion> rta = new ArrayList<>();
-        colecciones.forEach(coleccion -> {if(coleccion.getTitulo().equals(titulo)) rta.add(coleccion);});
+        colecciones.forEach(coleccion -> {if(coleccion.getId_coleccion().equals(id)) rta.add(coleccion);});
         return rta;
     }
     public void eliminarColeccion(Long idColeccion) {

@@ -45,4 +45,7 @@ public class ControllerHechos {
     public List<Hecho> obtenerTodos() {
         return service.obtenerTodos();
     }
+
+    @DeleteMapping
+    public void eliminarHecho(@PathVariable Long id) {service.eliminarHecho(id);}
 }

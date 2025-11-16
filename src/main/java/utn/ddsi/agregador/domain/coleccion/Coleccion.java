@@ -27,7 +27,7 @@ public class Coleccion {
     private String titulo;
     @Column(length = 1000)
     private String descripcion;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "fuente_x_coleccion",
             joinColumns = @JoinColumn(name = "id_coleccion"),

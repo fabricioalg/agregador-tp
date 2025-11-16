@@ -48,6 +48,10 @@ public class ActualizadorColecciones {
         List<Hecho> hechosNuevos = depurarHechos();
         List<Hecho> hechosTotales = repositoryHechos.findAll();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
+
+        // la consigna pide: Este servicio utiliza el mecanismo de rechazos de solicitudes
+        // de eliminación spam en forma automática definido en la Entrega 2
+        gestorSolicitudes.procesarTodasLasSolicitudes();
         for (Coleccion coleccion : colecciones) {
             //OJO que puede ser que este vacio pero no necesariamente es nueva la coleccion
             if(coleccion.getHechos() == null){

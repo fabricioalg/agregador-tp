@@ -29,12 +29,12 @@ public class ControllerColecciones {
         return service.obtenerTodasLasColecciones();
     }
 
-    @GetMapping("/{titulo}")
-    public List<Coleccion> buscarPorNombre(@RequestParam String titulo) {
-        return service.buscarPorNombre(titulo);
+    @GetMapping("/{id}")
+    public List<Coleccion> buscarPorId(@RequestParam long id) {
+        return service.buscarPorID(id);
     }
 
-    @DeleteMapping("/{titulo}")
+    @DeleteMapping("/{id}")
     public void eliminarColeccion(@RequestParam Long idColeccion) {
         service.eliminarColeccion(idColeccion);
     }
