@@ -5,6 +5,7 @@ import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.*;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
+import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 import java.net.URL;
@@ -67,6 +68,22 @@ public class HechoAdapter {
 
         return hecho;
     }
+    public Hecho adaptarDesdeFuenteProxy(HechoFuenteProxyDTO dto){
+        Categoria categoria = new Categoria(dto.getCategoria());
+
+        Ubicacion ubicacion = new Ubicacion(Float.valueOf( dto.getUbicacionLat()),Float.valueOf(dto.getUbicacionLon())); //Chequear orden
+
+        Fuente fuente = crearFuenteMetamapa();
+        Hecho hecho = new Hecho(
+                dto.getTitulo(),
+                dto.getDescripcion(),
+                categoria,
+                ubicacion,
+                LocalDate.parse(dto.getFecha()),
+                fuente
+        );
+        return hecho;
+    }
 
     public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto) {
 
@@ -112,6 +129,10 @@ public class HechoAdapter {
 
     private Fuente crearFuenteEstatica() {
         return new FuenteEstaticaExterna(2L, "FuenteEstatica", "http://localhost:8082", EnumTipoFuente.ESTATICA);
+    }
+
+    private Fuente crearFuenteMetamapa() {
+        return new FuenteEstaticaExterna(3L, "FuenteProxy", "http://localhost:8081", EnumTipoFuente.METAMAPA);
     }
 
     private static class FuenteEstaticaExterna extends Fuente {
