@@ -2,6 +2,7 @@ package utn.ddsi.agregador.domain.solicitudEliminacion;
 
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.repository.IRepositorySolicitudes;
+import utn.ddsi.agregador.utils.EnumEstadoSol;
 
 @Component
 public class GestorDeSolicitudes {
@@ -13,14 +14,16 @@ public class GestorDeSolicitudes {
         this.detector = new DetectorBasicoDeSpam();
     }
 
-    public void procesarTodasLasSolicitudes(){
-        repository.findAll().forEach(solicitud -> this.procesarSolicitud(solicitud.getMotivo()));
+    public void procesarTodasLasSolicitudes() {
+        repository.findAll().forEach(this::procesarSolicitud);
     }
-    public void procesarSolicitud(String textoSolicitud) {
-        if (detector.esSpam(textoSolicitud)) {
-            System.out.println("❌ Solicitud rechazada automáticamente por ser SPAM.");
+    public void procesarSolicitud(SolicitudEliminacion solicitud) {
+        if (detector.esSpam(solicitud.getMotivo())) {
+            solicitud.setEstado(EnumEstadoSol.RECHAZADA);
+            repository.save(solicitud);
         } else {
-            System.out.println("✅ Solicitud válida. Pasará a revisión.");
+            solicitud.setEstado(EnumEstadoSol.PENDIENTE);
+            repository.save(solicitud);
         }
     }
 }
