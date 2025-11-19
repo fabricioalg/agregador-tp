@@ -13,6 +13,7 @@ import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,25 +34,28 @@ public class LoaderEstatico extends Loader {
         this.adapter = adapter;
     }
 
-
     public List<Hecho> obtenerHechos() {
         try{
-            ResponseEntity<HechoFuenteEstaticaDTO[]> response =
+            ResponseEntity<HechoFuenteEstaticaDTO[][]> response =
                     restTemplate.exchange(
-                            ruta,
+                            ruta + "/api/estatica/hechos",
                             HttpMethod.GET,
                             null,
-                            HechoFuenteEstaticaDTO[].class
+                            HechoFuenteEstaticaDTO[][].class
                     );
 
-            HechoFuenteEstaticaDTO[] hechosDTO = response.getBody();
+            HechoFuenteEstaticaDTO[][] hechosDTO = response.getBody();
 
             if (hechosDTO == null) {
                 return Collections.emptyList();
             }
-            return Arrays.stream(hechosDTO)
-                    .map(adapter::adaptarDesdeFuenteEstatica)
-                    .collect(Collectors.toList());
+            List<Hecho> hechosTransformados = new ArrayList<>();
+            for (int i = 0; i<hechosDTO.length; i++ ) {
+                String ruta = hechosDTO[i][0].getFuente().getRuta();
+                List<Hecho> transformado =  adapter.adaptarHechosDeFuenteEstatica(ruta, List.of(hechosDTO[i]));
+                hechosTransformados.addAll(transformado);
+            }
+            return hechosTransformados;
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener hechos desde " + ruta, e);
         }
