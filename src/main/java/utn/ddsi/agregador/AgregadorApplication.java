@@ -9,8 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import utn.ddsi.agregador.domain.agregador.ActualizadorColecciones;
 import utn.ddsi.agregador.domain.fuentes.LoaderEstatico;
+import utn.ddsi.agregador.domain.fuentes.LoaderProxy;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootApplication
@@ -18,12 +20,13 @@ public class AgregadorApplication {
 
     public static void main(String[] args) {
         var context = SpringApplication.run(AgregadorApplication.class, args);
+        System.out.println("Funciona");
 
-        LoaderEstatico loader = context.getBean(LoaderEstatico.class);
-        List<Hecho> res = loader.obtenerHechos();
+        //LoaderEstatico loader = context.getBean(LoaderEstatico.class);
+        LoaderProxy metamapa = context.getBean(LoaderProxy.class);
+        List<Hecho> res = metamapa.obtenerHechos("http://localhost:8083");
         System.out.println(res.toString());
 
-        System.out.println("Funciona");
 
     }
 /*
