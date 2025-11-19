@@ -13,11 +13,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LoaderProxy extends Loader { private HechoAdapter adapter;
+public class LoaderProxy extends Loader {
+    private HechoAdapter adapter;
     private URL url;
-    public LoaderProxy(URL url) {
+    public LoaderProxy(URL url, HechoAdapter adapter) {
         super(url);
-        this.adapter = new HechoAdapter();
+        this.adapter = adapter;
     }
     public List<Hecho> obtenerHechos(String ruta) {
         try{

@@ -14,5 +14,6 @@ public class HechoFuenteEstaticaDTO {
     private String descripcion;
     private LocalDate fecha;
     private UbicacionDTO ubicacion;
+    private FuenteDTO fuente;
     private CategoriaDTO categoria;
 }

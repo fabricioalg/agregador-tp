@@ -17,9 +17,9 @@ public class LoaderDinamico extends Loader {
     private URL url;
     private HechoAdapter adapter;
 
-    public LoaderDinamico(URL url) {
+    public LoaderDinamico(URL url, HechoAdapter adapter) {
         super(url);
-        this.adapter = new HechoAdapter();
+        this.adapter = adapter;
     }
 
     @Override

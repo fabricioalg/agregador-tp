@@ -1,11 +1,14 @@
 package utn.ddsi.agregador.adapter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.*;
+import utn.ddsi.agregador.dto.FuenteDTO;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
+import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 import java.net.URL;
@@ -13,6 +16,12 @@ import java.time.LocalDate;
 
 @Component
 public class HechoAdapter {
+
+    @Autowired
+    private final IRepositoryFuentes repoFuente;
+    public HechoAdapter(IRepositoryFuentes repoFuente) {
+        this.repoFuente = repoFuente;
+    }
 
     /**
      * Adapta un HechoFuenteDinamicaDTO (del modelo de la fuente dinámica) al modelo de Hecho del agregador.
@@ -97,7 +106,14 @@ public class HechoAdapter {
             );
         }
 
-        Fuente fuente = crearFuenteEstatica();
+        Fuente fuente = this.repoFuente.findByUrl(dto.getFuente().getRuta());
+        if(fuente == null) {
+            fuente = new Fuente();
+            fuente.setNombre(dto.getFuente().getNombre());
+            fuente.setUrl(dto.getFuente().getRuta());
+            fuente.setTipoFuente(dto.getFuente().getTipoFuente());
+        }
+
         Hecho hecho = new Hecho(
                 dto.getTitulo(),
                 dto.getDescripcion(),

@@ -52,4 +52,12 @@ public class Hecho {
         this.fuente = fuente;
     }
 
+    @Override
+    public String toString() {
+        return "Hecho{" +
+                "titulo='" + titulo + '\'' +
+                ", fecha=" + fecha +
+                ", fuente=" + (fuente != null ? fuente.getNombre() : "null") +
+                '}';
+    }
 }

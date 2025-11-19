@@ -38,6 +38,7 @@ public class ActualizadorColecciones {
                 .flatMap(loader -> loader.obtenerHechos(hora).stream())
                 .toList();
     }
+
     public List<Hecho> depurarHechos() {
         List<Hecho> todosLosHechos = traerHechosDeLoaders();
         List<Hecho> hechosNormalizados = normalizador.normalizar(todosLosHechos);

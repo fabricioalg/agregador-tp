@@ -20,7 +20,9 @@ public class AgregadorApplication {
         var context = SpringApplication.run(AgregadorApplication.class, args);
 
         LoaderEstatico loader = context.getBean(LoaderEstatico.class);
-        loader.obtenerHechos();
+        List<Hecho> res = loader.obtenerHechos();
+        System.out.println(res.toString());
+
         System.out.println("Funciona");
 
     }
