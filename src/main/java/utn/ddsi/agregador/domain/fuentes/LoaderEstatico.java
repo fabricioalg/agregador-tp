@@ -13,7 +13,6 @@ import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,23 +21,23 @@ import java.util.stream.Collectors;
 @Component
 public class LoaderEstatico extends Loader {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoaderEstatico.class);
     private final RestTemplate restTemplate;
-    private String ruta;
-    private HechoAdapter adapter;
+
 
     public LoaderEstatico(@Value("${fuente.estatica.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
-        super(new URL(rutaUrl));
-        this.ruta = rutaUrl;
+        this.setRuta(rutaUrl);
         this.restTemplate = restTemplate;
-        this.adapter = adapter;
+        this.setAdapter(adapter);
     }
 
+
     public List<Hecho> obtenerHechos() {
+        String ruta = this.getRuta();
+        HechoAdapter adapter = this.getAdapter();
         try{
             ResponseEntity<HechoFuenteEstaticaDTO[][]> response =
                     restTemplate.exchange(
-                            ruta + "/api/estatica/hechos",
+                            ruta + "/hechos",
                             HttpMethod.GET,
                             null,
                             HechoFuenteEstaticaDTO[][].class
