@@ -35,22 +35,26 @@ public class LoaderEstatico extends Loader {
         String ruta = this.getRuta();
         HechoAdapter adapter = this.getAdapter();
         try{
-            ResponseEntity<HechoFuenteEstaticaDTO[]> response =
+            ResponseEntity<HechoFuenteEstaticaDTO[][]> response =
                     restTemplate.exchange(
                             ruta + "/hechos",
                             HttpMethod.GET,
                             null,
-                            HechoFuenteEstaticaDTO[].class
+                            HechoFuenteEstaticaDTO[][].class
                     );
 
-            HechoFuenteEstaticaDTO[] hechosDTO = response.getBody();
+            HechoFuenteEstaticaDTO[][] hechosDTO = response.getBody();
 
             if (hechosDTO == null) {
                 return Collections.emptyList();
             }
-            return Arrays.stream(hechosDTO)
-                    .map(adapter::adaptarDesdeFuenteEstatica)
-                    .collect(Collectors.toList());
+            List<Hecho> hechosTransformados = new ArrayList<>();
+            for (int i = 0; i<hechosDTO.length; i++ ) {
+                String ruta = hechosDTO[i][0].getFuente().getRuta();
+                List<Hecho> transformado =  adapter.adaptarHechosDeFuenteEstatica(ruta, List.of(hechosDTO[i]));
+                hechosTransformados.addAll(transformado);
+            }
+            return hechosTransformados;
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener hechos desde " + ruta, e);
         }

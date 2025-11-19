@@ -13,6 +13,9 @@ import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 public class HechoAdapter {
@@ -94,7 +97,9 @@ public class HechoAdapter {
         return hecho;
     }
 
-    public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto) {
+
+
+    public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto, Fuente fuente) {
 
         Categoria categoria = new Categoria(dto.getCategoria().getNombre());
 
@@ -104,14 +109,6 @@ public class HechoAdapter {
                     dto.getUbicacion().getLatitud(),
                     dto.getUbicacion().getLongitud()
             );
-        }
-
-        Fuente fuente = this.repoFuente.findByUrl(dto.getFuente().getRuta());
-        if(fuente == null) {
-            fuente = new Fuente();
-            fuente.setNombre(dto.getFuente().getNombre());
-            fuente.setUrl(dto.getFuente().getRuta());
-            fuente.setTipoFuente(dto.getFuente().getTipoFuente());
         }
 
         Hecho hecho = new Hecho(
@@ -125,6 +122,19 @@ public class HechoAdapter {
 
         hecho.setFechaDeCarga(LocalDate.now());
         return hecho;
+    }
+
+    public List<Hecho> adaptarHechosDeFuenteEstatica(String ruta, List<HechoFuenteEstaticaDTO> hechosDTO){
+        Fuente fuente = this.repoFuente.findByUrl(ruta);
+        if(fuente == null) {
+            return new ArrayList<>();
+        }
+        List<Hecho> hechos = new ArrayList<>();
+        for(int i = 0; i < hechosDTO.size(); i++){
+            Hecho h = adaptarDesdeFuenteEstatica(hechosDTO.get(i), fuente);
+            hechos.add(h);
+        }
+        return hechos;
     }
 
     /**
