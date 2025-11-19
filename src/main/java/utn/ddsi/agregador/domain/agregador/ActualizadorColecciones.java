@@ -1,6 +1,7 @@
 package utn.ddsi.agregador.domain.agregador;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -33,10 +34,11 @@ public class ActualizadorColecciones {
         this.filtradorDeHechos = filtrador;
     }
     public List<Hecho> traerHechosDeLoaders(){
-        var hora = LocalDate.now().minusDays(1);
-        return loaders.stream()
-                .flatMap(loader -> loader.obtenerHechos(hora).stream())
-                .toList();
+        List <Hecho> hechosNuevos = new ArrayList();
+        for(Loader loader : loaders){
+            hechosNuevos.addAll(loader.obtenerHechos()); //Falta poner lo de la horas según corresponda al Loader
+        }
+        return hechosNuevos;
     }
 
     public List<Hecho> depurarHechos() {

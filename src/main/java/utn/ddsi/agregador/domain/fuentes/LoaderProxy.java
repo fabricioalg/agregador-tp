@@ -23,24 +23,22 @@ import java.util.stream.Collectors;
 
 @Component
 public class LoaderProxy extends Loader {
-    private static final Logger logger = LoggerFactory.getLogger(LoaderProxy.class);
-    private final RestTemplate restTemplate;
-    private String ruta;
-    private HechoAdapter adapter;
 
-    public LoaderProxy(@Value("${fuente.metamapa.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
-        super(new URL(rutaUrl));
-        this.ruta = rutaUrl;
+    private final RestTemplate restTemplate;  //Por ahí se puede pasar a Loader
+
+    //ESta bien que este harcodeado porque debería solo apuntar a una LoaderProxy
+    public LoaderProxy(@Value("${loader.proxy.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
+        setRuta(rutaUrl);
         this.restTemplate = restTemplate;
-        this.adapter = adapter;
+        setAdapter(adapter);
     }
 
-
-    public List<Hecho> obtenerHechos(String ruta) {
+    @Override
+    public List<Hecho> obtenerHechos() {
         try{
             ResponseEntity<HechoFuenteProxyDTO[]> response =
                     restTemplate.exchange(
-                            ruta+"/hechos",
+                            getRuta()+"/hechos",
                             HttpMethod.GET,
                             null,
                             HechoFuenteProxyDTO[].class
@@ -52,10 +50,10 @@ public class LoaderProxy extends Loader {
                 return Collections.emptyList();
             }
             return Arrays.stream(hechosDTO)
-                    .map(adapter::adaptarDesdeFuenteProxy)
+                    .map(getAdapter()::adaptarDesdeFuenteProxy)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException("Error al obtener hechos desde " + ruta, e);
+            throw new RuntimeException("Error al obtener hechos desde " + getRuta(), e);
         }
     }
 

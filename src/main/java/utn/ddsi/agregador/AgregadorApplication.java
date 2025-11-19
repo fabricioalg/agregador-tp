@@ -24,7 +24,7 @@ public class AgregadorApplication {
 
         //LoaderEstatico loader = context.getBean(LoaderEstatico.class);
         LoaderProxy metamapa = context.getBean(LoaderProxy.class);
-        List<Hecho> res = metamapa.obtenerHechos("http://localhost:8083");
+        List<Hecho> res = metamapa.obtenerHechos();
         System.out.println(res.toString());
 
 

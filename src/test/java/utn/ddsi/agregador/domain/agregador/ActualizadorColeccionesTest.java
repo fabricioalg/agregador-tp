@@ -110,7 +110,7 @@ class ActualizadorColeccionesTest {
     void deberiaDepurarHechosYGuardarlos() {
         Hecho hechoOriginal = new Hecho("Titulo1", "Desc1", null, null, LocalDate.now(), null);
         Hecho hechoNormalizado = new Hecho("TituloNormal", "Desc", null, null, LocalDate.now(), null);
-        when(loader.obtenerHechos(any(LocalDate.class)))
+        when(loader.obtenerHechos())
                 .thenReturn(List.of(hechoOriginal));
         when(normalizador.normalizar(List.of(hechoOriginal)))
                 .thenReturn(List.of(hechoNormalizado));

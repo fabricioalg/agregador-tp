@@ -3,57 +3,56 @@ package utn.ddsi.agregador.domain.fuentes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import utn.ddsi.agregador.adapter.HechoAdapter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
+import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LoaderDinamico extends Loader {
-    private URL url;
-    private HechoAdapter adapter;
+private final RestTemplate restTemplate;
 
-    public LoaderDinamico(URL url, HechoAdapter adapter) {
-        super(url);
-        this.adapter = adapter;
+
+    public LoaderDinamico(@Value("${fuente.dinamico.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
+        this.setRuta(rutaUrl);
+        this.restTemplate = restTemplate;
+        this.setAdapter(adapter);
     }
 
+    //Ver lo de la hora donde agregar
     @Override
-    public List<Hecho> obtenerHechos(LocalDate fechaLimite) {
-        try {
-            // Hacer una petición GET al endpoint de exportación de la fuente dinámica
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
+    public List<Hecho> obtenerHechos() {
+        try{
+            ResponseEntity<HechoFuenteDinamicaDTO[]> response =
+                    restTemplate.exchange(
+                            getRuta()+"/hechos",
+                            HttpMethod.GET,
+                            null,
+                            HechoFuenteDinamicaDTO[].class
+                    );
 
-            if (connection.getResponseCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.registerModule(new JavaTimeModule());
+            HechoFuenteDinamicaDTO[] hechosDTO = response.getBody();
 
-                // Leer los DTOs de la fuente dinámica
-                List<HechoFuenteDinamicaDTO> hechosDTO = mapper.readValue(
-                    connection.getInputStream(),
-                    new TypeReference<List<HechoFuenteDinamicaDTO>>() {}
-                );
-
-                // Adaptar los hechos de la fuente dinámica al modelo del agregador
-                List<Hecho> hechos = hechosDTO.stream()
-                    .map(dto -> adapter.adaptarDesdeFuenteDinamica(dto))
-                    .collect(Collectors.toList());
-
-                // Filtrar por fecha límite
-                return hechos.stream()
-                    .filter(h -> !h.getFechaDeCarga().isAfter(fechaLimite))
-                    .collect(Collectors.toList());
-            } else {
-                throw new RuntimeException("Error al obtener hechos: HTTP " + connection.getResponseCode());
+            if (hechosDTO == null) {
+                return Collections.emptyList();
             }
+            return Arrays.stream(hechosDTO)
+                    .map(getAdapter()::adaptarDesdeFuenteDinamica)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException("Error al obtener hechos desde " + url, e);
+            throw new RuntimeException("Error al obtener hechos desde " + getRuta(), e);
         }
     }
 }
