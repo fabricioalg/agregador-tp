@@ -8,7 +8,12 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.service.ServiceHechos;
 
 import java.util.List;
-import java.util.Optional;
+import utn.ddsi.agregador.domain.hecho.Categoria;
+import utn.ddsi.agregador.domain.hecho.Ubicacion;
+import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.utils.EnumTipoFuente;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/hechos")
@@ -18,14 +23,6 @@ public class ControllerHechos {
     public ControllerHechos(ServiceHechos service) {
         this.service = service;
     }
-
-    // Crear un Hecho
-    @PostMapping
-    public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho) {
-        Hecho nuevo = service.agregarHecho(hecho);
-        return ResponseEntity.ok(nuevo);
-    }
-
     // Buscar por ID
     @GetMapping("/id/{id}")
     public ResponseEntity<Hecho> buscarPorId(@PathVariable Long id) {
@@ -48,4 +45,12 @@ public class ControllerHechos {
 
     @DeleteMapping
     public void eliminarHecho(@PathVariable Long id) {service.eliminarHecho(id);}
+
+    // Crear un Hecho
+    //NO HACE FALTAAAAA
+    //7@PostMapping
+    //7public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho) {
+    //7    Hecho nuevo = service.agregarHecho(hecho);
+    //7    return ResponseEntity.ok(nuevo);
+    //7}
 }

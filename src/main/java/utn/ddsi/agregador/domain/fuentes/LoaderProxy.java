@@ -1,50 +1,62 @@
 package utn.ddsi.agregador.domain.fuentes;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import utn.ddsi.agregador.adapter.HechoAdapter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 
-import java.net.HttpURLConnection;
+
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class LoaderProxy extends Loader {
+    private static final Logger logger = LoggerFactory.getLogger(LoaderProxy.class);
+    private final RestTemplate restTemplate;
+    private String ruta;
     private HechoAdapter adapter;
-    private URL url;
-    public LoaderProxy(URL url, HechoAdapter adapter) {
-        super(url);
+
+    public LoaderProxy(@Value("${fuente.metamapa.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
+        super(new URL(rutaUrl));
+        this.ruta = rutaUrl;
+        this.restTemplate = restTemplate;
         this.adapter = adapter;
     }
+
+
     public List<Hecho> obtenerHechos(String ruta) {
         try{
-            URL endpoint = new URL(url+"/hechos");
-            HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
+            ResponseEntity<HechoFuenteProxyDTO[]> response =
+                    restTemplate.exchange(
+                            ruta+"/hechos",
+                            HttpMethod.GET,
+                            null,
+                            HechoFuenteProxyDTO[].class
+                    );
 
-            if (connection.getResponseCode() == 200) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.registerModule(new JavaTimeModule());
+            HechoFuenteProxyDTO[] hechosDTO = response.getBody();
 
-                List<HechoFuenteProxyDTO> hechosDTO = mapper.readValue(
-                        connection.getInputStream(),
-                        new TypeReference<List<HechoFuenteProxyDTO>>() {
-                        });
-
-                List<Hecho> hechos = hechosDTO.stream()
-                        .map(dto -> adapter.adaptarDesdeFuenteProxy(dto))
-                        .collect(Collectors.toList());
-                return hechos.stream().toList();
-            }else {
-                throw new RuntimeException("Error al obtener hechos: HTTP " + connection.getResponseCode());
+            if (hechosDTO == null) {
+                return Collections.emptyList();
             }
+            return Arrays.stream(hechosDTO)
+                    .map(adapter::adaptarDesdeFuenteProxy)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException("Error al conectar con la fuente estática: " + url);
+            throw new RuntimeException("Error al obtener hechos desde " + ruta, e);
         }
     }
+
 }
