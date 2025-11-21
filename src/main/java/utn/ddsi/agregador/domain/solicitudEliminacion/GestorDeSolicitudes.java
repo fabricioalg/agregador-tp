@@ -1,17 +1,20 @@
 package utn.ddsi.agregador.domain.solicitudEliminacion;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.repository.IRepositorySolicitudes;
 import utn.ddsi.agregador.utils.EnumEstadoSol;
 
 @Component
 public class GestorDeSolicitudes {
-    private DetectorDeSpam detector;
-    private IRepositorySolicitudes repository;
+    private final DetectorDeSpam detector;
+    private final IRepositorySolicitudes repository;
 
-    public GestorDeSolicitudes(IRepositorySolicitudes repository) {
+    @Autowired
+    public GestorDeSolicitudes(IRepositorySolicitudes repository,
+                               DetectorDeSpam detector) {
         this.repository = repository;
-        this.detector = new DetectorBasicoDeSpam();
+        this.detector = detector;
     }
 
     public void procesarTodasLasSolicitudes() {

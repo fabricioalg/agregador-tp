@@ -119,4 +119,20 @@ class ActualizadorColeccionesTest {
         assertEquals(1, resultado.size());
         assertEquals("TituloNormal", resultado.get(0).getTitulo());
     }
+    @Test
+    void deberiaProcesarSolicitudesDeEliminacionAntesDeActualizarColecciones() {
+
+        // ARRANGE
+        when(repositoryColecciones.findAll()).thenReturn(List.of());
+        when(actualizador.depurarHechos()).thenReturn(List.of());
+
+        // ACT
+        actualizador.actualizarColecciones();
+
+        // ASSERT
+        verify(gestorSolicitudes, times(1))
+                .procesarTodasLasSolicitudes();
+
+        verify(repositoryColecciones).findAll();
+    }
 }

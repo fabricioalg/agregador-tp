@@ -11,7 +11,7 @@ public class DetectorBasicoDeSpam implements DetectorDeSpam {
 
     @Override
     public boolean esSpam(String texto) {
-        if (texto == null || texto.trim().length() < 500) {
+        if (texto == null || texto.trim().length() < 10) {
             return true; // spam si es muy corto
         }
 

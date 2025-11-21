@@ -1,10 +1,12 @@
 package utn.ddsi.agregador.service;
 
+import org.springframework.stereotype.Service;
 import utn.ddsi.agregador.dto.EstadisticaSolicitudesDTO;
 import utn.ddsi.agregador.repository.IRepositorySolicitudes;
 
 import java.time.LocalDate;
 
+@Service
 public class ServiceSolicitudes {
     
     private final IRepositorySolicitudes repoSolicitudes;
