@@ -12,12 +12,21 @@ import java.util.Optional;
 
 @Service
 public class ServiceHechos {
+    
     @Autowired
     private final IRepositoryHechos repository;
 
     public ServiceHechos(IRepositoryHechos repository) {
         this.repository = repository;
     }
+
+
+    public Long contarHechosDeCategoria(Long id_categoria) {
+       return  this.repository.contarHechosDeCategoria(id_categoria);
+    }
+
+
+    /*
 
     public Hecho agregarHecho(Hecho hecho) {
         return repository.save(hecho);
@@ -39,5 +48,7 @@ public class ServiceHechos {
     }
 
     public void eliminarHecho(Long id) {repository.deleteById(id);}
+    */
+    //Esto incluso podria ser un id (categoria)
 
 }

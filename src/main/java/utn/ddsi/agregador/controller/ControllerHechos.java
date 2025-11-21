@@ -1,10 +1,12 @@
 package utn.ddsi.agregador.controller;
 
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.repository.IRepositoryHechos;
 import utn.ddsi.agregador.service.ServiceHechos;
 
 import java.util.List;
@@ -18,12 +20,19 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/hechos")
 public class ControllerHechos {
-    private final ServiceHechos service;
 
-    public ControllerHechos(ServiceHechos service) {
-        this.service = service;
+    private  final IRepositoryHechos repoHechos;
+
+    public ControllerHechos(IRepositoryHechos repoHechos) {
+        this.repoHechos = repoHechos;
     }
-    // Buscar por ID
+
+
+
+
+
+
+    /*// Buscar por ID
     @GetMapping("/id/{id}")
     public ResponseEntity<Hecho> buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id)
@@ -45,12 +54,6 @@ public class ControllerHechos {
 
     @DeleteMapping
     public void eliminarHecho(@PathVariable Long id) {service.eliminarHecho(id);}
+    */
 
-    // Crear un Hecho
-    //NO HACE FALTAAAAA
-    //7@PostMapping
-    //7public ResponseEntity<Hecho> crearHecho(@RequestBody Hecho hecho) {
-    //7    Hecho nuevo = service.agregarHecho(hecho);
-    //7    return ResponseEntity.ok(nuevo);
-    //7}
 }

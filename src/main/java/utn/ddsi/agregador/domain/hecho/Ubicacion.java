@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Ubicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_ubicacion;
     private float latitud;
     private float longitud;
     @ManyToOne(cascade = CascadeType.ALL)

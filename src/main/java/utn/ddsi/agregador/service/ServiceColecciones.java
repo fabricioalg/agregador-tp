@@ -30,9 +30,12 @@ public class ServiceColecciones {
         Coleccion nuevaCole = new Coleccion(titulo,descripcion,fuentes);
         repositoryColecciones.save(nuevaCole);
     }
+
+
     public List<Coleccion> obtenerTodasLasColecciones(){
         return repositoryColecciones.findAll();
     }
+    //No se por que est definido asi jaja (att:yeri)
     public List<Coleccion> buscarPorID(Long id) {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         List<Coleccion> rta = new ArrayList<>();
@@ -43,5 +46,8 @@ public class ServiceColecciones {
        repositoryColecciones.deleteById(idColeccion);
     }
 
+    public Coleccion obtenerPorNombre(String nombre){
+        return this.repositoryColecciones.findByTitulo(nombre);
+    }
 }
 

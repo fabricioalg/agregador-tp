@@ -27,11 +27,15 @@ public class SolicitudEliminacion {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumEstadoSol estado;
+    //podria ser null?
+    @Column 
+    private boolean spam;
 
     public SolicitudEliminacion(Hecho hecho, LocalDate fecha, String motivo) {
         this.hecho = hecho;
         this.fecha = fecha;
         this.motivo = motivo;
         this.estado = EnumEstadoSol.PENDIENTE;
+        this.spam =  false;
     }
 }

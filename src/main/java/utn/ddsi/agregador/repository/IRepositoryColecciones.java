@@ -8,4 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface IRepositoryColecciones extends JpaRepository<Coleccion, Long> {
+    Coleccion findByTitulo(String nombre);
 }
