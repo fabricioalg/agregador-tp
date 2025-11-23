@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.utils.EnumEstadoHecho;
 import utn.ddsi.agregador.utils.EnumTipoHecho;
 
 import java.time.LocalDate;
@@ -40,6 +41,8 @@ public class Hecho {
     private EnumTipoHecho tipoHecho;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Adjunto> adjuntos;
+    @Column(name="estadoHecho")
+    private EnumEstadoHecho estado;
 
     public Hecho(String titulo, String descripcion, Categoria categoria,Ubicacion ubicacion, LocalDate fecha, Fuente fuente) {
         this.titulo = titulo;
