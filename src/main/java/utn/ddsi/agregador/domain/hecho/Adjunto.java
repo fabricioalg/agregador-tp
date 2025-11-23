@@ -15,7 +15,7 @@ import utn.ddsi.agregador.utils.TipoMedia;
 public class Adjunto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long id_adjunto;
     @Enumerated(EnumType.STRING)
     private TipoMedia tipo;
     @Column(length = 100)

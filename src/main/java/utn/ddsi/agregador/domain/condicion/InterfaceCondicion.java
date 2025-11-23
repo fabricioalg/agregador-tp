@@ -27,7 +27,7 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 public abstract class InterfaceCondicion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_condicion;
 
     public InterfaceCondicion() {}
 

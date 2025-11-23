@@ -18,7 +18,7 @@ public class Ubicacion {
     private float latitud;
     private float longitud;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "provincia_id_provincia")
+    @JoinColumn(name = "id_provincia")
     private Provincia provincia;
 
     public Ubicacion(float latitud, float longitud) {

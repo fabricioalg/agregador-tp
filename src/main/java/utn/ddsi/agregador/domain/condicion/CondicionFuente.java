@@ -20,7 +20,6 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 public class CondicionFuente extends InterfaceCondicion {
 
     @ManyToOne
-    @JoinColumn(name = "fuente_id_fuente")
     private Fuente fuente;
 
     @Override

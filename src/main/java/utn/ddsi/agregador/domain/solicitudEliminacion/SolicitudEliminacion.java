@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "Solicitud")
+@Table(name = "Solicitud de Eliminacion")
 @NoArgsConstructor
 public class SolicitudEliminacion {
     @Id
@@ -27,6 +27,8 @@ public class SolicitudEliminacion {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumEstadoSol estado;
+    @ManyToOne
+    private Contribuyente solicitante;
     //podria ser null?
     @Column 
     private boolean spam;

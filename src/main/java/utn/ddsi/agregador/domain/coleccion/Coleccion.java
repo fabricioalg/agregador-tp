@@ -38,9 +38,9 @@ public class Coleccion {
     private List<HechoXColeccion> hechos;
     @ManyToMany
     @JoinTable(
-            name = "criterio_x_coleccion",
+            name = "condicion_x_coleccion",
             joinColumns = @JoinColumn(name = "id_coleccion"),
-            inverseJoinColumns = @JoinColumn(name = "id_criterio")
+            inverseJoinColumns = @JoinColumn(name = "id_condicion")
     )
     private List<InterfaceCondicion> condicionDePertenencia;
     @Transient

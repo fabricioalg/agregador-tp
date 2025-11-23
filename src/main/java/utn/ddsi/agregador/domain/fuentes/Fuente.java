@@ -3,11 +3,8 @@ package utn.ddsi.agregador.domain.fuentes;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
-
-import java.net.URL;
 
 @Getter
 @Setter
@@ -15,7 +12,7 @@ import java.net.URL;
 public class Fuente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idFuente;
+    private long id_fuente;
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
@@ -31,11 +28,11 @@ public class Fuente {
     }
     public Fuente() {
     }
-    public long getIdFuente() {
-        return idFuente;
+    public long getId_fuente() {
+        return id_fuente;
     }
-    public void setIdFuente(long idFuente) {
-        this.idFuente = idFuente;
+    public void setId_fuente(long id_fuente) {
+        this.id_fuente = id_fuente;
     }
     public String getNombre() {
         return nombre;

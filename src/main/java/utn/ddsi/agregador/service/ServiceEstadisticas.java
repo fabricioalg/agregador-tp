@@ -58,10 +58,12 @@ public class ServiceEstadisticas {
 
     public List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechoXProvinciaXCategoria(String categoria){
         //TODO
+    return null;
     }
 
     public List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXHoraXCategoria(String categoria){
         //TODO
+        return null;
     }
 
     public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(Long desde){
