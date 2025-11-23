@@ -11,10 +11,10 @@ import java.util.List;
 
 @Repository
 public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
-    @Query("SELECT COUNT(*) FROM Hecho h" +
-            "WHERE a.categoria = id_categoria "
-    )
-    Long contarHechosDeCategoria(@Param("id_categoria") Long idCategoria);
+    //@Query("SELECT COUNT(*) FROM Hecho h " +
+    //        "WHERE h.categoria = id_categoria "
+    //)
+    //Long contarHechosDeCategoria(@Param("id_categoria") Long idCategoria);
 
     /*@Query("SELECT (SELECT COUNT(*) FROM Ubicacion ubi JOIN Provincia pro " +
             "ON ubi.id=pro.id " +

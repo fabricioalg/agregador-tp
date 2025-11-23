@@ -1,8 +1,11 @@
 package utn.ddsi.agregador.domain.solicitudEliminacion;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class DetectorBasicoDeSpam implements DetectorDeSpam {
 
     private static final List<String> palabrasSpam = Arrays.asList(

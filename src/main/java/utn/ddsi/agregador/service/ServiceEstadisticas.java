@@ -34,11 +34,11 @@ public class ServiceEstadisticas {
     public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadHechosDeColeccion(String nombreColeccion){
         Coleccion coleccionBuscada = this.serviceColecciones.obtenerPorNombre(nombreColeccion);
         Long id_coleccion = coleccionBuscada.getId_coleccion();
-        List<EstadisticaColeccionHechosXProvinciaDTO> estadistica = this.serviceHechosXColeccion.contarHechosDeColeccionDeProvincia(id_coleccion);
-        if(estadistica.isEmpty()){
+        //List<EstadisticaColeccionHechosXProvinciaDTO> estadistica = this.serviceHechosXColeccion.contarHechosDeColeccionDeProvincia(id_coleccion);
+        //if(estadistica.isEmpty()){
             //generar algo vacio o un error
-        }
-        return estadistica;
+        //}
+        return null;
     }
 
     //Se deberia hacer igual que el anterior
@@ -47,9 +47,9 @@ public class ServiceEstadisticas {
         List<EstadisticaCategoriaDTO> categoriasDatos =  new ArrayList<>();
         for (Categoria categoria : categorias) {
             Long idCategoria = categoria.getId_categoria();
-            Long cantidadHechosCategoria = this.serviceHechos.contarHechosDeCategoria(idCategoria);
-            EstadisticaCategoriaDTO estadistica_categoria = new EstadisticaCategoriaDTO(cantidadHechosCategoria, categoria.getNombre());
-            categoriasDatos.add(estadistica_categoria);
+            //Long cantidadHechosCategoria = this.serviceHechos.contarHechosDeCategoria(idCategoria);
+            //EstadisticaCategoriaDTO estadistica_categoria = new EstadisticaCategoriaDTO(cantidadHechosCategoria, categoria.getNombre());
+            //categoriasDatos.add(estadistica_categoria);
         }
         return categoriasDatos;
 

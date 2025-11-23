@@ -19,7 +19,7 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
             "where hc.id_coleccion = coleccion_Id" +
             "group by pro.nombre ")
     */
-    @Query("SELECT new utn.ddsi.agregador.dto.EstadisticaColeccionHechosXProvinciaDTO(" + // <--- RUTA COMPLETA
+    /*@Query("SELECT new utn.ddsi.agregador.dto.EstadisticaColeccionHechosXProvinciaDTO(" + // <--- RUTA COMPLETA
             "u.provincia.nombre, COUNT(h)) " +
             "FROM HechoXColeccion hc " +
             "JOIN hc.hecho h " +
@@ -27,6 +27,6 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
             "WHERE hc.coleccion.id_coleccion = :coleccionId " +
             "GROUP BY u.provincia.nombre")
     List<EstadisticaColeccionHechosXProvinciaDTO> contarHechosDeColeccionDeProvincia(@Param("coleccion_Id") Long coleccioId);
-}
+*/}
 
 

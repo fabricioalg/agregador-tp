@@ -17,9 +17,9 @@ public class ServiceSolicitudes {
     }
 
     public EstadisticaSolicitudesDTO cantidadSolicitudesSpam(LocalDate fecha){
-        Long cantidadSolitudesSpam= this.repoSolicitudes.contarSolicitudesSpamDesde(fecha);
-        EstadisticaSolicitudesDTO estadistica = new EstadisticaSolicitudesDTO(cantidadSolitudesSpam);
-        return estadistica;
+        //Long cantidadSolitudesSpam= this.repoSolicitudes.contarSolicitudesSpamDesde(fecha);
+        //EstadisticaSolicitudesDTO estadistica = new EstadisticaSolicitudesDTO(cantidadSolitudesSpam);
+        return null;
     };
     
 

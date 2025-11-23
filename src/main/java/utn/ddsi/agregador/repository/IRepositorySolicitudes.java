@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Repository
 public interface IRepositorySolicitudes extends JpaRepository<SolicitudEliminacion,Long> {
 
-    @Query("""
-    SELECT COUNT(a)
-    FROM SolicitudEliminacion a
-    WHERE a.spam = true
-      AND a.fecha >= :fechaLimite
-    """)
-    Long contarSolicitudesSpamDesde(@Param("fechaLimite") LocalDate fechaLimite);
+    //@Query("""
+    //SELECT COUNT(a)
+    //FROM SolicitudEliminacion a
+    //WHERE a.spam = true
+    //  AND a.fecha >= :fechaLimite
+    //""")
+    //Long contarSolicitudesSpamDesde(@Param("fechaLimite") LocalDate fechaLimite);
 
 
 }

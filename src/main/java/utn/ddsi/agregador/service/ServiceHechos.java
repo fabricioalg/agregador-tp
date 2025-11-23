@@ -21,9 +21,9 @@ public class ServiceHechos {
     }
 
 
-    public Long contarHechosDeCategoria(Long id_categoria) {
-       return  this.repository.contarHechosDeCategoria(id_categoria);
-    }
+    //public Long contarHechosDeCategoria(Long id_categoria) {
+    //   return  this.repository.contarHechosDeCategoria(id_categoria);
+    //}
 
 
     /*
