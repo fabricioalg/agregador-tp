@@ -6,4 +6,5 @@ import utn.ddsi.agregador.domain.hecho.Categoria;
 
 @Repository
 public interface IRepositoryCategorias extends JpaRepository<Categoria,Long> {
+    Categoria findByNombre(String categoria);
 }

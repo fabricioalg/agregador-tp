@@ -21,6 +21,7 @@ import java.util.ArrayList;
 @RequestMapping("/hechos")
 public class ControllerHechos {
 
+    @Autowired
     private  final IRepositoryHechos repoHechos;
 
     public ControllerHechos(IRepositoryHechos repoHechos) {

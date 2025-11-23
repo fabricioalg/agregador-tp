@@ -13,6 +13,7 @@ import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +77,7 @@ public class HechoAdapter {
 */
 
         // Establecer la fecha de carga como la fecha actual (cuando se recibe)
-        hecho.setFechaDeCarga(LocalDate.now());
+        hecho.setFechaDeCarga(LocalDateTime.now());
 
         return hecho;
     }
@@ -120,7 +121,7 @@ public class HechoAdapter {
                 fuente
         );
 
-        hecho.setFechaDeCarga(LocalDate.now());
+        hecho.setFechaDeCarga(LocalDateTime.now());
         return hecho;
     }
 

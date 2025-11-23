@@ -86,7 +86,7 @@ public class Normalizador {
         LocalDate hoy = LocalDate.now(clock);
 
         LocalDate fechaAcontecimiento = hecho.getFecha();
-        LocalDate fechaCarga = hecho.getFechaDeCarga();
+        LocalDate fechaCarga = hecho.getFechaDeCarga().toLocalDate();
 
         if (fechaAcontecimiento == null) {
             fechaAcontecimiento = Optional.ofNullable(fechaCarga).orElse(hoy);
@@ -102,7 +102,7 @@ public class Normalizador {
         if (fechaCarga.isBefore(fechaAcontecimiento)) {
             fechaCarga = fechaAcontecimiento;
         }
-        hecho.setFechaDeCarga(fechaCarga);
+        hecho.setFechaDeCarga(fechaCarga.atStartOfDay());
     }
 
     private void normalizarCategoria(Hecho hecho) {

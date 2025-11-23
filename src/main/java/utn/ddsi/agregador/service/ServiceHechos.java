@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.dto.EstadisticaCantidadHoraCateDTO;
+import utn.ddsi.agregador.dto.EstadisticaCategoriaDTO;
+import utn.ddsi.agregador.dto.EstadisticaProviciaXCategoriaDTO;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
 import java.util.List;
@@ -14,17 +17,27 @@ import java.util.Optional;
 public class ServiceHechos {
     
     @Autowired
-    private final IRepositoryHechos repository;
+    private final IRepositoryHechos repositoryHechos;
 
-    public ServiceHechos(IRepositoryHechos repository) {
-        this.repository = repository;
+    public ServiceHechos(IRepositoryHechos serviceHecho) {
+        this.repositoryHechos = serviceHecho;
     }
 
+    public Long contarHechosDeCategoria(Long id_categoria) {
+       return  this.repositoryHechos.contarHechosDeCategoria(id_categoria);
+    }
 
-    //public Long contarHechosDeCategoria(Long id_categoria) {
-    //   return  this.repository.contarHechosDeCategoria(id_categoria);
-    //}
+    public List<EstadisticaCategoriaDTO> contarHechosDeCategorias(){
+        return this.repositoryHechos.contarHechosDeCategorias();
+    }
 
+    public List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechosXProvinciaXCategoria(Long categoria) {
+        return this.repositoryHechos.obtenerCantidadDeHechosXProvinciaXCategoria(categoria);
+    }
+
+    public EstadisticaCantidadHoraCateDTO obtenerCantidadDeHechosXDiaXCategoria(Long categoria) {
+        return this.repositoryHechos.obtenerCantidadDeHechosXDiaXCategoria(categoria);
+    }
 
     /*
 

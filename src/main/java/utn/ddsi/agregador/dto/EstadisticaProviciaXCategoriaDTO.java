@@ -1,5 +1,11 @@
 package utn.ddsi.agregador.dto;
 
-public class EstadisticaProviciaXCategoriaDTO {
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
+public class EstadisticaProviciaXCategoriaDTO {
+    private String provincia;
+    private Long cantidad;
 }

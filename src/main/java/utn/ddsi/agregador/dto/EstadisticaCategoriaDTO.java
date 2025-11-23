@@ -1,5 +1,10 @@
 package utn.ddsi.agregador.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class EstadisticaCategoriaDTO {
 
    // private String id_categoria

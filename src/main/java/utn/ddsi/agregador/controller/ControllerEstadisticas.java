@@ -23,6 +23,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/hechos")
 public class ControllerEstadisticas {
+    @Autowired
     private ServiceEstadisticas service;
 
     public ControllerEstadisticas(ServiceEstadisticas service) {
@@ -51,7 +52,7 @@ public class ControllerEstadisticas {
 
     //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
     @GetMapping("estadisticas/{categoria}")
-    public List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXHoraXCategoria(@RequestParam String categoria) {
+    public EstadisticaCantidadHoraCateDTO obtenerCantidadDeHechosXHoraXCategoria(@RequestParam String categoria) {
         return this.service.obtenerCantidadDeHechosXHoraXCategoria(categoria);
     }
 

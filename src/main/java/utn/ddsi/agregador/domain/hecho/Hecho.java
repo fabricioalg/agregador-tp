@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.utils.EnumEstadoHecho;
@@ -30,7 +32,9 @@ public class Hecho {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     @Column(name = "fechaCarga", nullable = false)
-    private LocalDate fechaDeCarga;
+    // PASA DE LOCALDATE A LOCALDATETIME PORQUE ESTADISTICA NECESITA LA HORA, Y
+    // LOCALDATE SOLO NOS INDICA EL AÑO, MES Y DIA
+    private LocalDateTime fechaDeCarga;
     @ManyToOne(cascade = CascadeType.ALL)
     private Fuente fuente;
     @ManyToOne(cascade = CascadeType.ALL)
@@ -50,7 +54,7 @@ public class Hecho {
         this.categoria = categoria;
         this.ubicacion = ubicacion;
         this.fecha = fecha;
-        this.fechaDeCarga = LocalDate.now();
+        this.fechaDeCarga = LocalDateTime.now();
         this.etiqueta = null;
         this.fuente = fuente;
     }
