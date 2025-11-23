@@ -13,17 +13,14 @@ public class HechoXColeccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_hecho_x_coleccion;
 
     @ManyToOne
-    @JoinColumn(name = "id_hecho")
     private Hecho hecho;
 
     @ManyToOne
-    @JoinColumn(name = "id_coleccion")
     private Coleccion coleccion;
 
-    @Column(name = "consensuado", nullable = false)
     private Boolean consensuado;
 
     public HechoXColeccion(Hecho hecho, Coleccion coleccion, Boolean consensuado) {
