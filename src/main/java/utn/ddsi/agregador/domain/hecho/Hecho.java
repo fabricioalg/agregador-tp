@@ -62,9 +62,18 @@ public class Hecho {
     @Override
     public String toString() {
         return "Hecho{" +
-                "titulo='" + titulo + '\'' +
+                "id_hecho=" + id_hecho +
+                ", titulo='" + titulo + '\'' +
+                ", descripcion='" + descripcion + '\'' +
+                ", categoria=" + categoria +
                 ", fecha=" + fecha +
-                ", fuente=" + (fuente != null ? fuente.getNombre() : "null") +
+                ", fechaDeCarga=" + fechaDeCarga +
+                ", fuente=" + fuente +
+                ", ubicacion=" + ubicacion +
+                ", etiqueta=" + etiqueta +
+                ", tipoHecho=" + tipoHecho +
+                ", adjuntos=" + adjuntos +
+                ", estado=" + estado +
                 '}';
     }
 }
