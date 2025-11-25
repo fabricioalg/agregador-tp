@@ -35,14 +35,14 @@ public class Coleccion {
     )
     private List<Fuente> fuentes;
     @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HechoXColeccion> hechos;
+    private List<HechoXColeccion> hechos = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "condicion_x_coleccion",
             joinColumns = @JoinColumn(name = "id_coleccion"),
             inverseJoinColumns = @JoinColumn(name = "id_condicion")
     )
-    private List<InterfaceCondicion> condicionDePertenencia;
+    private List<InterfaceCondicion> condicionDePertenencia = new ArrayList<>();
     @Transient
     private AlgoritmoDeConsenso algoritmoDeConsenso;
     @Enumerated(EnumType.STRING)
@@ -53,7 +53,6 @@ public class Coleccion {
         this.descripcion = descripcion;
         this.fuentes = fuentes;
         this.hechos = new ArrayList<>();
-        this.condicionDePertenencia = new ArrayList<>();
         this.tipoDeAlgoritmo = EnumTipoDeAlgoritmo.DEFAULT;
         this.algoritmoDeConsenso = new ConsensoDefault();
     }
@@ -110,8 +109,8 @@ public class Coleccion {
         });
     }
 
-    public void cambiarCriterioDePertenencia(List<InterfaceCondicion> criterio) {
-        condicionDePertenencia = criterio;
+    public void agregarCriterioDePertenencia(InterfaceCondicion criterio) {
+        condicionDePertenencia.add(criterio);
     }
 
     // Metodo para obtener solo los hechos consensuados (para navegación curada)

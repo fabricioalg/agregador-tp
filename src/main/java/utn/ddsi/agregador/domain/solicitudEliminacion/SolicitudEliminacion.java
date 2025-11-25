@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "Solicitud de Eliminacion")
+@Table(name = "solicitud")
 @NoArgsConstructor
 public class SolicitudEliminacion {
     @Id
