@@ -23,19 +23,10 @@ public class AgregadorApplication {
         System.out.println("Funciona");
 
         //LoaderEstatico loader = ctx.getBean(LoaderEstatico.class);
-        LoaderProxy metamapa = ctx.getBean(LoaderProxy.class);
-        List<Hecho> res = metamapa.obtenerHechos();
-        System.out.println(res.toString());
+        //LoaderProxy metamapa = ctx.getBean(LoaderProxy.class);
+        //List<Hecho> res = metamapa.obtenerHechos();
+        //System.out.println(res.toString());
 
 
     }
-/*
-    @Bean
-    public CommandLineRunner test(ActualizadorColecciones actualizador) {
-        return args -> {
-            System.out.println("Actualizador cargado: " + actualizador);
-            List<Hecho> hechos = actualizador.depurarHechos();
-            System.out.println("Hechos normalizados: " + hechos.size());
-        };
-    }*/
 }
