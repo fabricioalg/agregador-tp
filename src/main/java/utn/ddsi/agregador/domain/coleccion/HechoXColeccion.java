@@ -3,6 +3,7 @@ package utn.ddsi.agregador.domain.coleccion;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
 @Data
@@ -16,12 +17,16 @@ public class HechoXColeccion {
     private Long id_hecho_x_coleccion;
 
     @ManyToOne
+    @JoinColumn(name = "id_hecho")
     private Hecho hecho;
 
     @ManyToOne
+    @JoinColumn(name = "id_coleccion")
     private Coleccion coleccion;
 
-    private Boolean consensuado;
+    @Column(name = "consensuado", nullable = false)
+    @ColumnDefault("0")
+    private Boolean consensuado=false;
 
     public HechoXColeccion(Hecho hecho, Coleccion coleccion, Boolean consensuado) {
         this.hecho = hecho;
