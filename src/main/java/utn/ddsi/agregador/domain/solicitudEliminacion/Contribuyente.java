@@ -4,7 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Data;
 
+@Data
 @Entity
 public class Contribuyente {
 
@@ -33,21 +35,4 @@ public class Contribuyente {
     public Contribuyente(String nombre, String apellido, int edad) {
         this(null, nombre, apellido, edad);
     }
-
-    public Long getId_contribuyente() { return id_contribuyente; }
-    public void setId_contribuyente(Long id_contribuyente) { this.id_contribuyente = id_contribuyente; }
-
-    public String getNombre() {return nombre;}
-    public void setNombre(String nombre) {this.nombre = nombre;}
-
-    public String getApellido() {return apellido;}
-    public void setApellido(String apellido) {this.apellido = apellido;}
-
-    public int getEdad() {return edad;}
-    public void setEdad(int edad) {this.edad = edad;}
-
-    public Boolean getAnonimo() {return anonimo;}
-    public void setAnonimo(Boolean anonimo) {this.anonimo = anonimo;}
-
-
 }
