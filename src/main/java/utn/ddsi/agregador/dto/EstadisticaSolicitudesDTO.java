@@ -4,10 +4,13 @@ import lombok.Data;
 
 @Data
 public class EstadisticaSolicitudesDTO {
-    private Long cantidadSolicitudes;
+
+    private Long cantSolicitudes;
+    private Long cantSpam;
+
 
     public EstadisticaSolicitudesDTO(Long cantidad){
-        this.cantidadSolicitudes = cantidad;
+        this.cantSolicitudes = cantidad;
     }
 
 }

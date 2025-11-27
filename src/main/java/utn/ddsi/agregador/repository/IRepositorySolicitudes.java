@@ -21,5 +21,12 @@ public interface IRepositorySolicitudes extends JpaRepository<SolicitudEliminaci
     """)
     Long contarSolicitudesSpamDesde(@Param("fechaLimite") LocalDate fechaLimite);
 
-
+    @Query("""
+    SELECT new com.tu.paquete.EstadisticasSolicitudes(
+        COUNT(a),                                  -- total
+        SUM(CASE WHEN a.spam = true THEN 1 ELSE 0 END) -- spam
+    )
+    FROM SolicitudEliminacion a
+    """)
+    EstadisticaSolicitudesDTO obtenerEstadisticas();
 }

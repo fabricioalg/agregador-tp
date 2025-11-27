@@ -71,9 +71,9 @@ public class ServiceEstadisticas {
         return this.serviceHechos.obtenerCantidadDeHechosXDiaXCategoria(cate.getId_categoria());
     }
 
-    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(Long desde){
-        LocalDate desdeLaFecha = LocalDate.now().minusMonths(desde);
-        return this.serviceSolicitudes.cantidadSolicitudesSpam(desdeLaFecha);
+    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(){
+       // LocalDate desdeLaFecha = LocalDate.now().minusMonths(desde);
+        return this.serviceSolicitudes.cantidadSolicitudesSpam();
     }
 
 }
