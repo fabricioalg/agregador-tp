@@ -35,7 +35,7 @@ public class ServiceHechos {
         return this.repositoryHechos.obtenerCantidadDeHechosXProvinciaXCategoria(categoria);
     }
 
-    public EstadisticaCantidadHoraCateDTO obtenerCantidadDeHechosXDiaXCategoria(Long categoria) {
+    public List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(Long categoria) {
         return this.repositoryHechos.obtenerCantidadDeHechosXDiaXCategoria(categoria);
     }
 
