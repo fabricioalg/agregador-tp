@@ -1,6 +1,7 @@
 package utn.ddsi.agregador.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.*;
@@ -8,6 +9,7 @@ import utn.ddsi.agregador.dto.FuenteDTO;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
+import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
@@ -21,20 +23,29 @@ import java.util.Arrays;
 @Component
 public class HechoAdapter {
 
+    @Value("${fuente.proxy.url}")
+    private String proxyUrl;
+    @Value("${fuente.dinamica.url}")
+    private String dinamicaUrl;
+
+
     @Autowired
     private final IRepositoryFuentes repoFuente;
-    public HechoAdapter(IRepositoryFuentes repoFuente) {
+    private final IRepositoryCategorias repoCategoria;
+    public HechoAdapter(IRepositoryFuentes repoFuente, IRepositoryCategorias repoCategoria) {
         this.repoFuente = repoFuente;
+        this.repoCategoria = repoCategoria;
     }
 
-    /**
-     * Adapta un HechoFuenteDinamicaDTO (del modelo de la fuente dinámica) al modelo de Hecho del agregador.
-     * Si el DTO tiene adjunto, crea un HechoMultimedia, sino crea un HechoTexto.
-     */
-    public Hecho adaptarDesdeFuenteDinamica(HechoFuenteDinamicaDTO dto) {
+    public Hecho adaptarDesdeFuenteDinamica(HechoFuenteDinamicaDTO dto, Fuente fuente) {
         // convierto componentes
-        Categoria categoria = new Categoria(dto.getCategoria());
-        
+        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria());
+        if(categoria == null) {
+            categoria = new Categoria();
+            categoria.setNombre(dto.getCategoria());
+            categoria = this.repoCategoria.save(categoria);
+        }
+
         Ubicacion ubicacion = null;
         if (dto.getUbicacion() != null) {
             ubicacion = new Ubicacion(
@@ -42,9 +53,6 @@ public class HechoAdapter {
                 dto.getUbicacion().getLongitud()
             );
         }
-
-        // crear fuente generica para fuente dinamica
-        Fuente fuente = crearFuenteDinamica();
 
         // determino si es multimedia o texto según tenga adjunto
         Hecho hecho= new Hecho(); //cargar de datos
@@ -81,12 +89,16 @@ public class HechoAdapter {
 
         return hecho;
     }
-    public Hecho adaptarDesdeFuenteProxy(HechoFuenteProxyDTO dto){
-        Categoria categoria = new Categoria(dto.getCategoria());
+    public Hecho adaptarDesdeFuenteProxy(HechoFuenteProxyDTO dto, Fuente fuente){
+        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria());
+        if(categoria == null) {
+            categoria = new Categoria();
+            categoria.setNombre(dto.getCategoria());
+            categoria = this.repoCategoria.save(categoria);
+        }
 
         Ubicacion ubicacion = new Ubicacion(Float.valueOf( dto.getUbicacionLat()),Float.valueOf(dto.getUbicacionLon())); //Chequear orden
 
-        Fuente fuente = crearFuenteMetamapa();
         Hecho hecho = new Hecho(
                 dto.getTitulo(),
                 dto.getDescripcion(),
@@ -98,11 +110,32 @@ public class HechoAdapter {
         return hecho;
     }
 
+    public List<Hecho> adaptarHechosDeFuenteProxy(List<HechoFuenteProxyDTO> hechosDTO) {
 
+        Fuente fuente = this.repoFuente.findByTipoFuente(EnumTipoFuente.METAMAPA);
+        if (fuente == null) {
+            fuente = new Fuente();
+            fuente.setTipoFuente(EnumTipoFuente.METAMAPA);
+            fuente.setUrl(this.proxyUrl);
+            fuente.setNombre("Proxy");
+            fuente = this.repoFuente.save(fuente);
+        }
+
+        List<Hecho> hechos = new ArrayList<>();
+        for (HechoFuenteProxyDTO hechoFuenteProxyDTO : hechosDTO) {
+            Hecho h = adaptarDesdeFuenteProxy(hechoFuenteProxyDTO, fuente);
+            hechos.add(h);
+        }
+        return hechos;
+    }
 
     public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto, Fuente fuente) {
-
-        Categoria categoria = new Categoria(dto.getCategoria().getNombre());
+        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria().getNombre());
+        if(categoria == null) {
+            categoria = new Categoria();
+            categoria.setNombre(dto.getCategoria().getNombre());
+            categoria = this.repoCategoria.save(categoria);
+        }
 
         Ubicacion ubicacion = null;
         if (dto.getUbicacion() != null) {
@@ -125,6 +158,23 @@ public class HechoAdapter {
         return hecho;
     }
 
+    public List<Hecho> adaptarHechosDeFuenteDinamica(List<HechoFuenteDinamicaDTO> hechosDTO) {
+        Fuente fuente = this.repoFuente.findByTipoFuente(EnumTipoFuente.DINAMICA);
+        if (fuente == null) {
+            fuente = new Fuente();
+            fuente.setTipoFuente(EnumTipoFuente.DINAMICA);
+            fuente.setUrl(this.dinamicaUrl);
+            fuente.setNombre("Dinamica");
+            fuente = this.repoFuente.save(fuente);
+        }
+        List<Hecho> hechos = new ArrayList<>();
+        for (HechoFuenteDinamicaDTO hechoFuenteDinamicaDTO : hechosDTO) {
+            Hecho h = adaptarDesdeFuenteDinamica(hechoFuenteDinamicaDTO, fuente);
+            hechos.add(h);
+        }
+        return hechos;
+    }
+
     public List<Hecho> adaptarHechosDeFuenteEstatica(String ruta, List<HechoFuenteEstaticaDTO> hechosDTO){
         Fuente fuente = this.repoFuente.findByUrl(ruta);
         if(fuente == null) {
@@ -138,34 +188,5 @@ public class HechoAdapter {
         return hechos;
     }
 
-    /**
-     * Crea una fuente genérica que representa a la fuente dinámica externa
-     */
-    private Fuente crearFuenteDinamica() {
-        return new FuenteDinamicaExterna(1L, "FuenteDinamica", "http://localhost:8080", EnumTipoFuente.DINAMICA);
-    }
-
-    /**
-     * Clase interna para representar la fuente dinámica externa
-     */
-    private static class FuenteDinamicaExterna extends Fuente {
-        public FuenteDinamicaExterna(long id, String nombre, String url, EnumTipoFuente tipoFuente) {
-            super(id, nombre, url, tipoFuente);
-        }
-    }
-
-    private Fuente crearFuenteEstatica() {
-        return new FuenteEstaticaExterna(2L, "FuenteEstatica", "http://localhost:8082", EnumTipoFuente.ESTATICA);
-    }
-
-    private Fuente crearFuenteMetamapa() {
-        return new FuenteEstaticaExterna(3L, "FuenteProxy", "http://localhost:8081", EnumTipoFuente.METAMAPA);
-    }
-
-    private static class FuenteEstaticaExterna extends Fuente {
-        public FuenteEstaticaExterna(long id, String nombre, String url, EnumTipoFuente tipoFuente) {
-            super(id, nombre, url, tipoFuente);
-        }
-    }
 
 }
