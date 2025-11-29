@@ -22,9 +22,9 @@ public interface IRepositorySolicitudes extends JpaRepository<SolicitudEliminaci
     Long contarSolicitudesSpamDesde(@Param("fechaLimite") LocalDate fechaLimite);
 
     @Query("""
-    SELECT new com.tu.paquete.EstadisticasSolicitudes(
-        COUNT(a),                                  -- total
-        SUM(CASE WHEN a.spam = true THEN 1 ELSE 0 END) -- spam
+    SELECT new utn.ddsi.agregador.dto.EstadisticaSolicitudesDTO(
+        COUNT(a),
+        COUNT(CASE WHEN a.spam = true THEN 1L ELSE 0L END)
     )
     FROM SolicitudEliminacion a
     """)

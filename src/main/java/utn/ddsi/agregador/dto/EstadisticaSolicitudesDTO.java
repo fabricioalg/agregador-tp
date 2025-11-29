@@ -9,7 +9,8 @@ public class EstadisticaSolicitudesDTO {
     private Long cantSpam;
 
 
-    public EstadisticaSolicitudesDTO(Long cantidad){
+    public EstadisticaSolicitudesDTO(Long cantidad, Long spam){
+        this.cantSpam = spam;
         this.cantSolicitudes = cantidad;
     }
 
