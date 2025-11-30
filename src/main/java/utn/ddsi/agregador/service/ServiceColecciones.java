@@ -49,5 +49,9 @@ public class ServiceColecciones {
     public Coleccion obtenerPorNombre(String nombre){
         return this.repositoryColecciones.findByTitulo(nombre);
     }
+
+    public List<String> obtenerNombreDeColecciones() {
+        return this.repositoryColecciones.obtenerNombresColecciones();
+    }
 }
 

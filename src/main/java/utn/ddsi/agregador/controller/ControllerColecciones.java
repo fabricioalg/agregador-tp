@@ -24,12 +24,7 @@ public class ControllerColecciones {
     public void crearColeccion(@RequestBody Coleccion coleccion) {
         service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes());
     }
-
-    @GetMapping
-    public List<Coleccion> obtenerTodasLasColecciones() {
-        return service.obtenerTodasLasColecciones();
-    }
-
+    */
     @GetMapping("/{id}")
     public List<Coleccion> buscarPorId(@PathVariable Long id) {
         return service.buscarPorID(id);
@@ -38,6 +33,6 @@ public class ControllerColecciones {
     @DeleteMapping("/{id}")
     public void eliminarColeccion(@RequestParam Long idColeccion) {
         service.eliminarColeccion(idColeccion);
-    }*/
+    }
 
 }

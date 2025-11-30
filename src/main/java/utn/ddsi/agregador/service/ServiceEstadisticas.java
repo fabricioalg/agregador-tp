@@ -21,7 +21,7 @@ public class ServiceEstadisticas {
     private IRepositoryHechoXColeccion serviceHechosXColeccion;
     private ServiceSolicitudes serviceSolicitudes;
     private IRepositoryCategorias repoCategorias;
-    //private IRepositoryProvincias repoProvincias;
+    private IRepositoryProvincias repoProvincias;
     
     public ServiceEstadisticas(ServiceHechos serviceHechos, ServiceColecciones serviceColecciones,ServiceSolicitudes serviceSolicitudes, IRepositoryCategorias repoCategorias) {
         this.serviceHechos= serviceHechos;
@@ -31,6 +31,19 @@ public class ServiceEstadisticas {
 
     }
 
+    //METODOS PARA OBTENER NOMBRES NECESARIOS PARA LA ESTADISTICA
+    public List<String> obtenerNombreColecciones(){
+       return this.serviceColecciones.obtenerNombreDeColecciones();
+    }
+
+    public List<String> obtenerNombreProvincias(){
+        return this.repoProvincias.obtenerNombreDeProvincias();
+    }
+
+    public List<String> obtenerNombreCategorias(){
+        return this.repoCategorias.obtenerNombreDeCategorias();
+    }
+ //----------------------------------------------------------------------
     //De una coleccion, en que provincia se agrupan la mayor cantidad de hechos reportados?
     public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadHechosDeColeccion(String nombreColeccion){
         Coleccion coleccionBuscada = this.serviceColecciones.obtenerPorNombre(nombreColeccion);

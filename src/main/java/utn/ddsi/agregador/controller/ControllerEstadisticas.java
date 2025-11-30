@@ -2,6 +2,7 @@ package utn.ddsi.agregador.controller;
 
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.batch.BatchTransactionManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
@@ -21,7 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/hechos")
+@RequestMapping("")
 public class ControllerEstadisticas {
     @Autowired
     private ServiceEstadisticas service;
@@ -31,7 +32,7 @@ public class ControllerEstadisticas {
     }
 
     //De una coleccion, en que provincia se agrupan la mayor cantidad de hechos reportados?
-    @GetMapping("/estadisticas/coleccion")                                                               //Antes era id discutir
+    @GetMapping("/estadistica_coleccion/:coleccion")                                                               //Antes era id discutir
     public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadDeHechosXProvincia(@RequestParam String nombreColeccion ){
         
         return this.service.obtenerCantidadHechosDeColeccion(nombreColeccion);
@@ -44,7 +45,7 @@ public class ControllerEstadisticas {
     }
 
     //En que provincia se presenta la mayor cantidad de hechos de una cierta categora?
-    @GetMapping("estadisticas/categoria")
+    @GetMapping("estadistica_categoria/provincia")
     public List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechoXProvinciaXCategoria(@RequestParam String categoria){
        return this.service.obtenerCantidadDeHechoXProvinciaXCategoria(categoria);
     }
@@ -62,6 +63,20 @@ public class ControllerEstadisticas {
         return this.service.obtenerCantidadSpamEnSolicitudes();
     }
 
+    //--------------------OBTENER NOMBRES -------------------------
+    @GetMapping("/colecciones/nombre") //MEJORAR
+    public List<String> obtenerColecciones(){
+        return this.service.obtenerNombreColecciones();
+    }
 
+    @GetMapping("/provincias/nombre")
+    public List<String> obtenerProvincias(){
+        return this.service.obtenerNombreProvincias();
+    }
+
+    @GetMapping("/categorias/nombre")
+    public List<String> obtnerCategorias(){
+        return this.service.obtenerNombreCategorias();
+    }
 
 }
