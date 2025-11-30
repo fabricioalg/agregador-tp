@@ -12,9 +12,8 @@ public class ServiceSolicitudes {
     @Autowired
     private final IRepositorySolicitudes repoSolicitudes;
 
-    public ServiceSolicitudes(IRepositorySolicitudes repositorySolicitudes){
-        this.repoSolicitudes= repositorySolicitudes;
-        
+    public ServiceSolicitudes(IRepositorySolicitudes repoSolicitudes) {
+        this.repoSolicitudes = repoSolicitudes;
     }
 
     public EstadisticaSolicitudesDTO cantidadSolicitudesSpam(){

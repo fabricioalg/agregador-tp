@@ -47,12 +47,14 @@ public class LoaderEstatico extends Loader {
             if (hechosDTO == null) {
                 return Collections.emptyList();
             }
+
             List<Hecho> hechosTransformados = new ArrayList<>();
             for (int i = 0; i<hechosDTO.length; i++ ) {
                 String ruta = hechosDTO[i][0].getFuente().getRuta();
                 List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteEstatica(ruta, List.of(hechosDTO[i]));
                 hechosTransformados.addAll(transformado);
             }
+
             return hechosTransformados;
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener hechos desde " + this.getRuta(), e);

@@ -16,6 +16,7 @@ import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,7 @@ public class LoaderProxy extends Loader {
     private final RestTemplate restTemplate;  //Por ahí se puede pasar a Loader
 
     //ESta bien que este harcodeado porque debería solo apuntar a una LoaderProxy
-    public LoaderProxy(@Value("${loader.proxy.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
+    public LoaderProxy(@Value("${fuente.proxy.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
         setRuta(rutaUrl);
         this.restTemplate = restTemplate;
         setAdapter(adapter);
@@ -49,9 +50,14 @@ public class LoaderProxy extends Loader {
             if (hechosDTO == null) {
                 return Collections.emptyList();
             }
-            return Arrays.stream(hechosDTO)
-                    .map(getAdapter()::adaptarDesdeFuenteProxy)
-                    .collect(Collectors.toList());
+
+            List<Hecho> hechosTransformados = new ArrayList<>();
+            for (int i = 0; i<hechosDTO.length; i++ ) {
+                //String ruta = hechosDTO[i].getFuente().getRuta();
+                List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteProxy(List.of(hechosDTO[i]));
+                hechosTransformados.addAll(transformado);
+            }
+            return hechosTransformados;
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener hechos desde " + getRuta(), e);
         }

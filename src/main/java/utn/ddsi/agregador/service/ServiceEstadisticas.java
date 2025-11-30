@@ -3,32 +3,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.hecho.Categoria;
-import utn.ddsi.agregador.domain.hecho.Provincia;
 import utn.ddsi.agregador.dto.*;
 import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryProvincias;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class ServiceEstadisticas {
 
     @Autowired
     private ServiceColecciones serviceColecciones;
     private ServiceHechos serviceHechos;
-    private IRepositoryHechoXColeccion serviceHechosXColeccion;
+    private IRepositoryHechoXColeccion repoHechosXColeccion;
     private ServiceSolicitudes serviceSolicitudes;
     private IRepositoryCategorias repoCategorias;
     private IRepositoryProvincias repoProvincias;
     
-    public ServiceEstadisticas(ServiceHechos serviceHechos, ServiceColecciones serviceColecciones,ServiceSolicitudes serviceSolicitudes, IRepositoryCategorias repoCategorias) {
+    public ServiceEstadisticas(ServiceHechos serviceHechos, ServiceColecciones serviceColecciones,ServiceSolicitudes serviceSolicitudes,IRepositoryHechoXColeccion repoHXC, IRepositoryCategorias repoCategorias,IRepositoryProvincias repoProvincias) {
         this.serviceHechos= serviceHechos;
         this.serviceColecciones = serviceColecciones;
+        this.serviceHechos = serviceHechos;
+        this.repoHechosXColeccion = repoHXC;
         this.serviceSolicitudes = serviceSolicitudes;
         this.repoCategorias = repoCategorias;
-
+        this.repoProvincias= repoProvincias;
     }
 
     //METODOS PARA OBTENER NOMBRES NECESARIOS PARA LA ESTADISTICA
@@ -48,7 +48,7 @@ public class ServiceEstadisticas {
     public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadHechosDeColeccion(String nombreColeccion){
         Coleccion coleccionBuscada = this.serviceColecciones.obtenerPorNombre(nombreColeccion);
         Long id_coleccion = coleccionBuscada.getId_coleccion();
-        List<EstadisticaColeccionHechosXProvinciaDTO> estadistica = this.serviceHechosXColeccion.contarHechosDeColeccionDeProvincia(id_coleccion);
+        List<EstadisticaColeccionHechosXProvinciaDTO> estadistica = this.repoHechosXColeccion.contarHechosDeColeccionDeProvincia(id_coleccion);
         if(estadistica.isEmpty()){
             //generar algo vacio o un error
         }
@@ -79,7 +79,7 @@ public class ServiceEstadisticas {
     }
 
     //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
-    public EstadisticaCantidadHoraCateDTO obtenerCantidadDeHechosXHoraXCategoria(String categoria){
+    public List<EstadisticaCantidadHoraCateDTO>  obtenerCantidadDeHechosXHoraXCategoria(String categoria){
         Categoria cate = this.repoCategorias.findByNombre(categoria);
         return this.serviceHechos.obtenerCantidadDeHechosXDiaXCategoria(cate.getId_categoria());
     }

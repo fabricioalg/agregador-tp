@@ -7,13 +7,8 @@ import lombok.Setter;
 import utn.ddsi.agregador.adapter.HechoAdapter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
-import java.io.InputStream;
 import java.time.LocalDate;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Getter
 @Setter
