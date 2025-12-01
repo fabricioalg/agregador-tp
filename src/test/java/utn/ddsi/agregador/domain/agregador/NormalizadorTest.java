@@ -5,28 +5,62 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import utn.ddsi.agregador.domain.hecho.Adjunto;
 import utn.ddsi.agregador.domain.hecho.Categoria;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.hecho.Provincia;
 import utn.ddsi.agregador.domain.hecho.Ubicacion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
+import utn.ddsi.agregador.repository.IRepositoryCategorias;
+import utn.ddsi.agregador.repository.IRepositoryProvincias;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 import utn.ddsi.agregador.utils.TipoMedia;
 
 class NormalizadorTest {
+    IRepositoryCategorias repoCategorias;
+    IRepositoryProvincias repoProvincias;
 
     private final Clock clock = Clock.fixed(Instant.parse("2025-01-10T00:00:00Z"), ZoneOffset.UTC);
-    private final Normalizador normalizador = new Normalizador(clock, null, null);
+    Normalizador normalizador;
+    @BeforeEach
+    void beforeEach() {
 
+        repoCategorias = mock(IRepositoryCategorias.class);
+        repoProvincias = mock(IRepositoryProvincias.class);
+
+        // Mock básico
+        when(repoProvincias.findByNombre(anyString())).thenReturn(null);
+        when(repoProvincias.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        // Crear normalizador real (esto carga provincias.json real!)
+        normalizador = new Normalizador(clock, repoCategorias, repoProvincias);
+    }
     @Test
     void normalizaCategoriaFechasYProvincia() {
+        when(repoCategorias.findByNombre("Fuego forestal"))
+                .thenReturn(new Categoria("Incendio forestal"));
+
+        Provincia cordoba = new Provincia();
+        cordoba.setNombre("Cordoba");
+        cordoba.setPais("Argentina");
+        when(repoProvincias.findByNombre(cordoba.getNombre())).thenReturn(cordoba);
+
         Hecho hecho = new Hecho();
         hecho.setTitulo("  Incendio forestal en cordoba   ");
         hecho.setDescripcion("  foco activo en zona norte   ");
@@ -49,6 +83,9 @@ class NormalizadorTest {
 
     @Test
     void fusionaDuplicadosPrivilegiandoFuenteMasConfiable() {
+        when(repoCategorias.findByNombre("Incendio forestal"))
+                .thenReturn(new Categoria("Incendio forestal"));
+
         Hecho base = new Hecho();
         base.setTitulo("Incendio en las sierras");
         base.setDescripcion("Foco contenido");
@@ -90,6 +127,8 @@ class NormalizadorTest {
 
     @Test
     void descartaUbicacionesInvalidas() {
+        when(repoCategorias.findByNombre("contaminacion"))
+                .thenReturn(new Categoria("Contaminacion"));
         Hecho hecho = new Hecho();
         hecho.setTitulo("hecho sin ubicacion valida");
         hecho.setCategoria(new Categoria("contaminacion"));
@@ -105,6 +144,19 @@ class NormalizadorTest {
 
     @Test
     void asignaProvinciaDesdePoligonoDelCsv() {
+        when(repoCategorias.findByNombre("incendio"))
+                .thenReturn(new Categoria("incendio"));
+
+        when(repoProvincias.findByNombre("Ciudad Autonoma de Buenos Aires"))
+                .thenReturn(null);
+        //TODO esto hay que verlo en el normalizador
+        // Simular que el repo crea una provincia y la devuelve
+        Provincia caba = new Provincia();
+        caba.setNombre("Ciudad Autonoma de Buenos Aires");
+        caba.setPais("Argentina");
+
+        when(repoProvincias.save(any())).thenReturn(caba);
+
         Hecho hecho = new Hecho();
         hecho.setTitulo("situacion en el microcentro");
         hecho.setCategoria(new Categoria("incendio"));
@@ -123,6 +175,8 @@ class NormalizadorTest {
 
     @Test
     void reutilizaInstanciaDeProvinciaCacheada() {
+        when(repoCategorias.findByNombre("incendio"))
+                .thenReturn(new Categoria("incendio"));
         Hecho primero = new Hecho();
         primero.setTitulo("evento en la capital");
         primero.setCategoria(new Categoria("incendio"));
@@ -149,6 +203,8 @@ class NormalizadorTest {
 
     @Test
     void ubicaHechosFueraDeArgentinaComoExterior() {
+        when(repoCategorias.findByNombre("contami"))
+                .thenReturn(new Categoria("incendio"));
         Hecho hecho = new Hecho();
         hecho.setTitulo("incidente internacional");
         hecho.setCategoria(new Categoria("contaminacion"));
