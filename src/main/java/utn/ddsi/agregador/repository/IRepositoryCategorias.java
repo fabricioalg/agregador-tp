@@ -13,6 +13,6 @@ public interface IRepositoryCategorias extends JpaRepository<Categoria,Long> {
             SELECT c FROM Categoria c WHERE c.nombre LIKE :categoria
             """)
     Categoria findByNombre(String categoria);
-    @Query("SELECT DISTINCT c.nombre FROM Cateoria c")
+    @Query("SELECT DISTINCT c.nombre FROM Categoria c")
     List<String> obtenerNombreDeCategorias();
 }
