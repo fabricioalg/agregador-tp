@@ -10,6 +10,7 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 @Entity
 @Table(name = "condicion")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)// DISCUTIR POR WHASATP
+@DiscriminatorColumn(name = "Condicion", discriminatorType = DiscriminatorType.STRING)
 public abstract class InterfaceCondicion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

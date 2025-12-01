@@ -27,6 +27,8 @@ public class AgregadorApplication {
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
         IRepositoryColecciones repoCol = ctx.getBean(IRepositoryColecciones.class);
         IRepositorySolicitudes repoSol = ctx.getBean(IRepositorySolicitudes.class);
+        IRepositoryHechoXColeccion repoHxC = ctx.getBean(IRepositoryHechoXColeccion.class);
+
 
         LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
         FiltradorDeHechos filter = new FiltradorDeHechos();
@@ -35,12 +37,16 @@ public class AgregadorApplication {
         List<Loader> loaders = new ArrayList<>();
         loaders.add(loaderEs);
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
-        /*ctualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter);
 
-        act.depurarHechos();
-*/
+
+        ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
+        act.actualizarColecciones();
+
+        //act.depurarHechos();
+        /*
         ActualizadorColecciones act = ctx.getBean(ActualizadorColecciones.class);
         act.depurarHechos();
         act.ejecutarAlgoritmosDeConsenso();
+        */
     }
 }

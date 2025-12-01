@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,25 +93,27 @@ public class Normalizador {
 
     private void normalizarFechas(Hecho hecho) {
         LocalDate hoy = LocalDate.now(clock);
+        LocalDateTime hoyConHora = LocalDateTime.now(clock);
 
         LocalDate fechaAcontecimiento = hecho.getFecha();
-        LocalDate fechaCarga = hecho.getFechaDeCarga().toLocalDate();
+        LocalDateTime fechaCarga = hecho.getFechaDeCarga();
 
         if (fechaAcontecimiento == null) {
-            fechaAcontecimiento = Optional.ofNullable(fechaCarga).orElse(hoy);
+            fechaAcontecimiento = Optional.ofNullable(fechaCarga.toLocalDate()).orElse(hoy);
         }
         if (fechaAcontecimiento.isAfter(hoy)) {
             fechaAcontecimiento = hoy;
         }
+
         hecho.setFecha(fechaAcontecimiento);
 
         if (fechaCarga == null) {
-            fechaCarga = hoy;
+            fechaCarga = hoyConHora;
         }
-        if (fechaCarga.isBefore(fechaAcontecimiento)) {
-            fechaCarga = fechaAcontecimiento;
+        if (fechaCarga.isBefore(fechaAcontecimiento.atStartOfDay())) {
+            fechaCarga = fechaAcontecimiento.atStartOfDay();
         }
-        hecho.setFechaDeCarga(fechaCarga.atStartOfDay());
+        hecho.setFechaDeCarga(fechaCarga);
     }
 
     private void normalizarCategoria(Hecho hecho) {

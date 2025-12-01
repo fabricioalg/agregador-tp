@@ -1,6 +1,7 @@
 package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -115,7 +116,7 @@ public class Coleccion {
     public void agregarHechos(List<Hecho> nuevosHechos) {
         nuevosHechos.forEach(hecho -> {
             HechoXColeccion hxc = new HechoXColeccion(hecho, this, false);
-            hechos.add(hxc);
+            this.hechos.add(hxc);
         });
     }
 
@@ -152,4 +153,6 @@ public class Coleccion {
         this.tipoDeAlgoritmo = tipoDeAlgoritmo;
         this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
     }
+
+
 }

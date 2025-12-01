@@ -49,6 +49,7 @@ class ActualizadorColeccionesTest {
                 gestorSolicitudes,
                 loaders,
                 filtrador
+
         );
     }
 

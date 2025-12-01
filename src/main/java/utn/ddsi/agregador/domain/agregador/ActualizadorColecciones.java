@@ -3,6 +3,7 @@ package utn.ddsi.agregador.domain.agregador;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -10,10 +11,12 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
+import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
+import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
 @Component
@@ -25,14 +28,16 @@ public class ActualizadorColecciones {
     private final Normalizador normalizador;
     private final GestorDeSolicitudes gestorSolicitudes;
     public final FiltradorDeHechos filtradorDeHechos;
+    public final IRepositoryHechoXColeccion repoHechoxColeccion;
 
-    public ActualizadorColecciones(IRepositoryColecciones rcole, IRepositoryHechos rhechos, Normalizador normal, GestorDeSolicitudes gestor, List<Loader> loaders, FiltradorDeHechos filtrador) {
+    public ActualizadorColecciones(IRepositoryColecciones rcole, IRepositoryHechos rhechos, Normalizador normal, GestorDeSolicitudes gestor, List<Loader> loaders, FiltradorDeHechos filtrador, IRepositoryHechoXColeccion repositoryHechoXColeccion) {
         this.repositoryColecciones = rcole;
         this.repositoryHechos = rhechos;
         this.gestorSolicitudes = gestor;
         this.normalizador = normal;
         this.loaders = loaders;
         this.filtradorDeHechos = filtrador;
+        this.repoHechoxColeccion = repositoryHechoXColeccion;
     }
     public List<Hecho> traerHechosDeLoaders(){
         List <Hecho> hechosNuevos = new ArrayList();
@@ -48,6 +53,7 @@ public class ActualizadorColecciones {
         repositoryHechos.saveAll(hechosNormalizados);
         return hechosNormalizados;
     }
+
     @Transactional
     public void actualizarColecciones(){
         List<Hecho> hechosNuevos = depurarHechos();
@@ -58,22 +64,30 @@ public class ActualizadorColecciones {
         // de eliminación spam en forma automática definido en la Entrega 2
         gestorSolicitudes.procesarTodasLasSolicitudes();
         for (Coleccion coleccion : colecciones) {
-            //OJO que puede ser que este vacio pero no necesariamente es nueva la coleccion
-            if(coleccion.getHechos() == null){
+            List<HechoXColeccion> hechosEnCol = this.repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
+            List<InterfaceCondicion> condiciones = this.repositoryColecciones.findByIdCondiciones(coleccion.getId_coleccion());
+            if(hechosEnCol.isEmpty()) {
                 List<Hecho> hechosFiltrados =
                         filtradorDeHechos.devolverHechosAPartirDe(
-                                coleccion.getCondicionDePertenencia(), hechosTotales
+                                condiciones, hechosTotales
                         );
-                coleccion.agregarHechos(hechosFiltrados);
+                for (Hecho h : hechosFiltrados) {
+                    HechoXColeccion hxc = new HechoXColeccion(h, coleccion, false);
+                    this.repoHechoxColeccion.save(hxc);
+                }
             }
             List<Hecho> hechosFiltrados =
                     filtradorDeHechos.devolverHechosAPartirDe(
-                            coleccion.getCondicionDePertenencia(), hechosNuevos
+                            condiciones, hechosNuevos
                     );
-            coleccion.agregarHechos(hechosFiltrados);
+            for (Hecho h : hechosFiltrados) {
+                HechoXColeccion hxc = new HechoXColeccion(h, coleccion, false);
+                this.repoHechoxColeccion.save(hxc);
+            }
         }
         repositoryColecciones.saveAll(colecciones);
     }
+
     @Transactional
     public void ejecutarAlgoritmosDeConsenso(){
         List<Coleccion> colecciones = repositoryColecciones.findAll();
