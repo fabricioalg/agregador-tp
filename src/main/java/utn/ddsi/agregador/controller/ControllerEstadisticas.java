@@ -54,7 +54,7 @@ public class ControllerEstadisticas {
 
     //Chequeado
     //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
-    @GetMapping("/hora}")
+    @GetMapping("/hora")
     public List<EstadisticaCantidadHoraCateDTO > obtenerCantidadDeHechosXHoraXCategoria(
             @RequestParam (value = "categoria")String categoria) {
         return this.service.obtenerCantidadDeHechosXHoraXCategoria(categoria);

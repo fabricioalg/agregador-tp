@@ -18,12 +18,15 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.hecho.Adjunto;
 import utn.ddsi.agregador.domain.hecho.Categoria;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.hecho.Provincia;
 import utn.ddsi.agregador.domain.hecho.Ubicacion;
+import utn.ddsi.agregador.repository.IRepositoryCategorias;
+import utn.ddsi.agregador.repository.IRepositoryProvincias;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 @Component
@@ -35,16 +38,21 @@ public class Normalizador {
     private static final double EPSILON = 1e-9;
     private final List<ProvinciaPoligono> provinciasPorCoordenada;
     private final Map<String, Provincia> provinciaCache = new HashMap<>();
+    private final IRepositoryCategorias repoCategoria;
+    private final IRepositoryProvincias repoProvincia;
 
-    public Normalizador() {
-        this(Clock.systemDefaultZone());
+    @Autowired
+    public Normalizador(IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia) {
+        this(Clock.systemDefaultZone(), repoCategoria, repoProvincia);
     }
     
     //esto es para los tests
-    public Normalizador(Clock clock) {
+    public Normalizador(Clock clock, IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia) {
         this.clock = clock;
+        this.repoCategoria = repoCategoria;
         this.categoriasCanonicas = inicializarCategoriasCanonicas();
         this.provinciasPorCoordenada = inicializarProvincias();
+        this.repoProvincia = repoProvincia;
     }
 
     public List<Hecho> normalizar(List<Hecho> hechos) {
@@ -124,7 +132,13 @@ public class Normalizador {
         }
 
         categoria.setNombre(canonico);
-        
+        Categoria found = this.repoCategoria.findByNombre(categoria.getNombre());
+        if(found == null){
+            found = new Categoria();
+            found.setNombre(categoria.getNombre());
+            this.repoCategoria.save(found);
+        }
+        hecho.setCategoria(found);
     }
 
     private void normalizarUbicacion(Hecho hecho) {
@@ -152,7 +166,10 @@ public class Normalizador {
                 ubicacion.setProvincia(obtenerProvinciaExterior());
             }
         }
+
     }
+    //TODO: Las provincias se repiten al momento de subirlas
+
 
     private void combinarHechos(Hecho base, Hecho candidato) {
         if (candidato.getDescripcion() != null && (base.getDescripcion() == null
@@ -241,28 +258,43 @@ public class Normalizador {
         return new ArrayList<>(adjuntosPorUrl.values());
     }
 
-    private Provincia identificarProvincia(float latitud, float longitud) {
+    private Provincia identificarProvincia(Float latitud, Float longitud) {
         for (ProvinciaPoligono provincia : provinciasPorCoordenada) {
             if (provincia.contiene(latitud, longitud)) {
-                return provinciaCache.computeIfAbsent(provincia.nombre(), this::crearProvincia);
+                return provinciaCache.computeIfAbsent(provincia.nombre(), this::buscarOCrearProvincia);
             }
         }
         return null;
     }
 
-    private Provincia crearProvincia(String nombre) {
-        Provincia provincia = new Provincia();
-        provincia.setNombre(nombre);
-        provincia.setPais("Argentina");
-        return provincia;
+    private Provincia buscarOCrearProvincia(String nombre) {
+        Provincia existente = this.repoProvincia.findByNombre(nombre);
+
+        if (existente != null) {
+            return existente;
+        }
+
+        Provincia nueva = new Provincia();
+        nueva.setNombre(nombre);
+        nueva.setPais("Argentina");
+
+        return this.repoProvincia.save(nueva);
     }
+
 
     private Provincia obtenerProvinciaExterior() {
         return provinciaCache.computeIfAbsent("EXTERIOR", key -> {
+            Provincia existente = this.repoProvincia.findByNombre("EXTERIOR");
+
+            if (existente != null) {
+                return existente;
+            }
+
             Provincia provincia = new Provincia();
             provincia.setNombre("EXTERIOR");
             provincia.setPais("EXTERIOR");
-            return provincia;
+
+            return this.repoProvincia.save(provincia);
         });
     }
 

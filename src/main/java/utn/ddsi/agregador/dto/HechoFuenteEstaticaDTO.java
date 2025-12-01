@@ -13,7 +13,8 @@ public class HechoFuenteEstaticaDTO {
     private String titulo;
     private String descripcion;
     private LocalDate fecha;
-    private UbicacionDTO ubicacion;
+    private Float  latitud;
+    private Float longitud;
     private FuenteDTO fuente;
     private CategoriaDTO categoria;
 }

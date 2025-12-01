@@ -33,6 +33,7 @@ public class LoaderEstatico extends Loader {
 
 
     public List<Hecho> obtenerHechos() {
+        String fuenteUrl = "";
         try{
             ResponseEntity<HechoFuenteEstaticaDTO[][]> response =
                     restTemplate.exchange(
@@ -50,13 +51,21 @@ public class LoaderEstatico extends Loader {
 
             List<Hecho> hechosTransformados = new ArrayList<>();
             for (int i = 0; i<hechosDTO.length; i++ ) {
-                String ruta = hechosDTO[i][0].getFuente().getRuta();
-                List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteEstatica(ruta, List.of(hechosDTO[i]));
+                fuenteUrl = hechosDTO[i][0].getFuente().getRuta();
+                List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteEstatica(fuenteUrl, List.of(hechosDTO[i]));
                 hechosTransformados.addAll(transformado);
             }
 
             return hechosTransformados;
         } catch (Exception e) {
+            ResponseEntity<String> response =
+                    restTemplate.exchange(
+                            this.getRuta() + "/reprocesar/" + fuenteUrl,
+                            HttpMethod.POST,
+                            null,
+                            String.class
+                    );
+            System.out.println("El archivo no se pudo procesar " + fuenteUrl);
             throw new RuntimeException("Error al obtener hechos desde " + this.getRuta(), e);
         }
     }

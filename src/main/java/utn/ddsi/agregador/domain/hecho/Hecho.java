@@ -39,7 +39,7 @@ public class Hecho {
     private LocalDateTime fechaDeCarga;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Fuente fuente;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Ubicacion ubicacion;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Etiqueta etiqueta;

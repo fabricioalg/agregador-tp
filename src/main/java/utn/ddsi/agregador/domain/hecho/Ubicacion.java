@@ -15,13 +15,13 @@ public class Ubicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_ubicacion;
-    private float latitud;
-    private float longitud;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private Float latitud;
+    private Float longitud;
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "id_provincia")
     private Provincia provincia;
 
-    public Ubicacion(float latitud, float longitud) {
+    public Ubicacion(Float latitud, Float longitud) {
         this.latitud = latitud;
         this.longitud = longitud;
     }

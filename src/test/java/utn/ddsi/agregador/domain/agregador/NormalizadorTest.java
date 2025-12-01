@@ -23,7 +23,7 @@ import utn.ddsi.agregador.utils.TipoMedia;
 class NormalizadorTest {
 
     private final Clock clock = Clock.fixed(Instant.parse("2025-01-10T00:00:00Z"), ZoneOffset.UTC);
-    private final Normalizador normalizador = new Normalizador(clock);
+    private final Normalizador normalizador = new Normalizador(clock, null, null);
 
     @Test
     void normalizaCategoriaFechasYProvincia() {

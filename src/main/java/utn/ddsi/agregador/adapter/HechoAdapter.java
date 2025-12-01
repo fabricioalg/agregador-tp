@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.*;
-import utn.ddsi.agregador.dto.FuenteDTO;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
@@ -13,12 +12,10 @@ import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Component
 public class HechoAdapter {
@@ -28,23 +25,15 @@ public class HechoAdapter {
     @Value("${fuente.dinamica.url}")
     private String dinamicaUrl;
 
-
     @Autowired
     private final IRepositoryFuentes repoFuente;
-    private final IRepositoryCategorias repoCategoria;
-    public HechoAdapter(IRepositoryFuentes repoFuente, IRepositoryCategorias repoCategoria) {
+    public HechoAdapter(IRepositoryFuentes repoFuente) {
         this.repoFuente = repoFuente;
-        this.repoCategoria = repoCategoria;
     }
 
     public Hecho adaptarDesdeFuenteDinamica(HechoFuenteDinamicaDTO dto, Fuente fuente) {
         // convierto componentes
-        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria());
-        if(categoria == null) {
-            categoria = new Categoria();
-            categoria.setNombre(dto.getCategoria());
-            categoria = this.repoCategoria.save(categoria);
-        }
+        Categoria categoria = new Categoria(dto.getCategoria());
 
         Ubicacion ubicacion = null;
         if (dto.getUbicacion() != null) {
@@ -90,12 +79,7 @@ public class HechoAdapter {
         return hecho;
     }
     public Hecho adaptarDesdeFuenteProxy(HechoFuenteProxyDTO dto, Fuente fuente){
-        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria());
-        if(categoria == null) {
-            categoria = new Categoria();
-            categoria.setNombre(dto.getCategoria());
-            categoria = this.repoCategoria.save(categoria);
-        }
+        Categoria categoria = new Categoria(dto.getCategoria());
 
         Ubicacion ubicacion = new Ubicacion(Float.valueOf( dto.getUbicacionLat()),Float.valueOf(dto.getUbicacionLon())); //Chequear orden
 
@@ -128,22 +112,12 @@ public class HechoAdapter {
         }
         return hechos;
     }
+    //TODO: Se persiste mal la ubicacion, aparece 0 y 0 en latitud y longitud
 
     public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto, Fuente fuente) {
-        Categoria categoria = this.repoCategoria.findByNombre(dto.getCategoria().getNombre());
-        if(categoria == null) {
-            categoria = new Categoria();
-            categoria.setNombre(dto.getCategoria().getNombre());
-            categoria = this.repoCategoria.save(categoria);
-        }
+        Categoria categoria = new Categoria(dto.getCategoria().getNombre());
 
-        Ubicacion ubicacion = null;
-        if (dto.getUbicacion() != null) {
-            ubicacion = new Ubicacion(
-                    dto.getUbicacion().getLatitud(),
-                    dto.getUbicacion().getLongitud()
-            );
-        }
+        Ubicacion ubicacion = new Ubicacion(dto.getLatitud(), dto.getLongitud());
 
         Hecho hecho = new Hecho(
                 dto.getTitulo(),
