@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,7 @@ public class ActualizadorColecciones {
         repositoryHechos.saveAll(hechosNormalizados);
         return hechosNormalizados;
     }
+    @Transactional
     public void actualizarColecciones(){
         List<Hecho> hechosNuevos = depurarHechos();
         List<Hecho> hechosTotales = repositoryHechos.findAll();
@@ -69,6 +71,15 @@ public class ActualizadorColecciones {
                             coleccion.getCondicionDePertenencia(), hechosNuevos
                     );
             coleccion.agregarHechos(hechosFiltrados);
+        }
+        repositoryColecciones.saveAll(colecciones);
+    }
+    @Transactional
+    public void ejecutarAlgoritmosDeConsenso(){
+        List<Coleccion> colecciones = repositoryColecciones.findAll();
+        for (Coleccion c : colecciones) {
+            c.actualizarFuentes();
+            c.aplicarConsensoAtodos();
         }
         repositoryColecciones.saveAll(colecciones);
     }

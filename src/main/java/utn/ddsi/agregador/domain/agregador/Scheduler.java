@@ -21,4 +21,12 @@ public class Scheduler {
             System.err.println("[Scheduler] Error en actualización: " + e.getMessage());
         }
     }
+    @Scheduled(cron = "0 0 1 * * *")
+    public void ejecutarAlgoritmosDeConsenso() {
+        try {
+            actualizador.ejecutarAlgoritmosDeConsenso();
+        } catch (Exception e) {
+            System.err.println("[Scheduler] Error en actualización: " + e.getMessage());
+        }
+    }
 }

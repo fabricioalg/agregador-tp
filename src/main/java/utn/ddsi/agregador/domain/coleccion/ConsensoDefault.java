@@ -11,4 +11,3 @@ public class ConsensoDefault extends AlgoritmoDeConsenso {
         return true;
     }
 }
-// return hechos.stream().map(HechoXColeccion::getHecho).collect(Collectors.toList());

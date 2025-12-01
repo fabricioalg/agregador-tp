@@ -23,7 +23,7 @@ public class AgregadorApplication {
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
         System.out.println("Funciona");
-
+/*
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
         IRepositoryColecciones repoCol = ctx.getBean(IRepositoryColecciones.class);
         IRepositorySolicitudes repoSol = ctx.getBean(IRepositorySolicitudes.class);
@@ -38,6 +38,9 @@ public class AgregadorApplication {
         ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter);
 
         act.depurarHechos();
-
+*/
+        ActualizadorColecciones act = ctx.getBean(ActualizadorColecciones.class);
+        act.depurarHechos();
+        act.ejecutarAlgoritmosDeConsenso();
     }
 }

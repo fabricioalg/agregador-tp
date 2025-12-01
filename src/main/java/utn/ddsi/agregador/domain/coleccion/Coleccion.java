@@ -10,6 +10,7 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,22 +49,24 @@ public class Coleccion {
     @Enumerated(EnumType.STRING)
     private EnumTipoDeAlgoritmo tipoDeAlgoritmo;
 
-    public Coleccion(String titulo, String descripcion, List<Fuente> fuentes) {
+    public Coleccion(String titulo, String descripcion) {
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.fuentes = fuentes;
+        this.fuentes = new ArrayList<>();
         this.hechos = new ArrayList<>();
         this.tipoDeAlgoritmo = EnumTipoDeAlgoritmo.DEFAULT;
         this.algoritmoDeConsenso = new ConsensoDefault();
     }
 
     public Coleccion() {
-
     }
     public Coleccion(String titulo) {
         this.titulo = titulo;
         this.hechos = new ArrayList<>();
+        this.fuentes = new ArrayList<>();
         this.condicionDePertenencia = new ArrayList<>();
+        this.tipoDeAlgoritmo = EnumTipoDeAlgoritmo.DEFAULT;
+        this.algoritmoDeConsenso = new ConsensoDefault();
     }
 
     @PostLoad
@@ -97,9 +100,16 @@ public class Coleccion {
 //        return hechosConsensuados
 //  }
 
-    public List<Fuente> obtenerFuentes() {
-        List<Fuente> fuentes = this.hechos.stream().map(hxc -> hxc.getHecho().getFuente()).distinct().collect(Collectors.toList());
-        return fuentes;
+    public void actualizarFuentes() { //ex obtenerFuentes
+        if (hechos == null || hechos.isEmpty()) {
+            this.fuentes = Collections.emptyList();
+            return;
+        }
+
+        this.fuentes = hechos.stream()
+                .map(hxc -> hxc.getHecho().getFuente())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public void agregarHechos(List<Hecho> nuevosHechos) {

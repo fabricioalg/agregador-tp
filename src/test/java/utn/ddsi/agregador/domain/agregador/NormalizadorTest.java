@@ -40,7 +40,7 @@ class NormalizadorTest {
         Hecho resultado = normalizados.get(0);
         assertEquals("Incendio forestal", resultado.getCategoria().getNombre());
         assertEquals(LocalDate.of(2025, 1, 10), resultado.getFecha());
-        assertEquals(LocalDate.of(2025, 1, 10), resultado.getFechaDeCarga());
+        assertEquals(LocalDateTime.of(2025, 1, 10,0,0), resultado.getFechaDeCarga());
         assertEquals("Incendio forestal en cordoba", resultado.getTitulo());
         assertNotNull(resultado.getUbicacion());
         assertNotNull(resultado.getUbicacion().getProvincia());

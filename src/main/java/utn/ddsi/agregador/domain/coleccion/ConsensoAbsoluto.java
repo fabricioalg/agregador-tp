@@ -3,16 +3,21 @@ package utn.ddsi.agregador.domain.coleccion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-//MODIFICAR ESTO, no son las mismas fuentes del metamapa
-public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
+import java.util.*;
+import java.util.stream.Collectors;
 
+public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
     @Override
     public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes) {
+        Set<Fuente>fuentesCoincidentes = obtenerFuentesCoincidentes(hechoEvaluado, todos, fuentes);
+        return fuentesCoincidentes.size() == fuentes.size();
+    }
+}
+/*
+@Override
+    public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes) {
         Hecho hecho = hechoEvaluado.getHecho();
+        boolean consensuado = false;
 
         // Contar cuántas veces aparece este hecho en la lista total
         long cantidad = todos.stream()
@@ -23,8 +28,9 @@ public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
         int minimo = (int) Math.ceil(fuentes.size() / 2.0);
 
         // Determinar si es consensuado
-        boolean consensuado = cantidad >= minimo;
-
+        if(minimo > 0) {
+            consensuado = cantidad >= minimo;
+        }
         return consensuado;
     }
-}
+ */

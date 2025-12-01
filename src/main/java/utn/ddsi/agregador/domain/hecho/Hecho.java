@@ -1,6 +1,7 @@
 package utn.ddsi.agregador.domain.hecho;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @Table(name = "hecho")
+@EqualsAndHashCode(of = {"titulo", "descripcion", "categoria", "fecha", "ubicacion", "etiqueta"})
 public class Hecho {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
