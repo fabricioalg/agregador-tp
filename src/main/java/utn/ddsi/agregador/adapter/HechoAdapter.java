@@ -11,6 +11,8 @@ import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
+import utn.ddsi.agregador.utils.EnumTipoHecho;
+import utn.ddsi.agregador.utils.TipoMedia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,37 +45,34 @@ public class HechoAdapter {
             );
         }
 
-        // determino si es multimedia o texto según tenga adjunto
-        Hecho hecho= new Hecho(); //cargar de datos
-        /*
-        if (dto.getAdjunto() != null && dto.getAdjunto().getUrl() != null && !dto.getAdjunto().getUrl().isEmpty()) {
-            // Es multimedia
-            HechoMultimedia hechoMultimedia = new HechoMultimedia(
-                dto.getTitulo(),
-                dto.getDescripcion(),
-                categoria,
-                ubicacion,
-                dto.getFecha(),
-                fuente
-            );
-            hechoMultimedia.rutaAlContenido = dto.getAdjunto().getUrl();
-            hecho = hechoMultimedia;
-        } else {
-            // Es texto
-            HechoTexto hechoTexto = new HechoTexto(
-                dto.getTitulo(),
-                dto.getDescripcion(),
-                categoria,
-                ubicacion,
-                dto.getFecha(),
-                fuente
-            );
-            hechoTexto.informacion = dto.getDescripcion();
-            hecho = hechoTexto;
-        }
-*/
+        Hecho hecho = new Hecho(
+            dto.getTitulo(),
+            dto.getDescripcion(),
+            categoria,
+            ubicacion,
+            dto.getFecha(),
+            fuente
+        );
 
-        // Establecer la fecha de carga como la fecha actual (cuando se recibe)
+        // Determinar tipo de hecho
+        if (dto.getTipoDeHecho() != null) {
+            hecho.setTipoHecho(EnumTipoHecho.valueOf(dto.getTipoDeHecho()));
+        }
+
+        // Adaptar adjuntos
+        if (dto.getAdjuntos() != null && !dto.getAdjuntos().isEmpty()) {
+            List<Adjunto> adjuntos = new ArrayList<>();
+            for (var adjuntoDTO : dto.getAdjuntos()) {
+                Adjunto adjunto = new Adjunto();
+                adjunto.setUrl(adjuntoDTO.getUrl());
+                if (adjuntoDTO.getTipo() != null) {
+                    adjunto.setTipo(TipoMedia.valueOf(adjuntoDTO.getTipo()));
+                }
+                adjuntos.add(adjunto);
+            }
+            hecho.setAdjuntos(adjuntos);
+        }
+
         hecho.setFechaDeCarga(LocalDateTime.now());
 
         return hecho;

@@ -8,27 +8,25 @@ import utn.ddsi.agregador.adapter.HechoAdapter;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.HechoFuenteDinamicaDTO;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class LoaderDinamico extends Loader {
-private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    public LoaderDinamico(@Value("${fuente.dinamico.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) throws MalformedURLException {
+    public LoaderDinamico(@Value("${fuente.dinamica.url}") String rutaUrl, RestTemplate restTemplate, HechoAdapter adapter) {
         this.setRuta(rutaUrl);
         this.restTemplate = restTemplate;
         this.setAdapter(adapter);
     }
 
-    //Ver lo de la hora donde agregar
     @Override
     public List<Hecho> obtenerHechos() {
-        try{
+        try {
             ResponseEntity<HechoFuenteDinamicaDTO[]> response =
                     restTemplate.exchange(
-                            getRuta()+"/hechos",
+                            getRuta() + "/hechos",
                             HttpMethod.GET,
                             null,
                             HechoFuenteDinamicaDTO[].class
@@ -36,18 +34,11 @@ private final RestTemplate restTemplate;
 
             HechoFuenteDinamicaDTO[] hechosDTO = response.getBody();
 
-            if (hechosDTO == null) {
+            if (hechosDTO == null || hechosDTO.length == 0) {
                 return Collections.emptyList();
             }
 
-            List<Hecho> hechosTransformados = new ArrayList<>();
-            for (int i = 0; i<hechosDTO.length; i++ ) {
-                //String ruta = hechosDTO[i].getFuente().getRuta();
-                List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteDinamica(List.of(hechosDTO[i]));
-                hechosTransformados.addAll(transformado);
-            }
-
-            return hechosTransformados;
+            return this.getAdapter().adaptarHechosDeFuenteDinamica(Arrays.asList(hechosDTO));
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener hechos desde " + getRuta(), e);
         }
