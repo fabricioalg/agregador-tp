@@ -7,6 +7,7 @@ import utn.ddsi.agregador.domain.agregador.ActualizadorColecciones;
 import utn.ddsi.agregador.domain.agregador.FiltradorDeHechos;
 import utn.ddsi.agregador.domain.agregador.Normalizador;
 import utn.ddsi.agregador.domain.fuentes.Loader;
+import utn.ddsi.agregador.domain.fuentes.LoaderDinamico;
 import utn.ddsi.agregador.domain.fuentes.LoaderEstatico;
 import utn.ddsi.agregador.domain.solicitudEliminacion.DetectorBasicoDeSpam;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
@@ -31,12 +32,15 @@ public class AgregadorApplication {
         IRepositoryHechoXColeccion repoHxC = ctx.getBean(IRepositoryHechoXColeccion.class);
 
 
-        LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
+//        LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
+        LoaderDinamico loaderDin = ctx.getBean(LoaderDinamico.class);
+
         FiltradorDeHechos filter = new FiltradorDeHechos();
         Normalizador normalizador = new Normalizador(repoCat, repoProv);
         DetectorBasicoDeSpam detectorBasico = new DetectorBasicoDeSpam();
         List<Loader> loaders = new ArrayList<>();
-        loaders.add(loaderEs);
+        //loaders.add(loaderEs);
+        loaders.add(loaderDin);
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
 
 
