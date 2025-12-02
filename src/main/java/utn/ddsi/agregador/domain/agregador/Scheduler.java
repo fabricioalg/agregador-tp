@@ -12,8 +12,8 @@ public class Scheduler {
         this.actualizador = actualizador;
     }
 
-    // Ejecuta cada 30 minutos
-    @Scheduled(fixedRate = 30 * 60 * 1000)
+    // Ejecuta cada hora
+    @Scheduled(fixedRate = 3600000)
     public void ejecutarActualizacionPeriodica() {
         try {
             actualizador.actualizarColecciones();

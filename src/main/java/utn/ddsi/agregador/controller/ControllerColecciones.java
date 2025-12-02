@@ -14,12 +14,12 @@ import java.util.Optional;
 public class ControllerColecciones {
     @Autowired
     private ServiceColecciones service;
-    @PutMapping
+    /*
+    @PutMapping este me parece que nao sirve
     public void cargarColeccionConHechos(Long id, List<Hecho> hechos){
         service.cargarColeccionConHechos(id,hechos);
     }
 
-    /*
     @PostMapping
     public void crearColeccion(@RequestBody Coleccion coleccion) {
         service.crearColeccion(coleccion.getTitulo(), coleccion.getDescripcion(), coleccion.getFuentes());

@@ -16,7 +16,7 @@ import java.util.Optional;
 public class ServiceColecciones {
     @Autowired
     private IRepositoryColecciones repositoryColecciones;
-
+    /* PREGUNTA SERIA, ESTO SIRVE? para mi no atte Fabri
     public void cargarColeccionConHechos(Long id, List<Hecho> hechos){
         Optional<Coleccion> coleccionConTitulo = repositoryColecciones.findById(id);
         if(coleccionConTitulo.isPresent()){
@@ -25,7 +25,7 @@ public class ServiceColecciones {
         else{
             throw new RuntimeException("no se encontró la coleccion");
         }
-    }
+    }*/
     public void crearColeccion(String titulo, String descripcion) {
         Coleccion nuevaCole = new Coleccion(titulo,descripcion);
         repositoryColecciones.save(nuevaCole);

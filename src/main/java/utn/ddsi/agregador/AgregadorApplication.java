@@ -19,6 +19,7 @@ import java.util.List;
 public class AgregadorApplication {
 
     public static void main(String[] args) {
+
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
         System.out.println("Funciona");
 
@@ -41,12 +42,8 @@ public class AgregadorApplication {
 
         ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
         act.actualizarColecciones();
-
-        //act.depurarHechos();
-        /*
-        ActualizadorColecciones act = ctx.getBean(ActualizadorColecciones.class);
-        act.depurarHechos();
         act.ejecutarAlgoritmosDeConsenso();
-        */
+        System.out.println("Finalizado");
+
     }
 }

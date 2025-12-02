@@ -1,7 +1,6 @@
 package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -101,16 +100,8 @@ public class Coleccion {
 //        return hechosConsensuados
 //  }
 
-    public void actualizarFuentes() { //ex obtenerFuentes
-        if (hechos == null || hechos.isEmpty()) {
-            this.fuentes = Collections.emptyList();
-            return;
-        }
-
-        this.fuentes = hechos.stream()
-                .map(hxc -> hxc.getHecho().getFuente())
-                .distinct()
-                .collect(Collectors.toList());
+    public void actualizarFuentes(List<Fuente> fuentes) {//ex obtenerFuentes
+        this.fuentes =fuentes;
     }
 
     public void agregarHechos(List<Hecho> nuevosHechos) {
@@ -144,7 +135,7 @@ public class Coleccion {
     }
     public void aplicarConsenso(HechoXColeccion hechoxcoleccion){
         if(algoritmoDeConsenso.aplicar(hechoxcoleccion,hechos,fuentes)){
-            hechoxcoleccion.setConsensuado(true);
+            hechoxcoleccion.setConsensuado(Boolean.TRUE);
         }
     }
 
