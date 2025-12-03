@@ -90,9 +90,6 @@ public class Normalizador {
             }
         }
 
-        repoCategoria.saveAll(categoriasExistentes);
-        repoProvincia.saveAll(provinciasExistentes);
-
         return new ArrayList<>(hechosDepurados.values());
     }
 
@@ -151,7 +148,8 @@ public class Normalizador {
 
         if(cate != null){
             //categoria.setNombre(canonico);
-            hecho.setCategoria(categoria);
+            hecho.setCategoria(cate);
+
         } else {
             Categoria nueva = new Categoria();
             nueva.setNombre(canonico);
