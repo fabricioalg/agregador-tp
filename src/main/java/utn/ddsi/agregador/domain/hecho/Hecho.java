@@ -29,7 +29,7 @@ public class Hecho {
     private String titulo;
     @Column(name="descripcion",length = 1000)
     private String descripcion;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private Categoria categoria;
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;

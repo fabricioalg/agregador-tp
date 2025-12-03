@@ -32,21 +32,21 @@ public class AgregadorApplication {
         IRepositoryHechoXColeccion repoHxC = ctx.getBean(IRepositoryHechoXColeccion.class);
 
 
-//        LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
-        LoaderDinamico loaderDin = ctx.getBean(LoaderDinamico.class);
+        LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
+//        LoaderDinamico loaderDin = ctx.getBean(LoaderDinamico.class);
 
         FiltradorDeHechos filter = new FiltradorDeHechos();
         Normalizador normalizador = new Normalizador(repoCat, repoProv);
         DetectorBasicoDeSpam detectorBasico = new DetectorBasicoDeSpam();
         List<Loader> loaders = new ArrayList<>();
-        //loaders.add(loaderEs);
-        loaders.add(loaderDin);
+        loaders.add(loaderEs);
+        //loaders.add(loaderDin);
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
 
 
         ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
         act.actualizarColecciones();
-        act.ejecutarAlgoritmosDeConsenso();
+        //act.ejecutarAlgoritmosDeConsenso();
         System.out.println("Finalizado");
 
     }
