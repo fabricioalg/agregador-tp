@@ -111,7 +111,6 @@ public class HechoAdapter {
         }
         return hechos;
     }
-    //TODO: Se persiste mal la ubicacion, aparece 0 y 0 en latitud y longitud
 
     public Hecho adaptarDesdeFuenteEstatica(HechoFuenteEstaticaDTO dto, Fuente fuente) {
         Categoria categoria = new Categoria(dto.getCategoria().getNombre());
@@ -126,7 +125,7 @@ public class HechoAdapter {
                 dto.getFecha(),
                 fuente
         );
-
+        hecho.setTipoHecho(EnumTipoHecho.TEXTO);
         hecho.setFechaDeCarga(LocalDateTime.now());
         return hecho;
     }

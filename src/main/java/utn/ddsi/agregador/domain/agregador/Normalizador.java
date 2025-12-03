@@ -173,7 +173,7 @@ public class Normalizador {
         */
     }
 
-
+    /*
     private void normalizarUbicacion(Hecho hecho, List<Provincia> existentes) {
 
         Ubicacion ubicacion = hecho.getUbicacion();
@@ -232,7 +232,60 @@ public class Normalizador {
             hecho.setUbicacion(nuevaUbi);
         }
 
+    }*/
+
+    private void normalizarUbicacion(Hecho hecho, List<Provincia> existentes) {
+        Ubicacion ubicacion = hecho.getUbicacion();
+        if (ubicacion == null) return;
+
+        float latitud = ubicacion.getLatitud();
+        float longitud = ubicacion.getLongitud();
+
+        if (!coordenadasValidas(latitud, longitud)) {
+            hecho.setUbicacion(null);
+            return;
+        }
+
+        ubicacion.setLatitud(redondear(latitud));
+        ubicacion.setLongitud(redondear(longitud));
+
+        // Solo procesamos si no tiene provincia asignada
+        if (ubicacion.getProvincia() == null) {
+
+            // 1. Identificamos el nombre (será el nombre real o NULL si es exterior)
+            String nombreDetectado = identificarProvincia(ubicacion.getLatitud(), ubicacion.getLongitud());
+            String nombreFinal = (nombreDetectado != null) ? nombreDetectado : "EXTERIOR";
+            String paisFinal = (nombreDetectado != null) ? "Argentina" : "EXTERIOR";
+
+            // 2. Buscamos si ya existe en la lista (Memoria/BD)
+            Provincia provincia = existentes.stream()
+                    .filter(p -> p.getNombre() != null && p.getNombre().equalsIgnoreCase(nombreFinal))
+                    .findFirst()
+                    .orElse(null);
+
+            // 3. Si no existe, la creamos y guardamos
+            if (provincia == null) {
+                provincia = new Provincia();
+                provincia.setNombre(nombreFinal);
+                provincia.setPais(paisFinal);
+
+                // Guardamos para tener ID
+                provincia = repoProvincia.save(provincia);
+
+                // Agregamos a la lista local para no re-crearla en el siguiente loop
+                existentes.add(provincia);
+            }
+
+            // 4. 🔥 ASIGNACIÓN FINAL (Esto es lo que te faltaba en el caso EXTERIOR)
+            ubicacion.setProvincia(provincia);
+
+            // 5. Guardamos la ubicación (Ahora con provincia asignada)
+            // Nota: Si Hecho tiene Cascade.PERSIST sobre Ubicacion, esta línea podría ser redundante,
+            // pero no hace daño si quieres asegurar el ID ahora.
+            repoUbicacion.save(ubicacion);
+        }
     }
+
 
     private void combinarHechos(Hecho base, Hecho candidato) {
         if (candidato.getDescripcion() != null && (base.getDescripcion() == null
