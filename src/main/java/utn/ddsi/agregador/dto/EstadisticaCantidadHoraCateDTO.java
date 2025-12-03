@@ -9,4 +9,8 @@ public class EstadisticaCantidadHoraCateDTO {
     private Integer hora;
     private Long cantidad;
 
+    public EstadisticaCantidadHoraCateDTO(Long cantidad, Integer hora) {
+        this.cantidad = cantidad;
+        this.hora = hora;
+    }
 }

@@ -24,7 +24,7 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
             "FROM HechoXColeccion hc " +
             "JOIN hc.hecho h " +
             "JOIN h.ubicacion u " +
-            "WHERE hc.coleccion.id_coleccion = :coleccionId " +
+            "WHERE hc.coleccion.id_coleccion = :coleccion_Id " +
             "GROUP BY u.provincia.nombre")
     List<EstadisticaColeccionHechosXProvinciaDTO> contarHechosDeColeccionDeProvincia(@Param("coleccion_Id") Long coleccioId);
 

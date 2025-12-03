@@ -23,7 +23,7 @@ public class AgregadorApplication {
 
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
         System.out.println("Funciona");
-
+/*
         IRepositoryProvincias repoProv = ctx.getBean(IRepositoryProvincias.class);
         IRepositoryCategorias repoCat = ctx.getBean(IRepositoryCategorias.class);
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
@@ -42,9 +42,9 @@ public class AgregadorApplication {
         loaders.add(loaderEs);
         //loaders.add(loaderDin);
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
-
-        ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
-        act.actualizarColecciones();
+*/
+        //ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
+        //act.actualizarColecciones();
         //act.ejecutarAlgoritmosDeConsenso();
         System.out.println("Finalizado");
 

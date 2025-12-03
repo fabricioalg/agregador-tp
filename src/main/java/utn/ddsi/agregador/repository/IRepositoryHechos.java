@@ -40,7 +40,7 @@ public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
             " HOUR(h.fecha), " +
             " COUNT(h)) " +
             " FROM Hecho h " +
-            " WHERE h.categoria.id_categoria = :idCategoria " +
+            " WHERE h.categoria.id_categoria = :categoria " +
             " GROUP BY HOUR(h.fecha) " +
             " ORDER BY COUNT(h) DESC")
     List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(@Param("categoria") Long categoria);

@@ -50,9 +50,9 @@ public class ServiceEstadisticas {
         Long id_coleccion = coleccionBuscada.getId_coleccion();
         List<EstadisticaColeccionHechosXProvinciaDTO> estadistica = this.repoHechosXColeccion.contarHechosDeColeccionDeProvincia(id_coleccion);
         if(estadistica.isEmpty()){
-            //generar algo vacio o un error
+            return null;
         }
-        return null;
+        return estadistica;
     }
 
     //Se deberia hacer igual que el anterior
