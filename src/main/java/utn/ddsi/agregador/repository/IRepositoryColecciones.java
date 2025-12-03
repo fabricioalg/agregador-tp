@@ -28,4 +28,7 @@ public interface IRepositoryColecciones extends JpaRepository<Coleccion, Long> {
             "LEFT JOIN FETCH c.condicionDePertenencia cond " + // Trae las condiciones
             "WHERE c.id_coleccion = :id")
     Optional<Coleccion> findColeccionCompleta(@Param("id") Long id);
+
+    @Query("SELECT c.id_coleccion FROM Coleccion c")
+    List<Long> findAllIds();
 }

@@ -13,6 +13,7 @@ import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
+import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
@@ -37,6 +38,7 @@ class ActualizadorColeccionesTest {
     @Mock private Loader loader1;
     @Mock private Loader loader2;
     @Mock private IRepositoryHechoXColeccion repositoryHechoXColeccion;
+    @Mock private IRepositoryFuentes repositoryFuentes;
 
     @InjectMocks
     private ActualizadorColecciones actualizador;
@@ -52,7 +54,7 @@ class ActualizadorColeccionesTest {
             gestorSolicitudes,
             loaders,
             filtrador,
-            repositoryHechoXColeccion
+            repositoryHechoXColeccion, repositoryFuentes
         );
     }
 

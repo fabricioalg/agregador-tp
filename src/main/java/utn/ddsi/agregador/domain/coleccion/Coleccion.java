@@ -7,6 +7,7 @@ import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
+import utn.ddsi.agregador.dto.HechoFuenteDTO;
 import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.ArrayList;
@@ -130,14 +131,15 @@ public class Coleccion {
                 .collect(Collectors.toList());
     }
 
-    public void aplicarConsensoAtodos(){
-        this.hechos.forEach(this::aplicarConsenso);
-    }
-    public void aplicarConsenso(HechoXColeccion hechoxcoleccion){
-        if(algoritmoDeConsenso.aplicar(hechoxcoleccion,hechos,fuentes)){
-            hechoxcoleccion.setConsensuado(Boolean.TRUE);
+    public void aplicarConsenso(HechoXColeccion hxc,
+                                List<HechoXColeccion> todos,
+                                HechoFuenteDTO dataFuenteEvaluada,
+                                List<HechoFuenteDTO> todosLosDatosDeFuentes){
+        if(algoritmoDeConsenso.aplicar(hxc, todos, fuentes, dataFuenteEvaluada, todosLosDatosDeFuentes)){
+            hxc.setConsensuado(Boolean.TRUE);
         }
     }
+
 
     // Metodo para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
     public void setTipoDeAlgoritmo(EnumTipoDeAlgoritmo tipoDeAlgoritmo) {

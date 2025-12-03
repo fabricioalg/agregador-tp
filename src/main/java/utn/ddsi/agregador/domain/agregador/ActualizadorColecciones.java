@@ -1,15 +1,9 @@
 package utn.ddsi.agregador.domain.agregador;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
@@ -18,7 +12,9 @@ import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
+import utn.ddsi.agregador.dto.HechoFuenteDTO;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
+import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
@@ -32,8 +28,9 @@ public class ActualizadorColecciones {
     private final GestorDeSolicitudes gestorSolicitudes;
     public final FiltradorDeHechos filtradorDeHechos;
     public final IRepositoryHechoXColeccion repoHechoxColeccion;
+    public final IRepositoryFuentes repositoryFuente;
 
-    public ActualizadorColecciones(IRepositoryColecciones rcole, IRepositoryHechos rhechos, Normalizador normal, GestorDeSolicitudes gestor, List<Loader> loaders, FiltradorDeHechos filtrador, IRepositoryHechoXColeccion repositoryHechoXColeccion) {
+    public ActualizadorColecciones(IRepositoryColecciones rcole, IRepositoryHechos rhechos, Normalizador normal, GestorDeSolicitudes gestor, List<Loader> loaders, FiltradorDeHechos filtrador, IRepositoryHechoXColeccion repositoryHechoXColeccion, IRepositoryFuentes repositoryFuente) {
         this.repositoryColecciones = rcole;
         this.repositoryHechos = rhechos;
         this.gestorSolicitudes = gestor;
@@ -41,6 +38,7 @@ public class ActualizadorColecciones {
         this.loaders = loaders;
         this.filtradorDeHechos = filtrador;
         this.repoHechoxColeccion = repositoryHechoXColeccion;
+        this.repositoryFuente = repositoryFuente;
     }
     public List<Hecho> traerHechosDeLoaders(){
         List <Hecho> hechosNuevos = new ArrayList();
@@ -91,28 +89,62 @@ public class ActualizadorColecciones {
         }
         repositoryColecciones.saveAll(colecciones);
     }
-
+/*
     @Transactional
     public void ejecutarAlgoritmosDeConsenso() {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         for (Coleccion coleccion : colecciones) {
-            List<HechoXColeccion> hechosEnColeccion = repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
-            /* esto es debatible que este acá
-            List<Fuente> fuentes = hechosEnColeccion.isEmpty()
-                    ? Collections.emptyList()
-                    : hechosEnColeccion.stream()
-                    .map(hxc -> hxc.getHecho().getFuente())
-                    .distinct()
-                    .toList();
-
+            List<Fuente> fuentes = repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
             coleccion.actualizarFuentes(fuentes);
-             */
-
+            List<HechoXColeccion> hechosEnColeccion = repoHechoxColeccion.findHechosByColeccionId(coleccion.getId_coleccion());
             for (HechoXColeccion hxc : hechosEnColeccion) {
-                coleccion.aplicarConsenso(hxc);
+                coleccion.aplicarConsenso(hxc, hechosEnColeccion);
                 repoHechoxColeccion.save(hxc);
             }
         }
         repositoryColecciones.saveAll(colecciones);
+    }*/
+    @Transactional
+    public void ejecutarAlgoritmosDeConsenso() {
+
+        List<Coleccion> colecciones = repositoryColecciones.findAll();
+
+        for (Coleccion coleccion : colecciones) {
+
+            // 1. Cargar las fuentes de la colección
+            List<Fuente> fuentes = repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
+            coleccion.actualizarFuentes(fuentes);
+
+            // 2. Cargar DTOs sin N+1
+            List<HechoFuenteDTO> datosHechoFuente =
+                    repoHechoxColeccion.findHechoFuenteData(coleccion.getId_coleccion());
+
+            // Mapa rápido idHecho -> DTO
+            Map<Long, HechoFuenteDTO> dtoPorHecho =
+                    datosHechoFuente.stream()
+                            .collect(Collectors.toMap(
+                                    HechoFuenteDTO::getIdHecho,
+                                    d -> d,
+                                    (a, b) -> a
+                            ));
+
+            // 3. Cargar entidades HechoXColeccion sin fetch join
+            List<HechoXColeccion> hechos =
+                    repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
+
+            // 4. Aplicar consenso
+            for (HechoXColeccion hxc : hechos) {
+
+                HechoFuenteDTO data = dtoPorHecho.get(hxc.getHecho().getId_hecho());
+
+                coleccion.aplicarConsenso(hxc, hechos, data, datosHechoFuente);
+
+                repoHechoxColeccion.save(hxc);
+            }
+        }
+
+        repositoryColecciones.saveAll(colecciones);
     }
+
 }
+

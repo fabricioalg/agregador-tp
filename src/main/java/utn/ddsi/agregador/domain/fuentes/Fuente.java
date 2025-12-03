@@ -12,7 +12,7 @@ import utn.ddsi.agregador.utils.EnumTipoFuente;
 public class Fuente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id_fuente;
+    private Long id_fuente;
     @Column(nullable = false)
     private String nombre;
     @Column(nullable = false)
@@ -21,7 +21,7 @@ public class Fuente {
     @Column(nullable = false)
     private EnumTipoFuente tipoFuente;
 
-    public Fuente(long id, String nombre, String url, EnumTipoFuente tipoFuente) {
+    public Fuente(Long id, String nombre, String url, EnumTipoFuente tipoFuente) {
         this.nombre = nombre;
         this.url = url;
         this.tipoFuente = tipoFuente;

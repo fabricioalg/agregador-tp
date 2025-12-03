@@ -23,7 +23,7 @@ public class AgregadorApplication {
 
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
         System.out.println("Funciona");
-/*
+
         IRepositoryProvincias repoProv = ctx.getBean(IRepositoryProvincias.class);
         IRepositoryCategorias repoCat = ctx.getBean(IRepositoryCategorias.class);
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
@@ -31,21 +31,22 @@ public class AgregadorApplication {
         IRepositorySolicitudes repoSol = ctx.getBean(IRepositorySolicitudes.class);
         IRepositoryHechoXColeccion repoHxC = ctx.getBean(IRepositoryHechoXColeccion.class);
         IRepositoryUbicacion repoUbi = ctx.getBean(IRepositoryUbicacion.class);
+        IRepositoryFuentes repoFu = ctx.getBean(IRepositoryFuentes.class);
 
-        LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
+        //LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
         //LoaderDinamico loaderDin = ctx.getBean(LoaderDinamico.class);
 
         FiltradorDeHechos filter = new FiltradorDeHechos();
         Normalizador normalizador = new Normalizador(repoCat, repoProv, repoUbi);
         DetectorBasicoDeSpam detectorBasico = new DetectorBasicoDeSpam();
         List<Loader> loaders = new ArrayList<>();
-        loaders.add(loaderEs);
+        //loaders.add(loaderEs);
         //loaders.add(loaderDin);
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
-*/
-        //ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC);
+
+        ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC, repoFu);
         //act.actualizarColecciones();
-        //act.ejecutarAlgoritmosDeConsenso();
+        act.ejecutarAlgoritmosDeConsenso();
         System.out.println("Finalizado");
 
     }
