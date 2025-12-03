@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
     @Override
     public boolean aplicar(HechoXColeccion hechoEvaluado, List<HechoXColeccion> todos, List<Fuente> fuentes) {
+        if (fuentes == null || fuentes.size() < 2) {
+            return false;
+        }
         Set<Fuente>fuentesCoincidentes = obtenerFuentesCoincidentes(hechoEvaluado, todos, fuentes);
         return fuentesCoincidentes.size() == fuentes.size();
     }

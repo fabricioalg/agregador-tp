@@ -97,7 +97,7 @@ public class ActualizadorColecciones {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         for (Coleccion coleccion : colecciones) {
             List<HechoXColeccion> hechosEnColeccion = repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
-            //actualiza las fuentes
+            /* esto es debatible que este acá
             List<Fuente> fuentes = hechosEnColeccion.isEmpty()
                     ? Collections.emptyList()
                     : hechosEnColeccion.stream()
@@ -106,13 +106,13 @@ public class ActualizadorColecciones {
                     .toList();
 
             coleccion.actualizarFuentes(fuentes);
+             */
 
             for (HechoXColeccion hxc : hechosEnColeccion) {
                 coleccion.aplicarConsenso(hxc);
                 repoHechoxColeccion.save(hxc);
             }
         }
-
         repositoryColecciones.saveAll(colecciones);
     }
 }

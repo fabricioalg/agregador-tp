@@ -29,12 +29,14 @@ import utn.ddsi.agregador.domain.hecho.Ubicacion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryProvincias;
+import utn.ddsi.agregador.repository.IRepositoryUbicacion;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 import utn.ddsi.agregador.utils.TipoMedia;
 
 class NormalizadorTest {
     IRepositoryCategorias repoCategorias;
     IRepositoryProvincias repoProvincias;
+    IRepositoryUbicacion repoUbicacion;
 
     private final Clock clock = Clock.fixed(Instant.parse("2025-01-10T00:00:00Z"), ZoneOffset.UTC);
     Normalizador normalizador;
@@ -43,13 +45,14 @@ class NormalizadorTest {
 
         repoCategorias = mock(IRepositoryCategorias.class);
         repoProvincias = mock(IRepositoryProvincias.class);
+        repoUbicacion = mock(IRepositoryUbicacion.class);
 
         // Mock básico
         when(repoProvincias.findByNombre(anyString())).thenReturn(null);
         when(repoProvincias.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         // Crear normalizador real (esto carga provincias.json real!)
-        normalizador = new Normalizador(clock, repoCategorias, repoProvincias);
+        normalizador = new Normalizador(clock, repoCategorias, repoProvincias, repoUbicacion);
     }
     @Test
     void normalizaCategoriaFechasYProvincia() {
