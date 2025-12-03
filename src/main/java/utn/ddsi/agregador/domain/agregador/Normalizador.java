@@ -29,6 +29,7 @@ import utn.ddsi.agregador.domain.hecho.Provincia;
 import utn.ddsi.agregador.domain.hecho.Ubicacion;
 import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryProvincias;
+import utn.ddsi.agregador.repository.IRepositoryUbicacion;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
 @Component
@@ -42,19 +43,21 @@ public class Normalizador {
     private final Map<String, Provincia> provinciaCache = new HashMap<>();
     private final IRepositoryCategorias repoCategoria;
     private final IRepositoryProvincias repoProvincia;
+    private final IRepositoryUbicacion repoUbicacion;
 
     @Autowired
-    public Normalizador(IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia) {
-        this(Clock.systemDefaultZone(), repoCategoria, repoProvincia);
+    public Normalizador(IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia,IRepositoryUbicacion repoUbicacion) {
+        this(Clock.systemDefaultZone(), repoCategoria, repoProvincia, repoUbicacion);
     }
     
     //esto es para los tests
-    public Normalizador(Clock clock, IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia) {
+    public Normalizador(Clock clock, IRepositoryCategorias repoCategoria, IRepositoryProvincias repoProvincia,IRepositoryUbicacion repoUbicacion) {
         this.clock = clock;
         this.repoCategoria = repoCategoria;
         this.categoriasCanonicas = inicializarCategoriasCanonicas();
         this.provinciasPorCoordenada = inicializarProvincias();
         this.repoProvincia = repoProvincia;
+        this.repoUbicacion = repoUbicacion;
     }
 
     public List<Hecho> normalizar(List<Hecho> hechos) {
@@ -86,6 +89,10 @@ public class Normalizador {
                 combinarHechos(existente, hecho);
             }
         }
+
+        repoCategoria.saveAll(categoriasExistentes);
+        repoProvincia.saveAll(provinciasExistentes);
+
         return new ArrayList<>(hechosDepurados.values());
     }
 
@@ -138,15 +145,23 @@ public class Normalizador {
             canonico = aTitulo(nombre);
         }
 
+        String finalCanonico = canonico;
 
-        if(existentes.contains(categoria)){
-            categoria.setNombre(canonico);
+        Categoria cate = existentes.stream().filter( c -> c.getNombre().equalsIgnoreCase(finalCanonico)).findFirst().orElse(null);
+
+        if(cate != null){
+            //categoria.setNombre(canonico);
             hecho.setCategoria(categoria);
         } else {
             Categoria nueva = new Categoria();
             nueva.setNombre(canonico);
             existentes.add(nueva);
+            nueva = repoCategoria.save(nueva);
+            if(nueva.getId_categoria() == null) {
+                nueva = repoCategoria.findByNombre(nueva.getNombre());
+            }
             hecho.setCategoria(nueva);
+
         }
         /*
         categoria.setNombre(canonico);
@@ -183,34 +198,40 @@ public class Normalizador {
             //SE IDENTIFICA NADA MAS SI ESTA EN ARGENTINA
             String nombre = identificarProvincia(ubicacion.getLatitud(), ubicacion.getLongitud());
             // NO ES UNA PROVINCIA DE ARGENTINA
-            if(nombre == null) {
+            if (nombre == null) {
                 Provincia exterior = existentes.stream()
                         .filter(p -> "EXTERIOR".equalsIgnoreCase(p.getNombre())) // <--- INVERTIR EL ORDEN
                         .findFirst()
                         .orElse(null);                //si no se creo la instancia de una provincia exterior
-                if(exterior == null) {
+                if (exterior == null) {
                     Provincia nueva = new Provincia();
                     nueva.setNombre("EXTERIOR");
                     nueva.setPais("EXTERIOR");
                     existentes.add(nueva);
+                    nueva = repoProvincia.save(nueva);
+                }
+
+            } else {
+                // SI NO ES NULL, ME FIJO SI ESTA EN LAS PROVINCIAS EXISTENTES
+                String finalNombre = nombre; // Variable final para lambda
+                Provincia provincia = existentes.stream()
+                        .filter(p -> p.getNombre() != null && p.getNombre().equalsIgnoreCase(finalNombre)) // Validar != null
+                        .findFirst()
+                        .orElse(null);            // LA PROVINCIA ESTA INSTANCIADA EN NUESTRA BD
+                if (provincia != null) {
+                    ubicacion.setProvincia(provincia);
+                } else {
+                    // LA PROVINCIA NO ESTA INSTANCIADA EN NUESTRA BD
+                    Provincia nueva = new Provincia();
+                    nueva.setNombre(finalNombre);
+                    nueva.setPais("Argentina");
+                    nueva = repoProvincia.save(nueva);
+                    ubicacion.setProvincia(nueva);
+                    existentes.add(nueva);
                 }
             }
-            // SI NO ES NULL, ME FIJO SI ESTA EN LAS PROVINCIAS EXISTENTES
-            String finalNombre = nombre; // Variable final para lambda
-            Provincia provincia = existentes.stream()
-                    .filter(p -> p.getNombre() != null && p.getNombre().equalsIgnoreCase(finalNombre)) // Validar != null
-                    .findFirst()
-                    .orElse(null);            // LA PROVINCIA ESTA INSTANCIADA EN NUESTRA BD
-            if (provincia != null) {
-                ubicacion.setProvincia(provincia);
-            } else{
-                // LA PROVINCIA NO ESTA INSTANCIADA EN NUESTRA BD
-                Provincia nueva = new Provincia();
-                nueva.setNombre(finalNombre);
-                nueva.setPais("Argentina");
-                ubicacion.setProvincia(nueva);
-                existentes.add(nueva);
-            }
+            Ubicacion nuevaUbi = repoUbicacion.save(ubicacion);
+            hecho.setUbicacion(nuevaUbi);
         }
 
     }

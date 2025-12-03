@@ -30,13 +30,13 @@ public class AgregadorApplication {
         IRepositoryColecciones repoCol = ctx.getBean(IRepositoryColecciones.class);
         IRepositorySolicitudes repoSol = ctx.getBean(IRepositorySolicitudes.class);
         IRepositoryHechoXColeccion repoHxC = ctx.getBean(IRepositoryHechoXColeccion.class);
-
+        IRepositoryUbicacion repoUbi = ctx.getBean(IRepositoryUbicacion.class);
 
         LoaderEstatico loaderEs = ctx.getBean(LoaderEstatico.class);
 //        LoaderDinamico loaderDin = ctx.getBean(LoaderDinamico.class);
 
         FiltradorDeHechos filter = new FiltradorDeHechos();
-        Normalizador normalizador = new Normalizador(repoCat, repoProv);
+        Normalizador normalizador = new Normalizador(repoCat, repoProv, repoUbi);
         DetectorBasicoDeSpam detectorBasico = new DetectorBasicoDeSpam();
         List<Loader> loaders = new ArrayList<>();
         loaders.add(loaderEs);
