@@ -36,29 +36,18 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     List<HechoXColeccion> findByColeccion(Long coleccionId);
 
 
-    @Query("""
-    SELECT new utn.ddsi.agregador.dto.HechoFuenteDTO(
-        hxc.hecho.id_hecho,
-        hxc.hecho.titulo,
-        hxc.hecho.descripcion,
-        hxc.hecho.fuente.url
-    )
-    FROM HechoXColeccion hxc
-    WHERE hxc.coleccion.id_coleccion = :idColeccion
-""")
+    @Query("SELECT new utn.ddsi.agregador.dto.HechoFuenteDTO( hxc.hecho.id_hecho, hxc.hecho.titulo, hxc.hecho.descripcion, hxc.hecho.fuente.url )FROM HechoXColeccion hxc WHERE hxc.coleccion.id_coleccion = :idColeccion ")
     List<HechoFuenteDTO> findHechoFuenteData(@Param("idColeccion") Long idColeccion);
-
-    @Query("""
-    SELECT hxc
-    FROM HechoXColeccion hxc
-    JOIN FETCH hxc.hecho h
-    LEFT JOIN FETCH h.categoria
-    LEFT JOIN FETCH h.etiqueta
-    LEFT JOIN FETCH h.fuente
-    LEFT JOIN FETCH h.ubicacion u
-    LEFT JOIN FETCH u.provincia
-    WHERE hxc.coleccion.id_coleccion = :idCol
-""")
+    @Query(""+
+    "SELECT hxc "+
+    "FROM HechoXColeccion hxc "+
+    "JOIN FETCH hxc.hecho h "+
+    "LEFT JOIN FETCH h.categoria "+
+    "LEFT JOIN FETCH h.etiqueta "+
+    "LEFT JOIN FETCH h.fuente " +
+    "LEFT JOIN FETCH h.ubicacion u "+
+    "LEFT JOIN FETCH u.provincia " +
+    "WHERE hxc.coleccion.id_coleccion = :idCol" )
     List<HechoXColeccion> findByColeccionOptimizado(Long idCol);
 }
 

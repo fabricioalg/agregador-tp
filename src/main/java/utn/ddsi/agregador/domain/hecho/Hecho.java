@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor
 @Table(name = "hecho")
-@EqualsAndHashCode(of = {"titulo", "descripcion", "categoria", "fecha", "ubicacion", "etiqueta"})
+//@EqualsAndHashCode(of = {"titulo", "descripcion", "categoria", "fecha", "ubicacion", "etiqueta"})
 public class Hecho {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Hecho {
     private String titulo;
     @Column(name="descripcion",length = 1000)
     private String descripcion;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private Categoria categoria;
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
@@ -38,11 +38,11 @@ public class Hecho {
     // PASA DE LOCALDATE A LOCALDATETIME PORQUE ESTADISTICA NECESITA LA HORA, Y
     // LOCALDATE SOLO NOS INDICA EL AÑO, MES Y DIA
     private LocalDateTime fechaDeCarga;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Fuente fuente;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Ubicacion ubicacion;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Etiqueta etiqueta;
     @Enumerated(EnumType.STRING)
     private EnumTipoHecho tipoHecho;

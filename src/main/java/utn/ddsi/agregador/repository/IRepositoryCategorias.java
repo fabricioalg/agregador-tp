@@ -9,9 +9,7 @@ import java.util.List;
 
 @Repository
 public interface IRepositoryCategorias extends JpaRepository<Categoria,Long> {
-    @Query("""
-            SELECT c FROM Categoria c WHERE c.nombre LIKE :categoria
-            """)
+    @Query("SELECT c FROM Categoria c WHERE c.nombre LIKE :categoria")
     Categoria findByNombre(String categoria);
     @Query("SELECT DISTINCT c.nombre FROM Categoria c")
     List<String> obtenerNombreDeCategorias();

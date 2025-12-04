@@ -17,7 +17,7 @@ public class Ubicacion {
     private Long id_ubicacion;
     private Float latitud;
     private Float longitud;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "id_provincia")
     private Provincia provincia;
 
