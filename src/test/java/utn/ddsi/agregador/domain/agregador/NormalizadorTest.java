@@ -47,38 +47,50 @@ class NormalizadorTest {
         repoProvincias = mock(IRepositoryProvincias.class);
         repoUbicacion = mock(IRepositoryUbicacion.class);
 
-        // Mock básico
         when(repoProvincias.findByNombre(anyString())).thenReturn(null);
         when(repoProvincias.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        // Crear normalizador real (esto carga provincias.json real!)
         normalizador = new Normalizador(clock, repoCategorias, repoProvincias, repoUbicacion);
     }
     @Test
     void normalizaCategoriaFechasYProvincia() {
-        when(repoCategorias.findByNombre("Fuego forestal"))
-                .thenReturn(new Categoria("Incendio forestal"));
+        Categoria incendioForestal = new Categoria("Incendio forestal");
+        incendioForestal.setId_categoria(1L); // simulamos ID generado por DB
+        when(repoCategorias.findByNombre("Fuego forestal")).thenReturn(incendioForestal);
+        when(repoCategorias.save(any())).thenAnswer(invocation -> {
+            Categoria cat = invocation.getArgument(0);
+            cat.setId_categoria(2L); // simulamos ID si se guarda nueva
+            return cat;
+        });
 
         Provincia cordoba = new Provincia();
         cordoba.setNombre("Cordoba");
         cordoba.setPais("Argentina");
-        when(repoProvincias.findByNombre(cordoba.getNombre())).thenReturn(cordoba);
+        when(repoProvincias.findByNombre("Cordoba")).thenReturn(cordoba);
+        when(repoProvincias.save(any())).thenReturn(cordoba);
 
         Hecho hecho = new Hecho();
         hecho.setTitulo("  Incendio forestal en cordoba   ");
         hecho.setDescripcion("  foco activo en zona norte   ");
-        hecho.setCategoria(new Categoria("Fuego forestal"));
+        hecho.setCategoria(new Categoria("Fuego forestal")); // sin ID
         hecho.setUbicacion(new Ubicacion(-31.4f, -64.2f));
         hecho.setFecha(LocalDate.of(2025, 1, 12));
         hecho.setFechaDeCarga(LocalDateTime.of(2025, 1,9,5,10));
+
         List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
 
         assertEquals(1, normalizados.size());
         Hecho resultado = normalizados.get(0);
+
+        assertNotNull(resultado.getCategoria());
         assertEquals("Incendio forestal", resultado.getCategoria().getNombre());
+        assertNotNull(resultado.getCategoria().getId_categoria());
+
         assertEquals(LocalDate.of(2025, 1, 10), resultado.getFecha());
         assertEquals(LocalDateTime.of(2025, 1, 10,0,0), resultado.getFechaDeCarga());
+
         assertEquals("Incendio forestal en cordoba", resultado.getTitulo());
+
         assertNotNull(resultado.getUbicacion());
         assertNotNull(resultado.getUbicacion().getProvincia());
         assertEquals("Cordoba", resultado.getUbicacion().getProvincia().getNombre());
@@ -86,13 +98,23 @@ class NormalizadorTest {
 
     @Test
     void fusionaDuplicadosPrivilegiandoFuenteMasConfiable() {
-        when(repoCategorias.findByNombre("Incendio forestal"))
-                .thenReturn(new Categoria("Incendio forestal"));
+        Categoria incendioForestal = new Categoria("Incendio forestal");
+        incendioForestal.setId_categoria(1L); // simula ID
+        when(repoCategorias.findByNombre(anyString())).thenAnswer(inv -> {
+            String nombre = inv.getArgument(0);
+            if (nombre.equalsIgnoreCase("Incendio forestal")) return incendioForestal;
+            return null;
+        });
+        when(repoCategorias.save(any())).thenAnswer(inv -> {
+            Categoria cat = inv.getArgument(0);
+            if (cat.getId_categoria() == null) cat.setId_categoria(2L);
+            return cat;
+        });
 
         Hecho base = new Hecho();
         base.setTitulo("Incendio en las sierras");
         base.setDescripcion("Foco contenido");
-        base.setCategoria(new Categoria("Incendio forestal"));
+        base.setCategoria(new Categoria("Incendio forestal")); // sin ID, se normaliza
         base.setUbicacion(new Ubicacion(-31.40f, -64.20f));
         base.setFecha(LocalDate.of(2025, 1, 8));
         base.setFechaDeCarga(LocalDateTime.of(2025, 1, 8,5,10));
@@ -106,7 +128,7 @@ class NormalizadorTest {
         Hecho candidato = new Hecho();
         candidato.setTitulo("  incendio en las sierras  ");
         candidato.setDescripcion("Fuego en zona de dificil acceso con 3 brigadas trabajando.");
-        candidato.setCategoria(new Categoria("Fuego forestal"));
+        candidato.setCategoria(new Categoria("Fuego forestal")); // sin ID
         candidato.setUbicacion(new Ubicacion(-31.401f, -64.201f));
         candidato.setFecha(LocalDate.of(2025, 1, 9));
         candidato.setFechaDeCarga(LocalDateTime.of(2025, 1, 9,9,10));
@@ -122,6 +144,7 @@ class NormalizadorTest {
         assertEquals(1, normalizados.size());
         Hecho resultado = normalizados.get(0);
         assertEquals("Incendio forestal", resultado.getCategoria().getNombre());
+        assertNotNull(resultado.getCategoria().getId_categoria());
         assertTrue(resultado.getDescripcion().contains("dificil acceso"));
         assertEquals(EnumTipoFuente.ESTATICA, resultado.getFuente().getTipoFuente());
         assertNotNull(resultado.getAdjuntos());
@@ -130,12 +153,21 @@ class NormalizadorTest {
 
     @Test
     void descartaUbicacionesInvalidas() {
-        when(repoCategorias.findByNombre("contaminacion"))
-                .thenReturn(new Categoria("Contaminacion"));
+        // --- Mock Categoria con ID ---
+        Categoria contaminacion = new Categoria("Contaminacion");
+        contaminacion.setId_categoria(1L); // simulamos ID asignado
+        when(repoCategorias.findByNombre(anyString())).thenReturn(contaminacion);
+        when(repoCategorias.save(any())).thenAnswer(inv -> {
+            Categoria cat = inv.getArgument(0);
+            if (cat.getId_categoria() == null) cat.setId_categoria(2L);
+            return cat;
+        });
+
+        // --- Hecho con ubicación inválida ---
         Hecho hecho = new Hecho();
         hecho.setTitulo("hecho sin ubicacion valida");
-        hecho.setCategoria(new Categoria("contaminacion"));
-        hecho.setUbicacion(new Ubicacion(120f, -200f));
+        hecho.setCategoria(new Categoria("contaminacion")); // sin ID
+        hecho.setUbicacion(new Ubicacion(120f, -200f)); // inválida
         hecho.setFecha(LocalDate.of(2025, 1, 5));
         hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 6,9,10));
 
@@ -147,49 +179,73 @@ class NormalizadorTest {
 
     @Test
     void asignaProvinciaDesdePoligonoDelCsv() {
-        when(repoCategorias.findByNombre("incendio"))
-                .thenReturn(new Categoria("incendio"));
+        // --- Mock Categoria ---
+        Categoria incendio = new Categoria("incendio");
+        incendio.setId_categoria(1L); // simulamos ID generado por DB
+        when(repoCategorias.findByNombre("incendio")).thenReturn(incendio);
+        when(repoCategorias.save(any())).thenAnswer(invocation -> {
+            Categoria cat = invocation.getArgument(0);
+            cat.setId_categoria(2L); // simulamos ID si se guarda nueva
+            return cat;
+        });
 
-        when(repoProvincias.findByNombre("Ciudad Autonoma de Buenos Aires"))
-                .thenReturn(null);
-        //TODO esto hay que verlo en el normalizador
-        // Simular que el repo crea una provincia y la devuelve
+        // --- Mock Provincia ---
+        when(repoProvincias.findByNombre("Ciudad Autonoma de Buenos Aires")).thenReturn(null);
         Provincia caba = new Provincia();
         caba.setNombre("Ciudad Autonoma de Buenos Aires");
         caba.setPais("Argentina");
-
         when(repoProvincias.save(any())).thenReturn(caba);
 
+        // --- Creamos el hecho ---
         Hecho hecho = new Hecho();
         hecho.setTitulo("situacion en el microcentro");
-        hecho.setCategoria(new Categoria("incendio"));
+        hecho.setCategoria(new Categoria("incendio")); // sin ID
         hecho.setUbicacion(new Ubicacion(-34.6037f, -58.3816f));
         hecho.setFecha(LocalDate.of(2025, 1, 7));
-        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 7,9,10));
+        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 7, 9, 10));
 
+        // --- Ejecutamos normalización ---
         List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
 
+        // --- Assertions ---
         assertEquals(1, normalizados.size());
-        Ubicacion ubicacion = normalizados.get(0).getUbicacion();
-        assertNotNull(ubicacion);
-        assertNotNull(ubicacion.getProvincia());
-        assertEquals("Ciudad Autonoma de Buenos Aires", ubicacion.getProvincia().getNombre());
-    }
 
+        Hecho normalizado = normalizados.get(0);
+
+        // Categoria
+        assertNotNull(normalizado.getCategoria());
+        assertEquals("Incendio", normalizado.getCategoria().getNombre());
+        assertNotNull(normalizado.getCategoria().getId_categoria());
+
+        // Ubicacion / Provincia
+        assertNotNull(normalizado.getUbicacion());
+        assertNotNull(normalizado.getUbicacion().getProvincia());
+        assertEquals("Ciudad Autonoma de Buenos Aires", normalizado.getUbicacion().getProvincia().getNombre());
+        assertEquals("Argentina", normalizado.getUbicacion().getProvincia().getPais());
+    }
     @Test
     void reutilizaInstanciaDeProvinciaCacheada() {
-        when(repoCategorias.findByNombre("incendio"))
-                .thenReturn(new Categoria("incendio"));
+        // Mock Categoria con ID
+        Categoria incendio = new Categoria("incendio");
+        incendio.setId_categoria(1L);
+        when(repoCategorias.findByNombre(anyString())).thenReturn(incendio);
+        when(repoCategorias.save(any())).thenAnswer(inv -> {
+            Categoria cat = inv.getArgument(0);
+            if (cat.getId_categoria() == null) cat.setId_categoria(2L);
+            return cat;
+        });
+
+        // Hechos a normalizar
         Hecho primero = new Hecho();
         primero.setTitulo("evento en la capital");
-        primero.setCategoria(new Categoria("incendio"));
+        primero.setCategoria(new Categoria("incendio")); // sin ID
         primero.setUbicacion(new Ubicacion(-34.6037f, -58.3816f));
         primero.setFecha(LocalDate.of(2025, 1, 7));
         primero.setFechaDeCarga(LocalDateTime.of(2025, 1, 7,9,10));
 
         Hecho segundo = new Hecho();
         segundo.setTitulo("evento en puerto madero");
-        segundo.setCategoria(new Categoria("incendio"));
+        segundo.setCategoria(new Categoria("incendio")); // sin ID
         segundo.setUbicacion(new Ubicacion(-34.6137f, -58.3616f));
         segundo.setFecha(LocalDate.of(2025, 1, 8));
         segundo.setFechaDeCarga(LocalDateTime.of(2025, 1, 8,9,10));
@@ -206,11 +262,19 @@ class NormalizadorTest {
 
     @Test
     void ubicaHechosFueraDeArgentinaComoExterior() {
-        when(repoCategorias.findByNombre("contami"))
-                .thenReturn(new Categoria("incendio"));
+        // Mock de categoría con ID
+        Categoria categoriaMock = new Categoria("Contaminacion");
+        categoriaMock.setId_categoria(1L);
+        when(repoCategorias.findByNombre(anyString())).thenReturn(categoriaMock);
+        when(repoCategorias.save(any())).thenAnswer(inv -> {
+            Categoria cat = inv.getArgument(0);
+            if (cat.getId_categoria() == null) cat.setId_categoria(2L);
+            return cat;
+        });
+
         Hecho hecho = new Hecho();
         hecho.setTitulo("incidente internacional");
-        hecho.setCategoria(new Categoria("contaminacion"));
+        hecho.setCategoria(new Categoria("contaminacion")); // sin ID
         hecho.setUbicacion(new Ubicacion(40.7128f, -74.0060f));
         hecho.setFecha(LocalDate.of(2025, 1, 4));
         hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 5,9,10));
