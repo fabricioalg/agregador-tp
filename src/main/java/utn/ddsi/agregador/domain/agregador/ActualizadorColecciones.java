@@ -109,7 +109,7 @@ public class ActualizadorColecciones {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
         for (Coleccion coleccion : colecciones) {
             List<Fuente> fuentes = repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
-            coleccion.actualizarFuentes(fuentes);
+            coleccion.setFuentes(fuentes);
 
             List<HechoFuenteDTO> datosHechoFuente =
                     repoHechoxColeccion.findHechoFuenteData(coleccion.getId_coleccion());
@@ -124,22 +124,21 @@ public class ActualizadorColecciones {
 
             List<HechoXColeccion> hechos =
                     repoHechoxColeccion.findByColeccionOptimizado(coleccion.getId_coleccion());
-            System.out.println("cantidad de hechos " + hechos.size());
+            //System.out.println("cantidad de hechos " + hechos.size());
 
             for (HechoXColeccion hxc : hechos) {
                 HechoFuenteDTO data = dtoPorHecho.get(hxc.getHecho().getId_hecho());
-                System.out.println("Coleccion " + coleccion.getId_coleccion() + " algoritmo=" + coleccion.getTipoDeAlgoritmo());
-                System.out.println("Hecho=" + hxc.getHecho().getId_hecho() + ", DTO=" + (data != null) + ", totalDTOs=" + datosHechoFuente.size());
-                System.out.println("Fuentes coleccion ids=" + coleccion.getFuentes().stream().map(Fuente::getId_fuente).toList());
-                System.out.println("Antes de guardar: hxc=" + hxc.getId_hecho_x_coleccion() + " cons=" + hxc.getConsensuado());
+                //System.out.println("Coleccion " + coleccion.getId_coleccion() + " algoritmo=" + coleccion.getTipoDeAlgoritmo());
+                //System.out.println("Hecho=" + hxc.getHecho().getId_hecho() + ", DTO=" + (data != null) + ", totalDTOs=" + datosHechoFuente.size());
+                //System.out.println("Fuentes coleccion ids=" + coleccion.getFuentes().stream().map(Fuente::getId_fuente).toList());
+                //System.out.println("Antes de guardar: hxc=" + hxc.getId_hecho_x_coleccion() + " cons=" + hxc.getConsensuado());
                 coleccion.aplicarConsenso(hxc, data, datosHechoFuente);
-                System.out.println("ANTES SAVE HXC id=" + hxc.getId_hecho_x_coleccion() + " consensuado=" + hxc.getConsensuado());
+                //System.out.println("ANTES SAVE HXC id=" + hxc.getId_hecho_x_coleccion() + " consensuado=" + hxc.getConsensuado());
                 repoHechoxColeccion.save(hxc);
-                System.out.println("Después de aplicar consenso: " + hxc.getConsensuado());
+                //System.out.println("Después de aplicar consenso: " + hxc.getConsensuado());
             }
         }
         repositoryColecciones.saveAll(colecciones);
     }
-
 }
 

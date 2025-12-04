@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.HechoFuenteDTO;
@@ -23,6 +24,7 @@ public class AlgoritmoDeConsenso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_algoritmo;
 
+    //ver performance
     public Set<String> obtenerFuentesCoincidentes(
             HechoFuenteDTO hechoActual,
             List<HechoFuenteDTO> todosLosDatos,
@@ -32,14 +34,15 @@ public class AlgoritmoDeConsenso {
                 .map(Fuente::getUrl)
                 .collect(Collectors.toSet());
 
+        // recolecta todas las fuentes de la colección donde aparece el hecho
         return todosLosDatos.stream()
-                // por titulo en vez de ID
                 .filter(dto -> dto.getTitulo().equals(hechoActual.getTitulo()))
                 .map(HechoFuenteDTO::getUrlFuente)
+                .map(String::trim)  // evita errores por espacios
                 .filter(urlsFuentesColeccion::contains)
-                .collect(Collectors.toSet()); // <-- evita duplicados
+                .collect(Collectors.toSet());
     }
-
+/*
     public boolean aplicarDTO(
             HechoFuenteDTO hechoActual,
             List<HechoFuenteDTO> todosLosDatosDeFuentes,
@@ -52,13 +55,13 @@ public class AlgoritmoDeConsenso {
                 obtenerFuentesCoincidentes(hechoActual, todosLosDatosDeFuentes, fuentesColeccion);
 
         return !coincidencias.isEmpty();
-    }
+    }*/
 
     public boolean aplicar(
             List<Fuente> fuentesColeccion,
             HechoFuenteDTO dataFuenteEvaluada,
             List<HechoFuenteDTO> todosLosDatosDeFuentes
     ) {
-        return aplicarDTO(dataFuenteEvaluada, todosLosDatosDeFuentes, fuentesColeccion);
+        return false;
     }
 }

@@ -100,10 +100,6 @@ public class Coleccion {
 //        return hechosConsensuados
 //  }
 
-    public void actualizarFuentes(List<Fuente> fuentes) {//ex obtenerFuentes
-        this.fuentes =fuentes;
-    }
-
     public void agregarHechos(List<Hecho> nuevosHechos) {
         nuevosHechos.forEach(hecho -> {
             HechoXColeccion hxc = new HechoXColeccion(hecho, this, false);
