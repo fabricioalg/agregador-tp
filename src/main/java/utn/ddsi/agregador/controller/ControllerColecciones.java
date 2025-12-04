@@ -29,10 +29,4 @@ public class ControllerColecciones {
     public List<Coleccion> buscarPorId(@PathVariable Long id) {
         return service.buscarPorID(id);
     }
-
-    @DeleteMapping("/{id}")
-    public void eliminarColeccion(@RequestParam Long idColeccion) {
-        service.eliminarColeccion(idColeccion);
-    }
-
 }

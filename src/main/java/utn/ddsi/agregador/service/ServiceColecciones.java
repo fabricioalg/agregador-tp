@@ -26,15 +26,7 @@ public class ServiceColecciones {
             throw new RuntimeException("no se encontró la coleccion");
         }
     }*/
-    public void crearColeccion(String titulo, String descripcion) {
-        Coleccion nuevaCole = new Coleccion(titulo,descripcion);
-        repositoryColecciones.save(nuevaCole);
-    }
 
-
-    public List<Coleccion> obtenerTodasLasColecciones(){
-        return repositoryColecciones.findAll();
-    }
     //No se por que est definido asi jaja (att:yeri)
     public List<Coleccion> buscarPorID(Long id) {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
@@ -42,10 +34,6 @@ public class ServiceColecciones {
         colecciones.forEach(coleccion -> {if(coleccion.getId_coleccion().equals(id)) rta.add(coleccion);});
         return rta;
     }
-    public void eliminarColeccion(Long idColeccion) {
-       repositoryColecciones.deleteById(idColeccion);
-    }
-
     public Coleccion obtenerPorNombre(String nombre){
         return this.repositoryColecciones.findByTitulo(nombre);
     }
