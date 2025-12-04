@@ -1,4 +1,4 @@
-package utn.ddsi.agregador.domain.solicitudEliminacion;
+/*package utn.ddsi.agregador.domain.solicitudEliminacion;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,3 +36,4 @@ public class Contribuyente {
         this(null, nombre, apellido, edad);
     }
 }
+*/

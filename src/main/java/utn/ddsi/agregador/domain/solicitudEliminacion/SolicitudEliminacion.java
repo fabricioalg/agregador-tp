@@ -27,8 +27,8 @@ public class SolicitudEliminacion {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumEstadoSol estado;
-    @ManyToOne
-    private Contribuyente solicitante;
+    @Column(nullable = false)
+    private Long id_solicitante;
     //podria ser null?
     @Column 
     private boolean spam;
