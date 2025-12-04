@@ -21,7 +21,7 @@ public class Fuente {
     @Column(nullable = false)
     private EnumTipoFuente tipoFuente;
 
-    public Fuente(Long id, String nombre, String url, EnumTipoFuente tipoFuente) {
+    public Fuente(String nombre, String url, EnumTipoFuente tipoFuente) {
         this.nombre = nombre;
         this.url = url;
         this.tipoFuente = tipoFuente;

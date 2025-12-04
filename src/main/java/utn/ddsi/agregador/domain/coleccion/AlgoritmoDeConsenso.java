@@ -23,21 +23,21 @@ public class AlgoritmoDeConsenso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_algoritmo;
 
-    public Set<Fuente> obtenerFuentesCoincidentes(
+    public Set<String> obtenerFuentesCoincidentes(
             HechoFuenteDTO hechoActual,
             List<HechoFuenteDTO> todosLosDatos,
             List<Fuente> fuentesColeccion
     ) {
-        Long idHecho = hechoActual.getIdHecho();
-
-        List<Long> idsFuentesCoincidentes = todosLosDatos.stream()
-                .filter(dto -> dto.getIdHecho().equals(idHecho))
-                .map(HechoFuenteDTO::getIdFuente)
-                .toList();
-
-        return fuentesColeccion.stream()
-                .filter(f -> idsFuentesCoincidentes.contains(f.getId_fuente()))
+        Set<String> urlsFuentesColeccion = fuentesColeccion.stream()
+                .map(Fuente::getUrl)
                 .collect(Collectors.toSet());
+
+        return todosLosDatos.stream()
+                // por titulo en vez de ID
+                .filter(dto -> dto.getTitulo().equals(hechoActual.getTitulo()))
+                .map(HechoFuenteDTO::getUrlFuente)
+                .filter(urlsFuentesColeccion::contains)
+                .collect(Collectors.toSet()); // <-- evita duplicados
     }
 
     public boolean aplicarDTO(
@@ -45,15 +45,16 @@ public class AlgoritmoDeConsenso {
             List<HechoFuenteDTO> todosLosDatosDeFuentes,
             List<Fuente> fuentesColeccion
     ) {
-        Set<Fuente> coincidencias =
+        System.out.println("aplicarDTO: hechoActual=" + hechoActual
+                + ", todosSize=" + todosLosDatosDeFuentes.size()
+                + ", fuentesSize=" + fuentesColeccion.size());
+        Set<String> coincidencias =
                 obtenerFuentesCoincidentes(hechoActual, todosLosDatosDeFuentes, fuentesColeccion);
 
         return !coincidencias.isEmpty();
     }
 
     public boolean aplicar(
-            HechoXColeccion hechoEvaluado,
-            List<HechoXColeccion> todos,
             List<Fuente> fuentesColeccion,
             HechoFuenteDTO dataFuenteEvaluada,
             List<HechoFuenteDTO> todosLosDatosDeFuentes

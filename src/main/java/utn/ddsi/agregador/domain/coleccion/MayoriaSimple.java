@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 public class MayoriaSimple extends AlgoritmoDeConsenso {
     @Override
     public boolean aplicar(
-            HechoXColeccion hechoEvaluado,
-            List<HechoXColeccion> todos,
             List<Fuente> fuentesColeccion,
             HechoFuenteDTO dataFuenteEvaluada,
             List<HechoFuenteDTO> todosLosDatosDeFuentes
     ) {
-        Set<Fuente> fuentesCoincidentes =
+        System.out.println("dataFuenteEvaluada=" + dataFuenteEvaluada.getIdHecho() + "," + dataFuenteEvaluada.getUrlFuente());
+        System.out.println("aplicarDTO: hechoActual=" + dataFuenteEvaluada.getIdHecho() + ", todosSize=" + todosLosDatosDeFuentes.size() + ", fuentesSize=" + fuentesColeccion.size());
+        Set<String> fuentesCoincidentes =
                 obtenerFuentesCoincidentes(dataFuenteEvaluada, todosLosDatosDeFuentes, fuentesColeccion);
 
         int minimo = (int) Math.ceil(fuentesColeccion.size() / 2.0);

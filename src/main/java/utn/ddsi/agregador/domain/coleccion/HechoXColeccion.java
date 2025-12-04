@@ -2,13 +2,17 @@ package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
 @Data
 @NoArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "hecho_x_coleccion")
 public class HechoXColeccion {
 
@@ -33,6 +37,6 @@ public class HechoXColeccion {
         this.coleccion = coleccion;
         this.consensuado = consensuado;
     }
-    //void setConsensuado(Boolean consenso) {this.consensuado = consenso;}
+    void setConsensuado(Boolean consenso) {this.consensuado = consenso;}
 }
 

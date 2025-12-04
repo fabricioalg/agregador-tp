@@ -1,179 +1,140 @@
 package utn.ddsi.agregador.domain.agregador;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utn.ddsi.agregador.domain.coleccion.*;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
-import utn.ddsi.agregador.domain.hecho.Hecho;
-import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
+import utn.ddsi.agregador.dto.HechoFuenteDTO;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-/*
+
 class ConsensoTests {
-    @Test
-    void constructorTitulo_inicializaAlgoritmoDefault() {
-        Coleccion col = new Coleccion("test");
 
-        assertEquals(EnumTipoDeAlgoritmo.DEFAULT, col.getTipoDeAlgoritmo());
-        assertTrue(col.getAlgoritmoDeConsenso() instanceof ConsensoDefault);
+    private Fuente fuente1;
+    private Fuente fuente2;
+    private Fuente fuente3;
+
+    private HechoFuenteDTO hecho1;
+    private HechoFuenteDTO hecho2;
+    private HechoFuenteDTO hecho3;
+    private HechoFuenteDTO hechoConflicto;
+
+    private List<Fuente> todasFuentes;
+    private List<HechoFuenteDTO> todosHechos;
+
+    @BeforeEach
+    void setUp() {
+        fuente1 = new Fuente("f1","Fuente1", EnumTipoFuente.ESTATICA);
+        fuente2 = new Fuente("f2","Fuente2", EnumTipoFuente.DINAMICA);
+        fuente3 = new Fuente("f3","Fuente3", EnumTipoFuente.DINAMICA);
+
+        todasFuentes = Arrays.asList(fuente1, fuente2, fuente3);
+
+        hecho1 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente1");
+        hecho2 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente2");
+        hecho3 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente3");
+
+        hechoConflicto = new HechoFuenteDTO(1L, "Hecho A", "Descripcion diferente", "Fuente3");
+
+        todosHechos = Arrays.asList(hecho1, hecho2, hecho3);
     }
+
+    // Subclase de prueba que permite controlar las fuentes coincidentes
+    abstract class AlgoritmoDeConsensoMock extends AlgoritmoDeConsenso {
+        protected Set<String> fuentesMock;
+
+        public void setFuentesMock(Set<String> fuentesMock) {
+            this.fuentesMock = fuentesMock;
+        }
+
+        @Override
+        public Set<String> obtenerFuentesCoincidentes(
+                HechoFuenteDTO dataFuenteEvaluada,
+                List<HechoFuenteDTO> todosLosDatosDeFuentes,
+                List<Fuente> fuentesColeccion) {
+            return fuentesMock;
+        }
+    }
+
     @Test
-    void defaultSiempreConsensua() {
+    void testConsensoAbsoluto_true() {
+        ConsensoAbsoluto algoritmo = new ConsensoAbsoluto() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2", "Fuente3"));
+            }
+        };
+
+        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    }
+
+    @Test
+    void testConsensoAbsoluto_false() {
+        ConsensoAbsoluto algoritmo = new ConsensoAbsoluto() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2")); // Falta Fuente3
+            }
+        };
+
+        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    }
+
+    @Test
+    void testMayoriaSimple_true() {
+        MayoriaSimple algoritmo = new MayoriaSimple() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2")); // 2 de 3
+            }
+        };
+
+        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    }
+
+    @Test
+    void testMayoriaSimple_false() {
+        MayoriaSimple algoritmo = new MayoriaSimple() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Collections.singletonList("Fuente1")); // Solo 1
+            }
+        };
+
+        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    }
+
+    @Test
+    void testMencionesMultiples_true() {
+        MencionesMultiples algoritmo = new MencionesMultiples() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2"));
+            }
+        };
+
+        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    }
+
+    @Test
+    void testMencionesMultiples_false_por_conflicto() {
+        MencionesMultiples algoritmo = new MencionesMultiples() {
+            @Override
+            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
+                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2", "Fuente3"));
+            }
+        };
+
+        List<HechoFuenteDTO> hechosConConflicto = Arrays.asList(hecho1, hecho2, hechoConflicto);
+        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, hechosConConflicto));
+    }
+
+    @Test
+    void testConsensoDefault() {
         ConsensoDefault algoritmo = new ConsensoDefault();
-
-        Hecho h = new Hecho();
-        HechoXColeccion hxc = new HechoXColeccion(h, null, false);
-
-        boolean result = algoritmo.aplicar(hxc, List.of(hxc), List.of());
-
-        assertTrue(result);
+        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
     }
-    @Test
-    void mayoriaSimple_conInstanciasDistintasPeroMismoContenido_devuelveTrue() {
-        Fuente f1 = new Fuente();
-        Fuente f2 = new Fuente();
-        Fuente f3 = new Fuente();
-
-        Hecho h1 = new Hecho("evento","desc", null, null, LocalDate.now(), f1);
-        Hecho h2 = new Hecho("evento","desc", null, null, LocalDate.now(), f2);
-
-        HechoXColeccion hx1 = new HechoXColeccion(h1, null, false);
-        HechoXColeccion hx2 = new HechoXColeccion(h2, null, false);
-
-        MayoriaSimple alg = new MayoriaSimple();
-
-        boolean res = alg.aplicar(hx1, List.of(hx1, hx2), List.of(f1,f2,f3));
-        assertTrue(res);
-    }
-
-    @Test
-    void noEsConsensuado_siHayConflictoDeMismoTitulo() {
-        Fuente f1 = new Fuente(1,"F1","url", EnumTipoFuente.DINAMICA);
-        Fuente f2 = new Fuente(2,"F2","url", EnumTipoFuente.DINAMICA);
-        Fuente f3 = new Fuente(3,"F3","url", EnumTipoFuente.DINAMICA);
-
-        Hecho hEval = new Hecho("Incendio", "Fuerte incendio en el centro", null, null, LocalDate.now(), f1);
-
-        // Mismo título pero atributos distintos → genera conflicto
-        Hecho hConflicto = new Hecho("Incendio", "Otro incendio distinto", null, null, LocalDate.now(), f2);
-
-        // Otro hecho más para completar las fuentes
-        Hecho hOtro = new Hecho("Corte de luz", "En toda la ciudad", null, null, LocalDate.now(), f3);
-
-        // Wrappers
-        HechoXColeccion hxEval = new HechoXColeccion(hEval, null, false);
-        HechoXColeccion hxConf = new HechoXColeccion(hConflicto, null, false);
-        HechoXColeccion hxOtro = new HechoXColeccion(hOtro, null, false);
-
-        List<HechoXColeccion> hechos = List.of(hxEval, hxConf, hxOtro);
-        List<Fuente> fuentes = List.of(f1, f2, f3);
-
-        MencionesMultiples algoritmo = new MencionesMultiples();
-
-        boolean resultado = algoritmo.aplicar(hxEval, hechos, fuentes);
-
-        assertFalse(resultado); // ✔ Debe detectar conflicto
-    }
-    @Test
-    void consensuado_siMasDeLaMitadDeLasFuentesLoTienen() {
-
-        Fuente f1 = new Fuente(1,"F1","url", EnumTipoFuente.DINAMICA);
-        Fuente f2 = new Fuente(2,"F2","url", EnumTipoFuente.DINAMICA);
-        Fuente f3 = new Fuente(3,"F3","url", EnumTipoFuente.DINAMICA);
-
-        // Hechos iguales (mismos atributos)
-        Hecho h1 = new Hecho("Accidente", "Choque múltiple", null, null, LocalDate.now(), f1);
-        Hecho h2 = new Hecho("Accidente", "Choque múltiple", null, null, LocalDate.now(), f2);
-
-        // Un hecho distinto
-        Hecho hOtro = new Hecho("Evento", "Nada que ver", null, null, LocalDate.now(), f3);
-
-        HechoXColeccion hx1 = new HechoXColeccion(h1, null, false);
-        HechoXColeccion hx2 = new HechoXColeccion(h2, null, false);
-        HechoXColeccion hxOtro = new HechoXColeccion(hOtro, null, false);
-
-        List<HechoXColeccion> hechos = List.of(hx1, hx2, hxOtro);
-        List<Fuente> fuentes = List.of(f1, f2, f3); // tamaño 3 → mayoría = 2
-
-        MayoriaSimple algoritmo = new MayoriaSimple();
-
-        boolean res = algoritmo.aplicar(hx1, hechos, fuentes);
-
-        assertTrue(res); // 2 fuentes coinciden
-    }
-
-    @Test
-    void noConsensuado_siNoSuperaLaMitad() {
-        Fuente f1 = new Fuente();
-        Fuente f2 = new Fuente();
-        Fuente f3 = new Fuente();
-
-        Hecho h1 = new Hecho();
-        h1.setTitulo("evento");
-        h1.setFuente(f1);
-
-        HechoXColeccion hx1 = new HechoXColeccion(h1, null, false);
-
-        MayoriaSimple alg = new MayoriaSimple();
-
-        boolean result = alg.aplicar(
-                hx1,
-                List.of(hx1),
-                List.of(f1, f2, f3)
-        );
-
-        assertFalse(result);
-    }
-    @Test
-    void consensuado_siTodasLasFuentesTienenElHecho() {
-        Fuente f1 = new Fuente();
-        Fuente f2 = new Fuente();
-
-        Hecho h1 = new Hecho();
-        h1.setTitulo("evento");
-        h1.setFuente(f1);
-
-        Hecho h2 = new Hecho();
-        h2.setTitulo("evento");
-        h2.setFuente(f2);
-
-        HechoXColeccion hx1 = new HechoXColeccion(h1, null, false);
-        HechoXColeccion hx2 = new HechoXColeccion(h2, null, false);
-
-        ConsensoAbsoluto alg = new ConsensoAbsoluto();
-
-        boolean result = alg.aplicar(
-                hx1,
-                List.of(hx1, hx2),
-                List.of(f1, f2)
-        );
-
-        assertTrue(result);
-    }
-
-    @Test
-    void noConsensuado_siAlgunFuenteNoLoTiene() {
-        Fuente f1 = new Fuente();
-        Fuente f2 = new Fuente();
-
-        Hecho h1 = new Hecho();
-        h1.setTitulo("evento");
-        h1.setFuente(f1);
-
-        HechoXColeccion hx1 = new HechoXColeccion(h1, null, false);
-
-        ConsensoAbsoluto alg = new ConsensoAbsoluto();
-
-        boolean result = alg.aplicar(
-                hx1,
-                List.of(hx1),
-                List.of(f1, f2) // f2 no lo tiene
-        );
-
-        assertFalse(result);
-    }
-
-}*/
+}

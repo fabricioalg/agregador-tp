@@ -1,8 +1,9 @@
 package utn.ddsi.agregador.domain.coleccion;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
@@ -11,14 +12,14 @@ import utn.ddsi.agregador.dto.HechoFuenteDTO;
 import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @Getter 
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="coleccion")
 public class Coleccion {
 
@@ -59,8 +60,6 @@ public class Coleccion {
         this.algoritmoDeConsenso = new ConsensoDefault();
     }
 
-    public Coleccion() {
-    }
     public Coleccion(String titulo) {
         this.titulo = titulo;
         this.hechos = new ArrayList<>();
@@ -132,10 +131,9 @@ public class Coleccion {
     }
 
     public void aplicarConsenso(HechoXColeccion hxc,
-                                List<HechoXColeccion> todos,
                                 HechoFuenteDTO dataFuenteEvaluada,
                                 List<HechoFuenteDTO> todosLosDatosDeFuentes){
-        if(algoritmoDeConsenso.aplicar(hxc, todos, fuentes, dataFuenteEvaluada, todosLosDatosDeFuentes)){
+        if(algoritmoDeConsenso.aplicar(fuentes, dataFuenteEvaluada, todosLosDatosDeFuentes)){
             hxc.setConsensuado(Boolean.TRUE);
         }
     }

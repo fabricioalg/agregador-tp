@@ -5,11 +5,15 @@ import lombok.Getter;
 @Getter
 public class HechoFuenteDTO {
     private final Long idHecho;
-    private final Long idFuente;
+    private final String titulo;
+    private final String descripcion;
+    private final String urlFuente;
 
-    public HechoFuenteDTO(Long idHecho, Long idFuente) {
+    public HechoFuenteDTO(Long idHecho, String titulo, String descripcion, String urlFuente) {
         this.idHecho = idHecho;
-        this.idFuente = idFuente;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.urlFuente = urlFuente;
     }
 
 }

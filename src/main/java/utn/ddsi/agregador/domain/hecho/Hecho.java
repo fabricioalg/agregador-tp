@@ -13,6 +13,7 @@ import utn.ddsi.agregador.utils.EnumEstadoHecho;
 import utn.ddsi.agregador.utils.EnumTipoHecho;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -29,7 +30,7 @@ public class Hecho {
     private String titulo;
     @Column(name="descripcion",length = 1000)
     private String descripcion;
-    @ManyToOne(cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE})
     private Categoria categoria;
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
@@ -37,11 +38,11 @@ public class Hecho {
     // PASA DE LOCALDATE A LOCALDATETIME PORQUE ESTADISTICA NECESITA LA HORA, Y
     // LOCALDATE SOLO NOS INDICA EL AÑO, MES Y DIA
     private LocalDateTime fechaDeCarga;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private Fuente fuente;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private Ubicacion ubicacion;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private Etiqueta etiqueta;
     @Enumerated(EnumType.STRING)
     private EnumTipoHecho tipoHecho;
@@ -60,7 +61,7 @@ public class Hecho {
         this.etiqueta = null;
         this.fuente = fuente;
     }
-
+/*
     @Override
     public String toString() {
         return "Hecho{" +
@@ -77,5 +78,5 @@ public class Hecho {
                 ", adjuntos=" + adjuntos +
                 ", estado=" + estado +
                 '}';
-    }
+    }*/
 }

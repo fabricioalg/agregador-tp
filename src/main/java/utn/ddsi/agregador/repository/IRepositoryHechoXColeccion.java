@@ -35,25 +35,31 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     @Query("SELECT hc FROM HechoXColeccion hc WHERE hc.coleccion.id_coleccion = :coleccionId")
     List<HechoXColeccion> findByColeccion(Long coleccionId);
 
-    @Modifying
-    @Transactional
-    @Query("""
-           UPDATE HechoXColeccion hxc 
-           SET hxc.consensuado = true
-           WHERE hxc.id_hecho_x_coleccion IN :ids
-           """)
-    void marcarConsensuados(List<Long> ids);
 
     @Query("""
     SELECT new utn.ddsi.agregador.dto.HechoFuenteDTO(
         hxc.hecho.id_hecho,
-        hxc.hecho.fuente.id_fuente
+        hxc.hecho.titulo,
+        hxc.hecho.descripcion,
+        hxc.hecho.fuente.url
     )
     FROM HechoXColeccion hxc
     WHERE hxc.coleccion.id_coleccion = :idColeccion
 """)
     List<HechoFuenteDTO> findHechoFuenteData(@Param("idColeccion") Long idColeccion);
 
+    @Query("""
+    SELECT hxc
+    FROM HechoXColeccion hxc
+    JOIN FETCH hxc.hecho h
+    LEFT JOIN FETCH h.categoria
+    LEFT JOIN FETCH h.etiqueta
+    LEFT JOIN FETCH h.fuente
+    LEFT JOIN FETCH h.ubicacion u
+    LEFT JOIN FETCH u.provincia
+    WHERE hxc.coleccion.id_coleccion = :idCol
+""")
+    List<HechoXColeccion> findByColeccionOptimizado(Long idCol);
 }
 
 
