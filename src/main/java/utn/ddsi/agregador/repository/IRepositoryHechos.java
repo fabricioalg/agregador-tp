@@ -37,11 +37,11 @@ public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
     List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechosXProvinciaXCategoria(@Param("categoria") Long categoria);
 
     @Query("SELECT new utn.ddsi.agregador.dto.EstadisticaCantidadHoraCateDTO(" +
-            " HOUR(h.fecha), " +
+            " HOUR(h.fechaDeCarga), " +
             " COUNT(h)) " +
             " FROM Hecho h " +
             " WHERE h.categoria.id_categoria = :categoria " +
-            " GROUP BY HOUR(h.fecha) " +
+            " GROUP BY HOUR(h.fechaDeCarga) " +
             " ORDER BY COUNT(h) DESC")
     List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(@Param("categoria") Long categoria);
 

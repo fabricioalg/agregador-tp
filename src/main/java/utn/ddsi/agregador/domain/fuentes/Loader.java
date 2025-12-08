@@ -15,8 +15,6 @@ import java.util.List;
 public abstract class Loader {
     private String  ruta;
     private HechoAdapter adapter;
-    private LocalDate fechaLimite;
-
 
     public Loader() {}
 

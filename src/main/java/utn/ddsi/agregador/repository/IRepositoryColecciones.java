@@ -21,13 +21,6 @@ public interface IRepositoryColecciones extends JpaRepository<Coleccion, Long> {
     @Query("SELECT cond FROM Coleccion c JOIN c.condicionDePertenencia cond WHERE c.id = :id")
     List<InterfaceCondicion> findByIdCondiciones(@Param("id") Long id);
 
-    @Query("SELECT DISTINCT c FROM Coleccion c " +
-            "LEFT JOIN FETCH c.hechos hxc " +       // Trae la tabla intermedia
-            "LEFT JOIN FETCH hxc.hecho h " +        // Trae los Hechos reales
-            "LEFT JOIN FETCH c.fuentes f " +        // Trae las Fuentes
-            "LEFT JOIN FETCH c.condicionDePertenencia cond " + // Trae las condiciones
-            "WHERE c.id_coleccion = :id")
-    Optional<Coleccion> findColeccionCompleta(@Param("id") Long id);
 
     @Query("SELECT c.id_coleccion FROM Coleccion c")
     List<Long> findAllIds();

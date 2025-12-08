@@ -80,12 +80,17 @@ public class Normalizador {
             normalizarCategoria(hecho, categoriasExistentes);
             normalizarUbicacion(hecho, provinciasExistentes);
 
+            if(hecho.getUbicacion() == null){
+                continue;
+            }
+
             String identificador = construirIdentificador(hecho);
             Hecho existente = hechosDepurados.get(identificador);
 
             if (existente == null) {
                 hechosDepurados.put(identificador, hecho);
             } else {
+                //TODO: Implementar con base de datos
                 combinarHechos(existente, hecho);
             }
         }
