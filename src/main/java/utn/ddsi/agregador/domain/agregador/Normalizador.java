@@ -625,8 +625,8 @@ public class Normalizador {
 
     private List<ProvinciaPoligono> inicializarProvinciasFallback() {
         List<ProvinciaPoligono> provincias = new ArrayList<>();
-        provincias.add(desdeBoundingBox("Ciudad Autonoma de Buenos Aires", -34.74f, -34.50f, -58.53f, -58.35f));
-        provincias.add(desdeBoundingBox("Buenos Aires", -41.0f, -33.0f, -64.5f, -56.0f));
+        provincias.add(desdeBoundingBox("CABA", -34.74f, -34.50f, -58.53f, -58.35f));
+        provincias.add(desdeBoundingBox("BsAs", -41.0f, -33.0f, -64.5f, -56.0f));
         provincias.add(desdeBoundingBox("Cordoba", -35.5f, -29.0f, -66.6f, -61.0f));
         provincias.add(desdeBoundingBox("Santa Fe", -33.8f, -28.5f, -62.5f, -58.0f));
         provincias.add(desdeBoundingBox("Mendoza", -37.5f, -31.5f, -70.8f, -66.5f));

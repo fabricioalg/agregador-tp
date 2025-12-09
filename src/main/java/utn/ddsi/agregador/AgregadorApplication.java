@@ -26,7 +26,6 @@ public class AgregadorApplication {
 
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
         System.out.println("Funciona");
-
         IRepositoryProvincias repoProv = ctx.getBean(IRepositoryProvincias.class);
         IRepositoryCategorias repoCat = ctx.getBean(IRepositoryCategorias.class);
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
