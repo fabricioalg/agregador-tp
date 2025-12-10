@@ -20,7 +20,7 @@ public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
     )
     Long contarHechosDeCategoria(@Param("id_categoria") Long idCategoria);
 
-    @Query("SELECT new utn.ddsi.agregador.dto.EstadisticaCategoriaDTO( COUNT(*),c.nombre) FROM Hecho h " +
+    @Query("SELECT new utn.ddsi.agregador.dto.EstadisticaCategoriaDTO(c.nombre, COUNT(*)) FROM Hecho h " +
         "JOIN h.categoria c " +
         "group by c.nombre"
     )
