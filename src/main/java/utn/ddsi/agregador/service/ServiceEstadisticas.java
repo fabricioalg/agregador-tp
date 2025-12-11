@@ -81,10 +81,7 @@ public class ServiceEstadisticas {
     //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
     public List<EstadisticaCantidadHoraCateDTO>  obtenerCantidadDeHechosXHoraXCategoria(String categoria){
         Categoria cate = this.repoCategorias.findByNombre(categoria);
-
-        List<EstadisticaCantidadHoraCateDTO> estadistica = this.serviceHechos.obtenerCantidadDeHechosXDiaXCategoria(cate.getId_categoria());
-        System.out.println(estadistica);
-        return estadistica;
+        return this.serviceHechos.obtenerCantidadDeHechosXDiaXCategoria(cate.getId_categoria());
     }
 
     public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(){

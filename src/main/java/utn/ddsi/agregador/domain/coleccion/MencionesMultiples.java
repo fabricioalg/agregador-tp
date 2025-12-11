@@ -14,8 +14,6 @@ public class MencionesMultiples extends AlgoritmoDeConsenso {
             HechoFuenteDTO dataFuenteEvaluada,
             List<HechoFuenteDTO> todosLosDatosDeFuentes
     ) {
-        System.out.println("dataFuenteEvaluada=" + dataFuenteEvaluada.getIdHecho() + "," + dataFuenteEvaluada.getUrlFuente());
-        System.out.println("aplicarDTO: hechoActual=" + dataFuenteEvaluada.getTitulo() + ", todosSize=" + todosLosDatosDeFuentes.size() + ", fuentesSize=" + fuentesColeccion.size());
 
         // Obtener fuentes que coinciden con el hecho evaluado
         Set<String> fuentesCoincidentes =

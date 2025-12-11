@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
+import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.EstadisticaColeccionHechosXProvinciaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteDTO;
 
@@ -35,6 +36,8 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     @Query("SELECT hc FROM HechoXColeccion hc WHERE hc.coleccion.id_coleccion = :coleccionId")
     List<HechoXColeccion> findByColeccion(Long coleccionId);
 
+    @Query("SELECT hc FROM HechoXColeccion hc where hc.coleccion.id_coleccion = :coleccionId and hc.hecho.id_hecho = :hechoId")
+    HechoXColeccion findByConjunto(Long coleccionId, Long hechoId);
 
     @Query("SELECT new utn.ddsi.agregador.dto.HechoFuenteDTO( hxc.hecho.id_hecho, hxc.hecho.titulo, hxc.hecho.descripcion, hxc.hecho.fuente.url )FROM HechoXColeccion hxc WHERE hxc.coleccion.id_coleccion = :idColeccion ")
     List<HechoFuenteDTO> findHechoFuenteData(@Param("idColeccion") Long idColeccion);

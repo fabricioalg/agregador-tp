@@ -43,14 +43,22 @@ public class ActualizadorColecciones {
     public List<Hecho> traerHechosDeLoaders(){
         List <Hecho> hechosNuevos = new ArrayList();
         for(Loader loader : loaders){
-            hechosNuevos.addAll(loader.obtenerHechos()); //Falta poner lo de la horas según corresponda al Loader
-        }
+            try {
+                hechosNuevos.addAll(loader.obtenerHechos()); //Falta poner lo de la horas según corresponda al Loader
+            } catch (Exception e) {
+                continue;
+            }
+            }
         return hechosNuevos;
     }
 
     public List<Hecho> depurarHechos() {
+        // mi fuente estatica lo manda 2 veces
         List<Hecho> todosLosHechos = traerHechosDeLoaders();
+        //los normaliza
+        if(todosLosHechos == null || todosLosHechos.isEmpty()) return Collections.emptyList();
         List<Hecho> hechosNormalizados = normalizador.normalizar(todosLosHechos);
+        // aca recien los sube y se duplica
         repositoryHechos.saveAll(hechosNormalizados);
         return hechosNormalizados;
     }
@@ -74,8 +82,11 @@ public class ActualizadorColecciones {
                                 condiciones, hechosTotales
                         );
                 for (Hecho h : hechosFiltrados) {
-                    HechoXColeccion hxc = new HechoXColeccion(h, coleccion, false);
-                    this.repoHechoxColeccion.save(hxc);
+                    HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
+                    if(hxc == null) {
+                        HechoXColeccion nuevo = new HechoXColeccion(h, coleccion, false);
+                        this.repoHechoxColeccion.save(nuevo);
+                    }
                 }
             }
             List<Hecho> hechosFiltrados =
@@ -83,8 +94,11 @@ public class ActualizadorColecciones {
                             condiciones, hechosNuevos
                     );
             for (Hecho h : hechosFiltrados) {
-                HechoXColeccion hxc = new HechoXColeccion(h, coleccion, false);
-                this.repoHechoxColeccion.save(hxc);
+                HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
+                if(hxc == null) {
+                    HechoXColeccion nuevo = new HechoXColeccion(h, coleccion, false);
+                    this.repoHechoxColeccion.save(nuevo);
+                }
             }
         }
         repositoryColecciones.saveAll(colecciones);

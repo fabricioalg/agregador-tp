@@ -13,9 +13,6 @@ public class ConsensoDefault extends AlgoritmoDeConsenso {
             HechoFuenteDTO dataFuenteEvaluada,
             List<HechoFuenteDTO> todosLosDatosDeFuentes
     ) {
-        System.out.println("dataFuenteEvaluada=" + dataFuenteEvaluada.getIdHecho() + "," + dataFuenteEvaluada.getUrlFuente());
-
-        System.out.println("aplicarDTO: hechoActual=" + dataFuenteEvaluada.getIdHecho() + ", todosSize=" + todosLosDatosDeFuentes.size() + ", fuentesSize=" + fuentesColeccion.size());
         return true;
     }
 }
