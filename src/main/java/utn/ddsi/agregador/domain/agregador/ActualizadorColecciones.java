@@ -117,6 +117,7 @@ public class ActualizadorColecciones {
         if(!fuentes.isEmpty()){
             for(Fuente f:fuentes){
                 CondicionFuente condicion = new CondicionFuente(f);
+                condiciones.add(condicion);
             }
         }
         return condiciones;
