@@ -14,13 +14,16 @@ import utn.ddsi.agregador.domain.hecho.Hecho;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 @DiscriminatorValue("fuente")
 public class CondicionFuente extends InterfaceCondicion {
 
     @ManyToOne
     private Fuente fuente;
+
+    public CondicionFuente(Fuente fuente) {
+        this.fuente = fuente;
+    }
 
     @Override
     public boolean cumpleCondicion(Hecho hecho) {

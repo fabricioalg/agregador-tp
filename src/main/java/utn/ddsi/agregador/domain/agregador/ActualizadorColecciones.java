@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
+import utn.ddsi.agregador.domain.condicion.CondicionFuente;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.fuentes.Loader;
@@ -77,6 +78,11 @@ public class ActualizadorColecciones {
             List<HechoXColeccion> hechosEnCol = this.repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
             List<InterfaceCondicion> condiciones = this.repositoryColecciones.findByIdCondiciones(coleccion.getId_coleccion());
             if(hechosEnCol.isEmpty()) {
+
+                List<Fuente> fuentesColeccion= this.repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
+                List<InterfaceCondicion> condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
+                condiciones.addAll(condicionesFuentes);
+                //Agrego condicones de fuente en las condciones de pertenencia para obtener el filtrado ocrecto en base a las fuentes de la coleccion
                 List<Hecho> hechosFiltrados =
                         filtradorDeHechos.devolverHechosAPartirDe(
                                 condiciones, hechosTotales
@@ -102,6 +108,18 @@ public class ActualizadorColecciones {
             }
         }
         repositoryColecciones.saveAll(colecciones);
+    }
+
+    @Transactional
+    public List<InterfaceCondicion> crearCondicionesDeFuentes(List<Fuente> fuentes){
+
+        List<InterfaceCondicion> condiciones = new ArrayList<InterfaceCondicion>();
+        if(!fuentes.isEmpty()){
+            for(Fuente f:fuentes){
+                CondicionFuente condicion = new CondicionFuente(f);
+            }
+        }
+        return condiciones;
     }
 /*
     @Transactional
