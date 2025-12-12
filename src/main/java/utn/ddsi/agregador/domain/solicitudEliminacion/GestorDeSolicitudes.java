@@ -23,6 +23,7 @@ public class GestorDeSolicitudes {
     public void procesarSolicitud(SolicitudEliminacion solicitud) {
         if (detector.esSpam(solicitud.getMotivo())) {
             solicitud.setEstado(EnumEstadoSol.RECHAZADA);
+            solicitud.setSpam(true);
             repository.save(solicitud);
         } else {
             solicitud.setEstado(EnumEstadoSol.PENDIENTE);

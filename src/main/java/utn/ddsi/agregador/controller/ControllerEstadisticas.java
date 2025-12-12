@@ -62,7 +62,7 @@ public class ControllerEstadisticas {
     //Chequeado
     //Cuantas solicitudes de eliminacion son spam?
     @GetMapping("/solicitudesSpam")
-    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(@RequestParam Long desde){
+    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(){
         return this.service.obtenerCantidadSpamEnSolicitudes();
     }
 
