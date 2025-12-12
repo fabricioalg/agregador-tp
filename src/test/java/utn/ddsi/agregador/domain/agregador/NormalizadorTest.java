@@ -40,7 +40,6 @@ class NormalizadorTest {
 
     private final Clock clock = Clock.fixed(Instant.parse("2025-01-10T00:00:00Z"), ZoneOffset.UTC);
     Normalizador normalizador;
-
     @BeforeEach
     void beforeEach() {
 
@@ -53,7 +52,6 @@ class NormalizadorTest {
 
         normalizador = new Normalizador(clock, repoCategorias, repoProvincias, repoUbicacion);
     }
-
     @Test
     void normalizaCategoriaFechasYProvincia() {
         Categoria incendioForestal = new Categoria("Incendio forestal");
@@ -77,7 +75,7 @@ class NormalizadorTest {
         hecho.setCategoria(new Categoria("Fuego forestal")); // sin ID
         hecho.setUbicacion(new Ubicacion(-31.4f, -64.2f));
         hecho.setFecha(LocalDate.of(2025, 1, 12));
-        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 9, 5, 10));
+        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1,9,5,10));
 
         List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
 
@@ -89,7 +87,7 @@ class NormalizadorTest {
         assertNotNull(resultado.getCategoria().getId_categoria());
 
         assertEquals(LocalDate.of(2025, 1, 10), resultado.getFecha());
-        assertEquals(LocalDateTime.of(2025, 1, 10, 0, 0), resultado.getFechaDeCarga());
+        assertEquals(LocalDateTime.of(2025, 1, 10,0,0), resultado.getFechaDeCarga());
 
         assertEquals("Incendio forestal en cordoba", resultado.getTitulo());
 
@@ -119,7 +117,7 @@ class NormalizadorTest {
         base.setCategoria(new Categoria("Incendio forestal")); // sin ID, se normaliza
         base.setUbicacion(new Ubicacion(-31.40f, -64.20f));
         base.setFecha(LocalDate.of(2025, 1, 8));
-        base.setFechaDeCarga(LocalDateTime.of(2025, 1, 8, 5, 10));
+        base.setFechaDeCarga(LocalDateTime.of(2025, 1, 8,5,10));
         base.setAdjuntos(List.of(new Adjunto(0, TipoMedia.IMAGEN, "https://ejemplo/img.jpg")));
         Fuente fuenteDinamica = new Fuente();
         fuenteDinamica.setNombre("Fuente comunitaria");
@@ -133,7 +131,7 @@ class NormalizadorTest {
         candidato.setCategoria(new Categoria("Fuego forestal")); // sin ID
         candidato.setUbicacion(new Ubicacion(-31.401f, -64.201f));
         candidato.setFecha(LocalDate.of(2025, 1, 9));
-        candidato.setFechaDeCarga(LocalDateTime.of(2025, 1, 9, 9, 10));
+        candidato.setFechaDeCarga(LocalDateTime.of(2025, 1, 9,9,10));
         candidato.setAdjuntos(List.of(new Adjunto(0, TipoMedia.VIDEO, "https://ejemplo/video.mp4")));
         Fuente fuenteEstatica = new Fuente();
         fuenteEstatica.setNombre("Base oficial");
@@ -153,33 +151,32 @@ class NormalizadorTest {
         assertEquals(2, resultado.getAdjuntos().size());
     }
 
-    /*
-        @Test
-        void descartaUbicacionesInvalidas() {
-            // --- Mock Categoria con ID ---
-            Categoria contaminacion = new Categoria("Contaminacion");
-            contaminacion.setId_categoria(1L); // simulamos ID asignado
-            when(repoCategorias.findByNombre(anyString())).thenReturn(contaminacion);
-            when(repoCategorias.save(any())).thenAnswer(inv -> {
-                Categoria cat = inv.getArgument(0);
-                if (cat.getId_categoria() == null) cat.setId_categoria(2L);
-                return cat;
-            });
+    @Test
+    void descartaUbicacionesInvalidas() {
+        // --- Mock Categoria con ID ---
+        Categoria contaminacion = new Categoria("Contaminacion");
+        contaminacion.setId_categoria(1L); // simulamos ID asignado
+        when(repoCategorias.findByNombre(anyString())).thenReturn(contaminacion);
+        when(repoCategorias.save(any())).thenAnswer(inv -> {
+            Categoria cat = inv.getArgument(0);
+            if (cat.getId_categoria() == null) cat.setId_categoria(2L);
+            return cat;
+        });
 
-            // --- Hecho con ubicación inválida ---
-            Hecho hecho = new Hecho();
-            hecho.setTitulo("hecho sin ubicacion valida");
-            hecho.setCategoria(new Categoria("contaminacion")); // sin ID
-            hecho.setUbicacion(new Ubicacion(120f, -200f)); // inválida
-            hecho.setFecha(LocalDate.of(2025, 1, 5));
-            hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 6,9,10));
+        // --- Hecho con ubicación inválida ---
+        Hecho hecho = new Hecho();
+        hecho.setTitulo("hecho sin ubicacion valida");
+        hecho.setCategoria(new Categoria("contaminacion")); // sin ID
+        hecho.setUbicacion(new Ubicacion(120f, -200f)); // inválida
+        hecho.setFecha(LocalDate.of(2025, 1, 5));
+        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 6,9,10));
 
-            List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
+        List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
 
-            assertEquals(1, normalizados.size());
-            assertNull(normalizados.get(0).getUbicacion());
-        }
-    */
+        assertEquals(1, normalizados.size());
+        assertNull(normalizados.get(0).getUbicacion());
+    }
+
     @Test
     void asignaProvinciaDesdePoligonoDelCsv() {
         // --- Mock Categoria ---
@@ -226,7 +223,6 @@ class NormalizadorTest {
         assertEquals("Ciudad Autonoma de Buenos Aires", normalizado.getUbicacion().getProvincia().getNombre());
         assertEquals("Argentina", normalizado.getUbicacion().getProvincia().getPais());
     }
-
     @Test
     void reutilizaInstanciaDeProvinciaCacheada() {
         // Mock Categoria con ID
@@ -245,14 +241,14 @@ class NormalizadorTest {
         primero.setCategoria(new Categoria("incendio")); // sin ID
         primero.setUbicacion(new Ubicacion(-34.6037f, -58.3816f));
         primero.setFecha(LocalDate.of(2025, 1, 7));
-        primero.setFechaDeCarga(LocalDateTime.of(2025, 1, 7, 9, 10));
+        primero.setFechaDeCarga(LocalDateTime.of(2025, 1, 7,9,10));
 
         Hecho segundo = new Hecho();
         segundo.setTitulo("evento en puerto madero");
         segundo.setCategoria(new Categoria("incendio")); // sin ID
         segundo.setUbicacion(new Ubicacion(-34.6137f, -58.3616f));
         segundo.setFecha(LocalDate.of(2025, 1, 8));
-        segundo.setFechaDeCarga(LocalDateTime.of(2025, 1, 8, 9, 10));
+        segundo.setFechaDeCarga(LocalDateTime.of(2025, 1, 8,9,10));
 
         List<Hecho> normalizados = normalizador.normalizar(List.of(primero, segundo));
 
@@ -281,7 +277,7 @@ class NormalizadorTest {
         hecho.setCategoria(new Categoria("contaminacion")); // sin ID
         hecho.setUbicacion(new Ubicacion(40.7128f, -74.0060f));
         hecho.setFecha(LocalDate.of(2025, 1, 4));
-        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 5, 9, 10));
+        hecho.setFechaDeCarga(LocalDateTime.of(2025, 1, 5,9,10));
 
         List<Hecho> normalizados = normalizador.normalizar(List.of(hecho));
 
