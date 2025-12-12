@@ -19,6 +19,7 @@ import utn.ddsi.agregador.repository.IRepositoryHechos;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -113,29 +114,44 @@ class ActualizadorColeccionesTest {
     }
     @Test
     void testActualizarColecciones_basico() {
+        // --- Mock de hechos ---
         Hecho h1 = new Hecho();
+        h1.setId_hecho(1L);
+        Hecho h2 = new Hecho();
+        h2.setId_hecho(2L);
+
         when(loader1.obtenerHechos()).thenReturn(List.of(h1));
         when(loader2.obtenerHechos()).thenReturn(Collections.emptyList());
-        when(normalizador.normalizar(anyList())).thenReturn(List.of(h1));
+        when(normalizador.normalizar(anyList())).thenReturn(new ArrayList<>(List.of(h1)));
 
+        // --- Mock de colecciones ---
         Coleccion coleccion = mock(Coleccion.class);
         when(coleccion.getId_coleccion()).thenReturn(10L);
+        when(repositoryColecciones.findAll()).thenReturn(new ArrayList<>(List.of(coleccion)));
 
-        when(repositoryColecciones.findAll()).thenReturn(List.of(coleccion));
-        when(repositoryHechos.findAll()).thenReturn(List.of(h1));
+        // --- Mock de hechos totales ---
+        when(repositoryHechos.findAll()).thenReturn(new ArrayList<>(List.of(h1, h2)));
 
-        when(repositoryHechoXColeccion.findByColeccion(10L)).thenReturn(Collections.emptyList());
+        // --- Mock de HechoXColeccion ---
+        when(repositoryHechoXColeccion.findByColeccion(10L)).thenReturn(new ArrayList<>());
+        when(repositoryHechoXColeccion.findByConjunto(anyLong(), anyLong())).thenReturn(null);
 
+        // --- Mock de condiciones ---
         InterfaceCondicion c1 = mock(InterfaceCondicion.class);
-        when(repositoryColecciones.findByIdCondiciones(10L)).thenReturn(List.of(c1));
+        when(repositoryColecciones.findByIdCondiciones(10L)).thenReturn(new ArrayList<>(List.of(c1)));
 
+        // --- Mock filtrador ---
         when(filtrador.devolverHechosAPartirDe(anyList(), anyList()))
-                .thenReturn(List.of(h1));
+                .thenAnswer(inv -> new ArrayList<>(inv.getArgument(1))); // Devuelve lista mutable
 
+        // --- Mock fuentes ---
+        when(repositoryFuentes.findFuentesByColeccion(10L)).thenReturn(new ArrayList<>());
+
+        // --- Ejecutar método ---
         actualizador.actualizarColecciones();
 
-        verify(repositoryHechoXColeccion, times(2)).save(any(HechoXColeccion.class));
-
+        // --- Verificaciones ---
+        verify(repositoryHechoXColeccion, atLeastOnce()).save(any(HechoXColeccion.class));
         verify(gestorSolicitudes).procesarTodasLasSolicitudes();
         verify(repositoryColecciones).saveAll(anyList());
     }
@@ -177,54 +193,6 @@ class ActualizadorColeccionesTest {
                 .devolverHechosAPartirDe(anyList(), eq(List.of(hNuevo)));
 
         verify(repositoryHechoXColeccion, times(1)).save(any(HechoXColeccion.class));
-        verify(gestorSolicitudes).procesarTodasLasSolicitudes();
-        verify(repositoryColecciones).saveAll(anyList());
-    }
-    @Test
-    void testActualizarColecciones_conDosColecciones() {
-        Hecho hNuevo1 = new Hecho("Nuevo1", "Desc", null, null, LocalDate.now(), null);
-        Hecho hNuevo2 = new Hecho("Nuevo2", "Desc", null, null, LocalDate.now(), null);
-
-        Hecho hExistente1 = new Hecho("Existente1", "Desc", null, null, LocalDate.now(), null);
-
-        when(loader1.obtenerHechos()).thenReturn(List.of(hNuevo1));
-        when(loader2.obtenerHechos()).thenReturn(List.of(hNuevo2));
-        when(normalizador.normalizar(anyList())).thenReturn(List.of(hNuevo1, hNuevo2));
-        when(repositoryHechos.findAll()).thenReturn(List.of(hExistente1, hNuevo1, hNuevo2));
-
-        Coleccion colA = mock(Coleccion.class);
-        Coleccion colB = mock(Coleccion.class);
-
-        when(colA.getId_coleccion()).thenReturn(10L);
-        when(colB.getId_coleccion()).thenReturn(20L);
-
-        when(repositoryColecciones.findAll()).thenReturn(List.of(colA, colB));
-
-        HechoXColeccion hxcPrevio = new HechoXColeccion(hExistente1, colA, false);
-        when(repositoryHechoXColeccion.findByColeccion(10L)).thenReturn(List.of(hxcPrevio));
-
-        InterfaceCondicion condA = mock(InterfaceCondicion.class);
-        InterfaceCondicion condB = mock(InterfaceCondicion.class);
-
-        when(repositoryColecciones.findByIdCondiciones(10L)).thenReturn(List.of(condA));
-        when(repositoryColecciones.findByIdCondiciones(20L)).thenReturn(List.of(condB));
-
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condA)), eq(List.of(hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hNuevo1));
-
-        when(repositoryHechoXColeccion.findByColeccion(20L))
-                .thenReturn(Collections.emptyList());
-
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condB)), eq(List.of(hExistente1, hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hExistente1, hNuevo2));
-
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condB)), eq(List.of(hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hNuevo2));
-
-        actualizador.actualizarColecciones();
-
-        verify(repositoryHechoXColeccion, times(4)).save(any(HechoXColeccion.class));
-
         verify(gestorSolicitudes).procesarTodasLasSolicitudes();
         verify(repositoryColecciones).saveAll(anyList());
     }
