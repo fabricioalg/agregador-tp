@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
@@ -19,6 +20,7 @@ import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 
+@Data
 @Component
 public class ActualizadorColecciones {
 
@@ -72,7 +74,7 @@ public class ActualizadorColecciones {
 
         // la consigna pide: Este servicio utiliza el mecanismo de rechazos de solicitudes
         // de eliminación spam en forma automática definido en la Entrega 2
-        gestorSolicitudes.procesarTodasLasSolicitudes();
+        //gestorSolicitudes.procesarTodasLasSolicitudes(); AHORA SE HACE SOLO CON SU PROPIO SCHEDULER
 
         for (Coleccion coleccion : colecciones) {
             List<HechoXColeccion> hechosEnCol = this.repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
