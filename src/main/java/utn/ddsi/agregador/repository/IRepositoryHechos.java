@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.EstadisticaCantidadHoraCateDTO;
 import utn.ddsi.agregador.dto.EstadisticaCategoriaDTO;
-import utn.ddsi.agregador.dto.EstadisticaColeccionHechosXProvinciaDTO;
 import utn.ddsi.agregador.dto.EstadisticaProviciaXCategoriaDTO;
 
 import java.util.List;
@@ -45,5 +44,5 @@ public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
             " ORDER BY COUNT(h) DESC")
     List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(@Param("categoria") Long categoria);
 
-
+    Hecho findByTitulo(String titulo);
 }
