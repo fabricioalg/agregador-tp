@@ -82,12 +82,12 @@ public class ActualizadorColecciones {
             if(hechosEnCol.isEmpty()) {
 
                 List<Fuente> fuentesColeccion= this.repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
-                List<InterfaceCondicion> condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
-                condiciones.addAll(condicionesFuentes);
+                List<CondicionFuente> condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
+                List<Hecho> hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales,condicionesFuentes);
                 //Agrego condicones de fuente en las condciones de pertenencia para obtener el filtrado ocrecto en base a las fuentes de la coleccion
                 List<Hecho> hechosFiltrados =
                         filtradorDeHechos.devolverHechosAPartirDe(
-                                condiciones, hechosTotales
+                                condiciones, hechosFiltradosPorFuente
                         );
                 for (Hecho h : hechosFiltrados) {
                     HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
@@ -113,9 +113,9 @@ public class ActualizadorColecciones {
     }
 
     @Transactional
-    public List<InterfaceCondicion> crearCondicionesDeFuentes(List<Fuente> fuentes){
+    public List<CondicionFuente> crearCondicionesDeFuentes(List<Fuente> fuentes){
 
-        List<InterfaceCondicion> condiciones = new ArrayList<InterfaceCondicion>();
+        List<CondicionFuente> condiciones = new ArrayList<CondicionFuente>();
         if(!fuentes.isEmpty()){
             for(Fuente f:fuentes){
                 CondicionFuente condicion = new CondicionFuente(f);

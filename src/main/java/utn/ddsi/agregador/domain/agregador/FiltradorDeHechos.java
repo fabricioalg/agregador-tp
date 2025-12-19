@@ -2,6 +2,7 @@ package utn.ddsi.agregador.domain.agregador;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
+import utn.ddsi.agregador.domain.condicion.CondicionFuente;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 
@@ -27,6 +28,18 @@ public class FiltradorDeHechos {
         }
 
         return base.stream().filter(hecho -> condiciones.stream().filter(Objects::nonNull).allMatch(cond -> cond.cumpleCondicion(hecho))).collect(Collectors.toList());
+    }
+    public List<Hecho> devovelHechosDeFuentes( List<Hecho> hechos,List<CondicionFuente> condicionesFuente){
+
+        List<Hecho> base = hechos.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        return base.stream().filter(h-> perteneceAlaFuente(h,condicionesFuente)).collect(Collectors.toList());
+
+
+    };
+
+    public boolean perteneceAlaFuente(Hecho hecho, List<CondicionFuente> condiciones){
+       return   condiciones.stream().anyMatch(f->hecho.getFuente().equals(f));
+
     }
     
 }
