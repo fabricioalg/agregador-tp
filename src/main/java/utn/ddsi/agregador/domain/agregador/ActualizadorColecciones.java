@@ -71,6 +71,9 @@ public class ActualizadorColecciones {
         List<Hecho> hechosNuevos = depurarHechos();
         List<Hecho> hechosTotales = repositoryHechos.findAll();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
+        List<Hecho> hechosFiltradosPorFuente = new ArrayList<>();
+        List<CondicionFuente> condicionesFuentes= new ArrayList<>();
+        List<Fuente> fuentesColeccion =new ArrayList<>();
 
         // la consigna pide: Este servicio utiliza el mecanismo de rechazos de solicitudes
         // de eliminación spam en forma automática definido en la Entrega 2
@@ -81,9 +84,9 @@ public class ActualizadorColecciones {
             List<InterfaceCondicion> condiciones = this.repositoryColecciones.findByIdCondiciones(coleccion.getId_coleccion());
             if(hechosEnCol.isEmpty()) {
 
-                List<Fuente> fuentesColeccion= this.repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
-                List<CondicionFuente> condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
-                List<Hecho> hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales,condicionesFuentes);
+                fuentesColeccion= this.repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
+                condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
+                hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales,condicionesFuentes);
                 //Agrego condicones de fuente en las condciones de pertenencia para obtener el filtrado ocrecto en base a las fuentes de la coleccion
                 List<Hecho> hechosFiltrados =
                         filtradorDeHechos.devolverHechosAPartirDe(
@@ -97,9 +100,12 @@ public class ActualizadorColecciones {
                     }
                 }
             }
+            fuentesColeccion= this.repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
+            condicionesFuentes =crearCondicionesDeFuentes(fuentesColeccion);
+            hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales,condicionesFuentes);
             List<Hecho> hechosFiltrados =
                     filtradorDeHechos.devolverHechosAPartirDe(
-                            condiciones, hechosNuevos
+                            condiciones, hechosFiltradosPorFuente
                     );
             for (Hecho h : hechosFiltrados) {
                 HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
