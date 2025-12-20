@@ -19,6 +19,7 @@ import utn.ddsi.agregador.repository.IRepositoryColecciones;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
+import utn.ddsi.agregador.utils.EnumEstadoHecho;
 
 @Data
 @Component
@@ -66,6 +67,7 @@ public class ActualizadorColecciones {
             Hecho hechoguardado =repositoryHechos.findByTitulo(h.getTitulo());
             if (hechoguardado == null ||
                     !hechoguardado.getFuente().getId_fuente().equals(h.getFuente().getId_fuente())) {
+                h.setEstado(EnumEstadoHecho.ALTA);
                 aGuardar.add(h);
             }
         }
@@ -107,6 +109,10 @@ public class ActualizadorColecciones {
             for (Hecho h : hechosFiltrados) {
                 HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
                 if (hxc == null) {
+                    // Si en la coleccion ya existe un hecho con mismo titulo y estado BAJA,
+                    // marcar el nuevo hecho como BAJA antes de guardarlo
+                    aplicarEstadoBajaSiCorresponde(h, coleccion.getId_coleccion(), hechosEnCol);
+
                     HechoXColeccion nuevo = new HechoXColeccion(h, coleccion, false);
                     this.repoHechoxColeccion.save(nuevo);
                 }
@@ -149,6 +155,27 @@ public class ActualizadorColecciones {
             }
         }
     }
+
+    // Nuevo helper: si existe en la coleccion un hecho con el mismo título y estado BAJA,
+    // marcar el hecho dado como BAJA y persistir el cambio.
+    private void aplicarEstadoBajaSiCorresponde(Hecho hecho, Long idColeccion, List<HechoXColeccion> hechosEnCol){
+        if(hecho == null || hecho.getTitulo() == null) return;
+        List<HechoXColeccion> lista = hechosEnCol;
+        if(lista == null) lista = this.repoHechoxColeccion.findByColeccion(idColeccion);
+        for(HechoXColeccion hxc : lista){
+            if(hxc == null || hxc.getHecho() == null) continue;
+            Hecho existente = hxc.getHecho();
+            if(existente.getTitulo() != null && existente.getTitulo().equals(hecho.getTitulo())){
+                if(existente.getEstado() != null && existente.getEstado().equals(EnumEstadoHecho.BAJA)){
+                    hecho.setEstado(EnumEstadoHecho.BAJA);
+                    // guardar cambio en el repositorio de hechos
+                    this.repositoryHechos.save(hecho);
+                }
+                break;
+            }
+        }
+    }
+
 /*
     @Transactional
     public void ejecutarAlgoritmosDeConsenso() {
