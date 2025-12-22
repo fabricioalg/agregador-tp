@@ -47,7 +47,7 @@ public class AgregadorApplication {
         GestorDeSolicitudes gestBasico = new GestorDeSolicitudes(repoSol, detectorBasico);
         ActualizadorColecciones act = new ActualizadorColecciones(repoCol, repoHecho, normalizador, gestBasico, loaders, filter, repoHxC, repoFu);
         Scheduler scheduler = ctx.getBean(Scheduler.class);
-        scheduler.ejecutarActualizacionPeriodica();
+        //scheduler.ejecutarActualizacionPeriodica();
         scheduler.ejecutarAlgoritmosDeConsenso();
         System.out.println("Finalizado");
 

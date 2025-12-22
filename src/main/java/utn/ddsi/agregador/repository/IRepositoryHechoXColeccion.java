@@ -44,13 +44,9 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     @Query(""+
     "SELECT hxc "+
     "FROM HechoXColeccion hxc "+
-    "JOIN FETCH hxc.hecho h "+
-    "LEFT JOIN FETCH h.categoria "+
-    "LEFT JOIN FETCH h.etiqueta "+
-    "LEFT JOIN FETCH h.fuente " +
-    "LEFT JOIN FETCH h.ubicacion u "+
-    "LEFT JOIN FETCH u.provincia " +
-    "WHERE hxc.coleccion.id_coleccion = :idCol" )
+    "JOIN hxc.hecho.fuente " +
+    "WHERE hxc.coleccion.id_coleccion = :idCol "+
+    "GROUP BY hxc.id_hecho_x_coleccion")
     List<HechoXColeccion> findByColeccionOptimizado(Long idCol);
 }
 

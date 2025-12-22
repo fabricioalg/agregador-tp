@@ -194,7 +194,7 @@ public class ActualizadorColecciones {
                 //System.out.println("Antes de guardar: hxc=" + hxc.getId_hecho_x_coleccion() + " cons=" + hxc.getConsensuado());
                 coleccion.aplicarConsenso(hxc, data, datosHechoFuente);
                 //System.out.println("ANTES SAVE HXC id=" + hxc.getId_hecho_x_coleccion() + " consensuado=" + hxc.getConsensuado());
-                repoHechoxColeccion.save(hxc);
+                //repoHechoxColeccion.save(hxc);
                 //System.out.println("Después de aplicar consenso: " + hxc.getConsensuado());
             }
         }

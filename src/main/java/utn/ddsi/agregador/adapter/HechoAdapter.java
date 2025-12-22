@@ -10,6 +10,7 @@ import utn.ddsi.agregador.dto.HechoFuenteEstaticaDTO;
 import utn.ddsi.agregador.dto.HechoFuenteProxyDTO;
 import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
+import utn.ddsi.agregador.utils.EnumEstadoHecho;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
 import utn.ddsi.agregador.utils.EnumTipoHecho;
 import utn.ddsi.agregador.utils.TipoMedia;
@@ -72,7 +73,7 @@ public class HechoAdapter {
             }
             hecho.setAdjuntos(adjuntos);
         }
-
+        hecho.setEstado(EnumEstadoHecho.ALTA);
         hecho.setFechaDeCarga(LocalDateTime.now());
 
         return hecho;
@@ -90,6 +91,10 @@ public class HechoAdapter {
                 LocalDate.parse(dto.getFecha()),
                 fuente
         );
+
+        hecho.setEstado(EnumEstadoHecho.ALTA);
+        hecho.setTipoHecho(EnumTipoHecho.valueOf(dto.getTipoHecho()));
+        hecho.setFechaDeCarga(LocalDateTime.now());
         return hecho;
     }
 
@@ -126,6 +131,7 @@ public class HechoAdapter {
                 fuente
         );
         hecho.setTipoHecho(EnumTipoHecho.TEXTO);
+        hecho.setEstado(EnumEstadoHecho.ALTA);
         hecho.setFechaDeCarga(LocalDateTime.now());
         return hecho;
     }
