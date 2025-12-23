@@ -8,7 +8,6 @@ import lombok.Setter;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
-import utn.ddsi.agregador.dto.HechoFuenteDTO;
 import utn.ddsi.agregador.utils.EnumTipoDeAlgoritmo;
 
 import java.util.ArrayList;
@@ -60,15 +59,6 @@ public class Coleccion {
         this.algoritmoDeConsenso = new ConsensoDefault();
     }
 
-    public Coleccion(String titulo) {
-        this.titulo = titulo;
-        this.hechos = new ArrayList<>();
-        this.fuentes = new ArrayList<>();
-        this.condicionDePertenencia = new ArrayList<>();
-        this.tipoDeAlgoritmo = EnumTipoDeAlgoritmo.DEFAULT;
-        this.algoritmoDeConsenso = new ConsensoDefault();
-    }
-
     @PostLoad
     private void cargarAlgoritmoDeConsenso() {
         if (tipoDeAlgoritmo != null) {
@@ -100,6 +90,16 @@ public class Coleccion {
 //        return hechosConsensuados
 //  }
 
+    public void aplicarConsenso(HechoXColeccion hxc, EvidenciaDeHecho evidencia) {
+        if (algoritmoDeConsenso.aplicar(evidencia, fuentes.size())) {
+            hxc.setConsensuado(Boolean.TRUE);
+        }
+    }
+    // Metodo para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
+    public void setTipoDeAlgoritmo(EnumTipoDeAlgoritmo tipoDeAlgoritmo) {
+        this.tipoDeAlgoritmo = tipoDeAlgoritmo;
+        this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
+    }
     public void agregarHechos(List<Hecho> nuevosHechos) {
         nuevosHechos.forEach(hecho -> {
             HechoXColeccion hxc = new HechoXColeccion(hecho, this, false);
@@ -110,7 +110,6 @@ public class Coleccion {
     public void agregarCriterioDePertenencia(InterfaceCondicion criterio) {
         condicionDePertenencia.add(criterio);
     }
-
     // Metodo para obtener solo los hechos consensuados (para navegación curada)
     public List<Hecho> obtenerSoloHechosConsensuados() {
         return hechos.stream()
@@ -125,21 +124,5 @@ public class Coleccion {
                 .map(HechoXColeccion::getHecho)
                 .collect(Collectors.toList());
     }
-
-    public void aplicarConsenso(HechoXColeccion hxc,
-                                HechoFuenteDTO dataFuenteEvaluada,
-                                List<HechoFuenteDTO> todosLosDatosDeFuentes){
-        if(algoritmoDeConsenso.aplicar(fuentes, dataFuenteEvaluada, todosLosDatosDeFuentes)){
-            hxc.setConsensuado(Boolean.TRUE);
-        }
-    }
-
-
-    // Metodo para cambiar el tipo de algoritmo (actualiza tanto el enum como la instancia)
-    public void setTipoDeAlgoritmo(EnumTipoDeAlgoritmo tipoDeAlgoritmo) {
-        this.tipoDeAlgoritmo = tipoDeAlgoritmo;
-        this.algoritmoDeConsenso = obtenerAlgoritmoPorTipo(tipoDeAlgoritmo);
-    }
-
 
 }

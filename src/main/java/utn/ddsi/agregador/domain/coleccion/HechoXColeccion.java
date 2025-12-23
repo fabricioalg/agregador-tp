@@ -37,6 +37,5 @@ public class HechoXColeccion {
         this.coleccion = coleccion;
         this.consensuado = consensuado;
     }
-    void setConsensuado(Boolean consenso) {this.consensuado = consenso;}
 }
 

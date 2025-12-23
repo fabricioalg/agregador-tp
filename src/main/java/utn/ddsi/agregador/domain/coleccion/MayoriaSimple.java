@@ -2,24 +2,15 @@ package utn.ddsi.agregador.domain.coleccion;
 
 import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.hecho.Hecho;
-import utn.ddsi.agregador.dto.HechoFuenteDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class MayoriaSimple extends AlgoritmoDeConsenso {
     @Override
-    public boolean aplicar(
-            List<Fuente> fuentesColeccion,
-            HechoFuenteDTO dataFuenteEvaluada,
-            List<HechoFuenteDTO> todosLosDatosDeFuentes
-    ) {
-         Set<String> fuentesCoincidentes =
-                obtenerFuentesCoincidentes(dataFuenteEvaluada, todosLosDatosDeFuentes, fuentesColeccion);
-
-        int minimo = (int) Math.ceil(fuentesColeccion.size() / 2.0);
-
-        return fuentesCoincidentes.size() >= minimo;
+    public boolean aplicar(EvidenciaDeHecho e, int totalFuentes) {
+        int minimo = (int) Math.ceil(totalFuentes / 2.0);
+        return e.getFuentesQueLoMencionan().size() >= minimo;
     }
 }
 /*
