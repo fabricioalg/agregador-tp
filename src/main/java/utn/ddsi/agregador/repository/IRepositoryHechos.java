@@ -44,5 +44,5 @@ public interface IRepositoryHechos extends JpaRepository<Hecho, Long> {
             " ORDER BY COUNT(h) DESC")
     List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(@Param("categoria") Long categoria);
 
-    Hecho findByTitulo(String titulo);
+    Hecho findFirstByTitulo(String titulo);
 }

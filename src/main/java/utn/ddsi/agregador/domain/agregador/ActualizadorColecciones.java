@@ -65,7 +65,8 @@ public class ActualizadorColecciones {
         // guardar solo los nuevos (ejemplo si existe getExternalId)
         List<Hecho> aGuardar = new ArrayList<>();
         for (Hecho h : hechosNormalizados) {
-            Hecho hechoguardado =repositoryHechos.findByTitulo(h.getTitulo());
+            //xd
+            Hecho hechoguardado =repositoryHechos.findFirstByTitulo(h.getTitulo());
             if (hechoguardado == null ||
                     !hechoguardado.getFuente().getId_fuente().equals(h.getFuente().getId_fuente())) {
                 h.setEstado(EnumEstadoHecho.ALTA);
