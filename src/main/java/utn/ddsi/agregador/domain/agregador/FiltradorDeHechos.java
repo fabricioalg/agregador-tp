@@ -38,7 +38,7 @@ public class FiltradorDeHechos {
     };
 
     public boolean perteneceAlaFuente(Hecho hecho, List<CondicionFuente> condiciones){
-       return   condiciones.stream().anyMatch(f->hecho.getFuente().equals(f));
+       return   condiciones.stream().anyMatch(f->hecho.getFuente().equals(f.getFuente()));
 
     }
     

@@ -1,11 +1,13 @@
 package utn.ddsi.agregador.dto;
 
 import jakarta.websocket.server.ServerEndpoint;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@Data
 @Getter
 @Setter
 public class HechoFuenteProxyDTO{

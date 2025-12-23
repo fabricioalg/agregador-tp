@@ -8,7 +8,7 @@ import utn.ddsi.agregador.utils.EnumTipoFuente;
 import java.util.List;
 
 public interface IRepositoryFuentes extends JpaRepository<Fuente, Long> {
-    @Query("SELECT f FROM Coleccion c JOIN c.fuentes f WHERE c.id = :idColeccion")
+    @Query("SELECT f FROM Coleccion c JOIN c.fuentes f WHERE c.id_coleccion = :idColeccion")
     List<Fuente> findFuentesByColeccion(Long idColeccion);
 
     Fuente findByUrl(String url);

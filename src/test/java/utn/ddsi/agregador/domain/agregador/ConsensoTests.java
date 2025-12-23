@@ -1,140 +1,220 @@
 package utn.ddsi.agregador.domain.agregador;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utn.ddsi.agregador.domain.coleccion.*;
-import utn.ddsi.agregador.domain.fuentes.Fuente;
-import utn.ddsi.agregador.dto.HechoFuenteDTO;
-import utn.ddsi.agregador.utils.EnumTipoFuente;
+import utn.ddsi.agregador.domain.hecho.Hecho;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ConsensoTests {
+public class ConsensoTests {
 
-    private Fuente fuente1;
-    private Fuente fuente2;
-    private Fuente fuente3;
+    /* =====================================================
+       MÉTODO AUXILIAR
+       ===================================================== */
+    private void aplicarConsenso(
+            Coleccion coleccion,
+            List<HechoXColeccion> hechos,
+            Map<Long, EvidenciaDeHecho> evidenciaPorHecho,
+            int totalFuentes
+    ) {
+        for (HechoXColeccion hxc : hechos) {
+            Long hechoId = hxc.getHecho().getId_hecho();
 
-    private HechoFuenteDTO hecho1;
-    private HechoFuenteDTO hecho2;
-    private HechoFuenteDTO hecho3;
-    private HechoFuenteDTO hechoConflicto;
+            EvidenciaDeHecho evidencia =
+                    evidenciaPorHecho.getOrDefault(
+                            hechoId,
+                            EvidenciaDeHecho.vacia(hechoId)
+                    );
 
-    private List<Fuente> todasFuentes;
-    private List<HechoFuenteDTO> todosHechos;
+            boolean consensuado =
+                    coleccion.getAlgoritmoDeConsenso()
+                            .aplicar(evidencia, totalFuentes);
 
-    @BeforeEach
-    void setUp() {
-        fuente1 = new Fuente("f1","Fuente1", EnumTipoFuente.ESTATICA);
-        fuente2 = new Fuente("f2","Fuente2", EnumTipoFuente.DINAMICA);
-        fuente3 = new Fuente("f3","Fuente3", EnumTipoFuente.DINAMICA);
-
-        todasFuentes = Arrays.asList(fuente1, fuente2, fuente3);
-
-        hecho1 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente1");
-        hecho2 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente2");
-        hecho3 = new HechoFuenteDTO(1L, "Hecho A", "Descripcion A", "Fuente3");
-
-        hechoConflicto = new HechoFuenteDTO(1L, "Hecho A", "Descripcion diferente", "Fuente3");
-
-        todosHechos = Arrays.asList(hecho1, hecho2, hecho3);
-    }
-
-    // Subclase de prueba que permite controlar las fuentes coincidentes
-    abstract class AlgoritmoDeConsensoMock extends AlgoritmoDeConsenso {
-        protected Set<String> fuentesMock;
-
-        public void setFuentesMock(Set<String> fuentesMock) {
-            this.fuentesMock = fuentesMock;
-        }
-
-        @Override
-        public Set<String> obtenerFuentesCoincidentes(
-                HechoFuenteDTO dataFuenteEvaluada,
-                List<HechoFuenteDTO> todosLosDatosDeFuentes,
-                List<Fuente> fuentesColeccion) {
-            return fuentesMock;
+            hxc.setConsensuado(consensuado);
         }
     }
 
+    /* =====================================================
+       DEFAULT
+       ===================================================== */
     @Test
-    void testConsensoAbsoluto_true() {
-        ConsensoAbsoluto algoritmo = new ConsensoAbsoluto() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2", "Fuente3"));
-            }
-        };
+    void algoritmoDefault_consensuaSiempre() {
+        AlgoritmoDeConsenso algoritmo = new ConsensoDefault();
 
-        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+        EvidenciaDeHecho evidencia = EvidenciaDeHecho.vacia(1L);
+
+        assertTrue(algoritmo.aplicar(evidencia, 5));
+    }
+
+    /* =====================================================
+       MULTIPLES MENCIONES
+       ===================================================== */
+    @Test
+    void multiplesMenciones_dosFuentes_sinConflicto_consensua() {
+        AlgoritmoDeConsenso algoritmo = new MencionesMultiples();
+
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L, 20L), // fuentes
+                false
+        );
+
+        assertTrue(algoritmo.aplicar(evidencia, 3));
     }
 
     @Test
-    void testConsensoAbsoluto_false() {
-        ConsensoAbsoluto algoritmo = new ConsensoAbsoluto() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2")); // Falta Fuente3
-            }
-        };
+    void multiplesMenciones_unaFuente_noConsensua() {
+        AlgoritmoDeConsenso algoritmo = new MencionesMultiples();
 
-        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L),
+                false
+        );
+
+        assertFalse(algoritmo.aplicar(evidencia, 3));
     }
 
     @Test
-    void testMayoriaSimple_true() {
-        MayoriaSimple algoritmo = new MayoriaSimple() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2")); // 2 de 3
-            }
-        };
+    void multiplesMenciones_conConflicto_noConsensua() {
+        AlgoritmoDeConsenso algoritmo = new MencionesMultiples();
 
-        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L, 20L),
+                true
+        );
+
+        assertFalse(algoritmo.aplicar(evidencia, 3));
+    }
+
+    /* =====================================================
+       MAYORIA SIMPLE
+       ===================================================== */
+    @Test
+    void mayoriaSimple_mitadExacta_consensua() {
+        AlgoritmoDeConsenso algoritmo = new MayoriaSimple();
+
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L, 20L), // 2 de 4
+                false
+        );
+
+        assertTrue(algoritmo.aplicar(evidencia, 4));
     }
 
     @Test
-    void testMayoriaSimple_false() {
-        MayoriaSimple algoritmo = new MayoriaSimple() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Collections.singletonList("Fuente1")); // Solo 1
-            }
-        };
+    void mayoriaSimple_menosDeLaMitad_noConsensua() {
+        AlgoritmoDeConsenso algoritmo = new MayoriaSimple();
 
-        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L), // 1 de 4
+                false
+        );
+
+        assertFalse(algoritmo.aplicar(evidencia, 4));
+    }
+
+    /* =====================================================
+       ABSOLUTA
+       ===================================================== */
+    @Test
+    void absoluta_todasLasFuentes_consensua() {
+        AlgoritmoDeConsenso algoritmo = new ConsensoAbsoluto();
+
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L, 20L, 30L),
+                false
+        );
+
+        assertTrue(algoritmo.aplicar(evidencia, 3));
     }
 
     @Test
-    void testMencionesMultiples_true() {
-        MencionesMultiples algoritmo = new MencionesMultiples() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2"));
-            }
-        };
+    void absoluta_faltaUnaFuente_noConsensua() {
+        AlgoritmoDeConsenso algoritmo = new ConsensoAbsoluto();
 
-        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+        EvidenciaDeHecho evidencia = new EvidenciaDeHecho(
+                1L,
+                Set.of(10L, 20L),
+                false
+        );
+
+        assertFalse(algoritmo.aplicar(evidencia, 3));
     }
 
+    /* =====================================================
+       CASO BORDE: EVIDENCIA VACIA
+       ===================================================== */
     @Test
-    void testMencionesMultiples_false_por_conflicto() {
-        MencionesMultiples algoritmo = new MencionesMultiples() {
-            @Override
-            public Set<String> obtenerFuentesCoincidentes(HechoFuenteDTO dto, List<HechoFuenteDTO> todos, List<Fuente> fuentes) {
-                return new HashSet<>(Arrays.asList("Fuente1", "Fuente2", "Fuente3"));
-            }
-        };
+    void evidenciaVacia_noRompe_y_noConsensua() {
+        AlgoritmoDeConsenso algoritmo = new MayoriaSimple();
 
-        List<HechoFuenteDTO> hechosConConflicto = Arrays.asList(hecho1, hecho2, hechoConflicto);
-        assertFalse(algoritmo.aplicar(todasFuentes, hecho1, hechosConConflicto));
+        EvidenciaDeHecho evidencia = EvidenciaDeHecho.vacia(1L);
+
+        assertFalse(algoritmo.aplicar(evidencia, 5));
     }
 
+    /* =====================================================
+       MULTIPLES MENCIONES + COLECCION
+       ===================================================== */
     @Test
-    void testConsensoDefault() {
-        ConsensoDefault algoritmo = new ConsensoDefault();
-        assertTrue(algoritmo.aplicar(todasFuentes, hecho1, todosHechos));
+    void multiplesMenciones_variosHechos_mixto() {
+        Coleccion coleccion = new Coleccion();
+        coleccion.setAlgoritmoDeConsenso(new MencionesMultiples());
+
+        int totalFuentes = 3;
+
+        Hecho h1 = new Hecho(); h1.setId_hecho(1L);
+        Hecho h2 = new Hecho(); h2.setId_hecho(2L);
+        Hecho h3 = new Hecho(); h3.setId_hecho(3L);
+
+        HechoXColeccion hx1 = new HechoXColeccion(h1, coleccion, false);
+        HechoXColeccion hx2 = new HechoXColeccion(h2, coleccion, false);
+        HechoXColeccion hx3 = new HechoXColeccion(h3, coleccion, false);
+
+        Map<Long, EvidenciaDeHecho> evidencia = Map.of(
+                1L, new EvidenciaDeHecho(1L, Set.of(10L, 20L), false), // ✔
+                2L, new EvidenciaDeHecho(2L, Set.of(10L), false),     // ✖
+                3L, new EvidenciaDeHecho(3L, Set.of(10L, 20L), true) // ✖ conflicto
+        );
+
+        aplicarConsenso(coleccion, List.of(hx1, hx2, hx3), evidencia, totalFuentes);
+
+        assertTrue(hx1.getConsensuado());
+        assertFalse(hx2.getConsensuado());
+        assertFalse(hx3.getConsensuado());
+    }
+
+    /* =====================================================
+       DEFAULT + COLECCION
+       ===================================================== */
+    @Test
+    void default_consensua_todos_los_hechos() {
+        Coleccion coleccion = new Coleccion();
+        coleccion.setAlgoritmoDeConsenso(new ConsensoDefault());
+
+        Hecho h1 = new Hecho(); h1.setId_hecho(1L);
+        Hecho h2 = new Hecho(); h2.setId_hecho(2L);
+
+        HechoXColeccion hx1 = new HechoXColeccion(h1, coleccion, false);
+        HechoXColeccion hx2 = new HechoXColeccion(h2, coleccion, false);
+
+        aplicarConsenso(
+                coleccion,
+                List.of(hx1, hx2),
+                Collections.emptyMap(),
+                5
+        );
+
+        assertTrue(hx1.getConsensuado());
+        assertTrue(hx2.getConsensuado());
     }
 }

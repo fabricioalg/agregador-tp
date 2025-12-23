@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
+import utn.ddsi.agregador.domain.coleccion.EvidenciaDeHecho;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
 import utn.ddsi.agregador.domain.condicion.CondicionFuente;
 import utn.ddsi.agregador.domain.condicion.InterfaceCondicion;
@@ -14,12 +15,11 @@ import utn.ddsi.agregador.domain.fuentes.Fuente;
 import utn.ddsi.agregador.domain.fuentes.Loader;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.domain.solicitudEliminacion.GestorDeSolicitudes;
-import utn.ddsi.agregador.dto.HechoFuenteDTO;
+import utn.ddsi.agregador.dto.MencionDeHecho;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
 import utn.ddsi.agregador.repository.IRepositoryFuentes;
 import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
-import utn.ddsi.agregador.utils.EnumEstadoHecho;
 
 @Data
 @Component
@@ -67,7 +67,6 @@ public class ActualizadorColecciones {
             Hecho hechoguardado =repositoryHechos.findByTitulo(h.getTitulo());
             if (hechoguardado == null ||
                     !hechoguardado.getFuente().getId_fuente().equals(h.getFuente().getId_fuente())) {
-                h.setEstado(EnumEstadoHecho.ALTA);
                 aGuardar.add(h);
             }
         }
@@ -109,10 +108,6 @@ public class ActualizadorColecciones {
             for (Hecho h : hechosFiltrados) {
                 HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
                 if (hxc == null) {
-                    // Si en la coleccion ya existe un hecho con mismo titulo y estado BAJA,
-                    // marcar el nuevo hecho como BAJA antes de guardarlo
-                    aplicarEstadoBajaSiCorresponde(h, coleccion.getId_coleccion(), hechosEnCol);
-
                     HechoXColeccion nuevo = new HechoXColeccion(h, coleccion, false);
                     this.repoHechoxColeccion.save(nuevo);
                 }
@@ -156,73 +151,66 @@ public class ActualizadorColecciones {
         }
     }
 
-    // Nuevo helper: si existe en la coleccion un hecho con el mismo título y estado BAJA,
-    // marcar el hecho dado como BAJA y persistir el cambio.
-    private void aplicarEstadoBajaSiCorresponde(Hecho hecho, Long idColeccion, List<HechoXColeccion> hechosEnCol){
-        if(hecho == null || hecho.getTitulo() == null) return;
-        List<HechoXColeccion> lista = hechosEnCol;
-        if(lista == null) lista = this.repoHechoxColeccion.findByColeccion(idColeccion);
-        for(HechoXColeccion hxc : lista){
-            if(hxc == null || hxc.getHecho() == null) continue;
-            Hecho existente = hxc.getHecho();
-            if(existente.getTitulo() != null && existente.getTitulo().equals(hecho.getTitulo())){
-                if(existente.getEstado() != null && existente.getEstado().equals(EnumEstadoHecho.BAJA)){
-                    hecho.setEstado(EnumEstadoHecho.BAJA);
-                    // guardar cambio en el repositorio de hechos
-                    this.repositoryHechos.save(hecho);
-                }
-                break;
-            }
-        }
-    }
+    @Transactional
+    public void ejecutarAlgoritmosDeConsenso() {
 
-/*
-    @Transactional
-    public void ejecutarAlgoritmosDeConsenso() {
         List<Coleccion> colecciones = repositoryColecciones.findAll();
+
         for (Coleccion coleccion : colecciones) {
-            List<Fuente> fuentes = repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
-            coleccion.actualizarFuentes(fuentes);
-            List<HechoXColeccion> hechosEnColeccion = repoHechoxColeccion.findHechosByColeccionId(coleccion.getId_coleccion());
-            for (HechoXColeccion hxc : hechosEnColeccion) {
-                coleccion.aplicarConsenso(hxc, hechosEnColeccion);
-                repoHechoxColeccion.save(hxc);
-            }
-        }
-        repositoryColecciones.saveAll(colecciones);
-    }*/
-    @Transactional
-    public void ejecutarAlgoritmosDeConsenso() {
-        List<Coleccion> colecciones = repositoryColecciones.findAll();
-        for (Coleccion coleccion : colecciones) {
-            List<Fuente> fuentes = repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
+
+            List<Fuente> fuentes =
+                    repositoryFuente.findFuentesByColeccion(coleccion.getId_coleccion());
             coleccion.setFuentes(fuentes);
 
-            List<HechoFuenteDTO> datosHechoFuente =
-                    repoHechoxColeccion.findHechoFuenteData(coleccion.getId_coleccion());
+            int totalFuentes = fuentes.size();
 
-            Map<Long, HechoFuenteDTO> dtoPorHecho =
-                    datosHechoFuente.stream()
-                            .collect(Collectors.toMap(
-                                    HechoFuenteDTO::getIdHecho,
-                                    d -> d,
-                                    (a, b) -> a
-                            ));
+            List<MencionDeHecho> menciones =
+                    repoHechoxColeccion.findMencionesDeHechos(coleccion.getId_coleccion());
 
-            List<HechoXColeccion> hechos =
-                    repoHechoxColeccion.findByColeccionOptimizado(coleccion.getId_coleccion());
-            //System.out.println("cantidad de hechos " + hechos.size());
+            Map<Long, List<MencionDeHecho>> mencionesPorHecho =
+                    menciones.stream()
+                            .collect(Collectors.groupingBy(MencionDeHecho::hechoId));
+
+            Map<Long, EvidenciaDeHecho> evidenciaPorHecho = new HashMap<>();
+
+            //busco la evidencia del hecho
+            for (Map.Entry<Long, List<MencionDeHecho>> entry : mencionesPorHecho.entrySet()) {
+
+                Long hechoId = entry.getKey();
+                List<MencionDeHecho> mencionesDelHecho = entry.getValue();
+
+                Set<Long> fuentesQueMencionan =
+                        mencionesDelHecho.stream()
+                                .map(MencionDeHecho::fuenteId)
+                                .collect(Collectors.toSet());
+
+                Set<String> descripciones =
+                        mencionesDelHecho.stream()
+                                .map(MencionDeHecho::descripcion)
+                                .collect(Collectors.toSet());
+
+                boolean hayConflicto = descripciones.size() > 1;
+
+                evidenciaPorHecho.put(
+                        hechoId,
+                        new EvidenciaDeHecho(hechoId, fuentesQueMencionan, hayConflicto)
+                );
+            }
+            List<HechoXColeccion> hechos = repoHechoxColeccion.findByColeccion(coleccion.getId_coleccion());
 
             for (HechoXColeccion hxc : hechos) {
-                HechoFuenteDTO data = dtoPorHecho.get(hxc.getHecho().getId_hecho());
-                //System.out.println("Coleccion " + coleccion.getId_coleccion() + " algoritmo=" + coleccion.getTipoDeAlgoritmo());
-                //System.out.println("Hecho=" + hxc.getHecho().getId_hecho() + ", DTO=" + (data != null) + ", totalDTOs=" + datosHechoFuente.size());
-                //System.out.println("Fuentes coleccion ids=" + coleccion.getFuentes().stream().map(Fuente::getId_fuente).toList());
-                //System.out.println("Antes de guardar: hxc=" + hxc.getId_hecho_x_coleccion() + " cons=" + hxc.getConsensuado());
-                coleccion.aplicarConsenso(hxc, data, datosHechoFuente);
-                //System.out.println("ANTES SAVE HXC id=" + hxc.getId_hecho_x_coleccion() + " consensuado=" + hxc.getConsensuado());
-                repoHechoxColeccion.save(hxc);
-                //System.out.println("Después de aplicar consenso: " + hxc.getConsensuado());
+                Long hechoId = hxc.getHecho().getId_hecho();
+
+                EvidenciaDeHecho evidencia = evidenciaPorHecho.getOrDefault(
+                                hechoId,
+                                EvidenciaDeHecho.vacia(hechoId)
+                        );
+
+                boolean consensuado =
+                        coleccion.getAlgoritmoDeConsenso()
+                                .aplicar(evidencia, totalFuentes);
+
+                hxc.setConsensuado(consensuado);
             }
         }
         repositoryColecciones.saveAll(colecciones);

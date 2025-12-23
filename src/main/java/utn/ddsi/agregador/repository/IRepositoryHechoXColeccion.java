@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
 import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.dto.EstadisticaColeccionHechosXProvinciaDTO;
-import utn.ddsi.agregador.dto.HechoFuenteDTO;
+import utn.ddsi.agregador.dto.MencionDeHecho;
 
 import java.util.List;
 
@@ -39,19 +39,24 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     @Query("SELECT hc FROM HechoXColeccion hc where hc.coleccion.id_coleccion = :coleccionId and hc.hecho.id_hecho = :hechoId")
     HechoXColeccion findByConjunto(Long coleccionId, Long hechoId);
 
-    @Query("SELECT new utn.ddsi.agregador.dto.HechoFuenteDTO( hxc.hecho.id_hecho, hxc.hecho.titulo, hxc.hecho.descripcion, hxc.hecho.fuente.url )FROM HechoXColeccion hxc WHERE hxc.coleccion.id_coleccion = :idColeccion ")
-    List<HechoFuenteDTO> findHechoFuenteData(@Param("idColeccion") Long idColeccion);
+    @Query("""
+        SELECT new utn.ddsi.agregador.dto.MencionDeHecho(
+        hxc.hecho.id_hecho,
+        hxc.hecho.fuente.id_fuente,
+        hxc.hecho.descripcion
+    )
+    FROM HechoXColeccion hxc
+    WHERE hxc.coleccion.id_coleccion = :idColeccion
+    """)
+    List<MencionDeHecho> findMencionesDeHechos(@Param("idColeccion") Long idColeccion);
+    /*
     @Query(""+
     "SELECT hxc "+
     "FROM HechoXColeccion hxc "+
-    "JOIN FETCH hxc.hecho h "+
-    "LEFT JOIN FETCH h.categoria "+
-    "LEFT JOIN FETCH h.etiqueta "+
-    "LEFT JOIN FETCH h.fuente " +
-    "LEFT JOIN FETCH h.ubicacion u "+
-    "LEFT JOIN FETCH u.provincia " +
-    "WHERE hxc.coleccion.id_coleccion = :idCol" )
-    List<HechoXColeccion> findByColeccionOptimizado(Long idCol);
+    "JOIN hxc.hecho.fuente " +
+    "WHERE hxc.coleccion.id_coleccion = :idCol "+
+    "GROUP BY hxc.id_hecho_x_coleccion")
+    List<HechoXColeccion> findByColeccionOptimizado(Long idCol);*/
 }
 
 
