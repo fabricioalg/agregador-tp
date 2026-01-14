@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 # Ejecutamos el comando de Maven para crear el JAR (saltando los tests para ir más rápido)
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # --- ETAPA 2: RUN (Ejecución) ---
 # Usamos una imagen ligera de Java 17 solo para correr la app
