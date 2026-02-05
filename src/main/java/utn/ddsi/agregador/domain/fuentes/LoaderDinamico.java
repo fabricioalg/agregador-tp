@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.domain.fuentes;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Component
 public class LoaderDinamico extends Loader {
     private final RestTemplate restTemplate;
@@ -22,26 +24,39 @@ public class LoaderDinamico extends Loader {
         this.restTemplate = restTemplate;
         this.setAdapter(adapter);
     }
-
     @Override
     public List<Hecho> obtenerHechos() {
+        String urlCompleta = getRuta() + "/hechos";
+        log.info("Iniciando petición GET a fuente externa: {}", urlCompleta);
+
         try {
             ResponseEntity<HechoFuenteDinamicaDTO[]> response =
                     restTemplate.exchange(
-                            getRuta() + "/hechos",
+                            urlCompleta,
                             HttpMethod.GET,
                             null,
                             HechoFuenteDinamicaDTO[].class
                     );
 
+            log.info("Respuesta recibida de la API externa. Status Code: {}", response.getStatusCode());
+
             HechoFuenteDinamicaDTO[] hechosDTO = response.getBody();
 
             if (hechosDTO == null || hechosDTO.length == 0) {
+                log.warn("La API externa en {} devolvió una lista vacía o nula", urlCompleta);
                 return Collections.emptyList();
             }
 
-            return this.getAdapter().adaptarHechosDeFuenteDinamica(Arrays.asList(hechosDTO));
+            log.debug("Se recuperaron {} HechosDTOs de la fuente externa. Iniciando adaptación...", hechosDTO.length);
+
+            List<Hecho> hechosAdaptados = this.getAdapter().adaptarHechosDeFuenteDinamica(Arrays.asList(hechosDTO));
+
+            log.info("Proceso de carga dinámica finalizado. Hechos adaptados con éxito: {}", hechosAdaptados.size());
+            return hechosAdaptados;
+
         } catch (Exception e) {
+            log.error("ERROR CRÍTICO: Falló la conexión o el procesamiento de la fuente externa en {}", urlCompleta);
+            log.error("Detalle del error: {}", e.getMessage());
             throw new RuntimeException("Error al obtener hechos desde " + getRuta(), e);
         }
     }

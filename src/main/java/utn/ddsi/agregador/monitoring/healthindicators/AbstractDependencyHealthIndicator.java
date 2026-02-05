@@ -2,6 +2,7 @@ package utn.ddsi.agregador.monitoring.healthindicators;
 
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
 
 public abstract class AbstractDependencyHealthIndicator implements HealthIndicator {
 
@@ -13,14 +14,16 @@ public abstract class AbstractDependencyHealthIndicator implements HealthIndicat
                         .withDetail(dependencyName(), "OK")
                         .build();
             }
-            return Health.down()
-                    .withDetail(dependencyName(), downMessage())
-                    .build();
+           // return Health.status(200).withDetail(dependencyName(), downMessage())
+             //       .build();
+            return Health.status(Status.DOWN).build();
+
         } catch (Exception ex) {
-            return Health.down()
-                    .withDetail(dependencyName(), downMessage())
-                    .withException(ex)
-                    .build();
+            //return Health.down()
+              //      .withDetail(dependencyName(), downMessage())
+                  //  .withException(ex)
+                //    .build();
+                return Health.status(Status.DOWN).build();
         }
     }
 

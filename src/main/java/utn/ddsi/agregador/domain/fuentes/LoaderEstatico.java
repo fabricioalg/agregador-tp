@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.domain.fuentes;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class LoaderEstatico extends Loader {
 
@@ -34,10 +36,14 @@ public class LoaderEstatico extends Loader {
 
     public List<Hecho> obtenerHechos() {
         String fuenteUrl = "";
-        try{
+        String urlCarga = this.getRuta() + "/hechos";
+
+        log.info("Iniciando carga estática desde: {}", urlCarga);
+
+        try {
             ResponseEntity<HechoFuenteEstaticaDTO[][]> response =
                     restTemplate.exchange(
-                            this.getRuta() + "/hechos",
+                            urlCarga,
                             HttpMethod.GET,
                             null,
                             HechoFuenteEstaticaDTO[][].class
@@ -45,29 +51,43 @@ public class LoaderEstatico extends Loader {
 
             HechoFuenteEstaticaDTO[][] hechosDTO = response.getBody();
 
-            if (hechosDTO == null) {
+            if (hechosDTO == null || hechosDTO.length == 0) {
+                log.warn("La respuesta de la fuente estática está vacía.");
                 return Collections.emptyList();
             }
 
+            log.info("Se recibieron {} HechosDTO para procesar", hechosDTO.length);
+
             List<Hecho> hechosTransformados = new ArrayList<>();
-            for (int i = 0; i<hechosDTO.length; i++ ) {
-                fuenteUrl = hechosDTO[i][0].getFuente().getRuta();
-                List<Hecho> transformado =  this.getAdapter().adaptarHechosDeFuenteEstatica(fuenteUrl, List.of(hechosDTO[i]));
-                hechosTransformados.addAll(transformado);
+            for (int i = 0; i < hechosDTO.length; i++) {
+
+                    fuenteUrl = hechosDTO[i][0].getFuente().getRuta();
+                    log.debug("Procesando grupo {} - Fuente: {}", i, fuenteUrl);
+
+                    List<Hecho> transformado = this.getAdapter().adaptarHechosDeFuenteEstatica(fuenteUrl, List.of(hechosDTO[i]));
+                    hechosTransformados.addAll(transformado);
             }
 
+            log.info("Proceso completado. Total de hechos transformados: {}", hechosTransformados.size());
             return hechosTransformados;
+
         } catch (Exception e) {
-            ResponseEntity<String> response =
-                    restTemplate.exchange(
-                            this.getRuta() + "/reprocesar/" + fuenteUrl,
-                            HttpMethod.POST,
-                            null,
-                            String.class
-                    );
-            System.out.println("El archivo no se pudo procesar " + fuenteUrl);
+            log.error("Error durante el procesamiento en la URL: {}. Detalle: {}", fuenteUrl, e.getMessage());
+
+            try {
+                log.info("Intentando reprocesar fuente fallida: {}", fuenteUrl);
+                restTemplate.exchange(
+                        this.getRuta() + "/reprocesar/" + fuenteUrl,
+                        HttpMethod.POST,
+                        null,
+                        String.class
+                );
+                log.info("Solicitud de reprocesamiento enviada correctamente para: {}", fuenteUrl);
+            } catch (Exception re) {
+                log.error("No se pudo enviar la solicitud de reprocesamiento para {}: {}", fuenteUrl, re.getMessage());
+            }
+
             throw new RuntimeException("Error al obtener hechos desde " + this.getRuta(), e);
         }
     }
-
 }

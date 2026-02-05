@@ -1,5 +1,6 @@
 package utn.ddsi.agregador;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -18,14 +19,15 @@ import utn.ddsi.agregador.repository.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @SpringBootApplication
 @EnableScheduling
 public class AgregadorApplication {
 
     public static void main(String[] args) {
 
+        log.info("Iniciando aplicacion Agregador");
         ApplicationContext ctx = SpringApplication.run(AgregadorApplication.class, args);
-        System.out.println("Funciona");
         IRepositoryProvincias repoProv = ctx.getBean(IRepositoryProvincias.class);
         IRepositoryCategorias repoCat = ctx.getBean(IRepositoryCategorias.class);
         IRepositoryHechos repoHecho = ctx.getBean(IRepositoryHechos.class);
@@ -49,7 +51,7 @@ public class AgregadorApplication {
         Scheduler scheduler = ctx.getBean(Scheduler.class);
         //scheduler.ejecutarActualizacionPeriodica();
         scheduler.ejecutarAlgoritmosDeConsenso();
-        System.out.println("Finalizado");
+        log.info("Aplicacion Agregador iniciada correctamente");
 
     }
 }

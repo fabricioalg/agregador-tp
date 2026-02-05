@@ -36,28 +36,65 @@ public class ServiceColecciones {
     }
     //No se por que est definido asi jaja (att:yeri)
     public List<Coleccion> buscarPorID(Long id) {
+        log.info("Buscando por ID {}", id);
         List<Coleccion> colecciones = repositoryColecciones.findAll();
+        log.debug("Se recuperaron {} registros totaes de la base de datos", colecciones.size());
         List<Coleccion> rta = new ArrayList<>();
-        colecciones.forEach(coleccion -> {if(coleccion.getId_coleccion().equals(id)) rta.add(coleccion);});
+        colecciones.forEach(coleccion -> {
+            if(coleccion.getId_coleccion().equals(id)) rta.add(coleccion);
+        });
+        if (rta.isEmpty()) {
+            log.warn("No se encontraron coincidencias para el ID: {}", id);
+        } else {
+            log.info("Búsqueda finalizada. Coincidencias encontradas: {}", rta.size());
+        }
         return rta;
     }
     public void eliminarColeccion(Long idColeccion) {
-       repositoryColecciones.deleteById(idColeccion);
+        log.info("Intentando eliminar la colección con ID: {}", idColeccion);
+        repositoryColecciones.deleteById(idColeccion);
+        log.info("Proceso de eliminación finalizado para el ID: {}", idColeccion);
     }
 
-    public Coleccion obtenerPorNombre(String nombre){
-        return this.repositoryColecciones.findByTitulo(nombre);
+    public Coleccion obtenerPorNombre(String nombre) {
+        log.info("Iniciando búsqueda de colección por nombre: '{}'", nombre);
+        Coleccion resultado = this.repositoryColecciones.findByTitulo(nombre);
+
+        if (resultado == null) {
+            log.warn("No se encontró ninguna colección con el nombre: '{}'", nombre);
+        } else {
+            log.info("Colección encontrada exitosamente, Id: {}", resultado.getId_coleccion());
+        }
+
+        return resultado;
     }
 
     public List<String> obtenerNombreDeColecciones() {
-        return this.repositoryColecciones.obtenerNombresColecciones();
+        log.info("Solicitando lista completa de nombres de colecciones");
+        List<String> nombres = this.repositoryColecciones.obtenerNombresColecciones();
+
+        if (nombres.isEmpty()) {
+            log.info("La consulta de nombres devolvió una lista vacía");
+        } else {
+            log.debug("Se recuperaron {} nombres de colecciones", nombres.size());
+        }
+
+        return nombres;
     }
 
     public void agregar(Coleccion coleccion) {
+        log.info("Intentando agregar una nueva colección");
         if (coleccion == null) {
+            log.error("Fallo al agregar: el objeto Coleccion proporcionado es null");
             throw new IllegalArgumentException("Coleccion es null");
         }
+
         repositoryColecciones.save(coleccion);
-        log.info("ServiceColecciones: Coleccion agregada: {}", coleccion);
+        // Usamos el ID para confirmar la persistencia en el log
+        if(coleccion.getId_coleccion()!=null){
+            log.info("ServiceColecciones: Coleccion guardada exitosamente con ID: {}", coleccion.getId_coleccion());
+        }else{
+            log.warn("ServiceColecciones: La coleccion no pudo ser guardada");
+        }
     }
 }

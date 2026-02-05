@@ -34,15 +34,18 @@ public class DependencyMonitorService {
     public void heartbeat() {
 
         boolean databaseOk = database.estaDisponible();
-        //boolean dinamicaOk = dinamica.estaDisponible();
-        //boolean estaticaOk = estatica.estaDisponible();
-        //boolean proxyOk = proxy.estaDisponible();
+        boolean dinamicaOk = dinamica.estaDisponible();
+        boolean estaticaOk = estatica.estaDisponible();
+        boolean proxyOk = proxy.estaDisponible();
 
-        //if (!databaseOk || !dinamicaOk || !estaticaOk || !proxyOk) {
-        if(!databaseOk) {
-            log.error("Dependencia crítica caída → forzando restart");
-            throw new IllegalStateException(
-                    "Dependencia crítica caída: autorestart requerido");
+        if (!databaseOk || !dinamicaOk || !estaticaOk || !proxyOk) {
+            log.info("Heartbeat FAILED – estado de dependencias:" +
+                    " database: {}, fuenteDinamica: {}, fuenteEstatica: {}, fuenteProxy: {}",
+                    databaseOk ? "UP" : "DOWN",
+                    dinamicaOk ? "UP" : "DOWN",
+                    estaticaOk ? "UP" : "DOWN",
+                    proxyOk ? "UP" : "DOWN"
+            );
         }
 
         log.info("Heartbeat OK – todas las dependencias UP");

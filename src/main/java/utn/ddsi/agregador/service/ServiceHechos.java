@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import utn.ddsi.agregador.repository.IRepositoryHechos;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class ServiceHechos {
     
@@ -24,19 +26,47 @@ public class ServiceHechos {
     }
 
     public Long contarHechosDeCategoria(Long id_categoria) {
-       return  this.repositoryHechos.contarHechosDeCategoria(id_categoria);
+        log.info("ServiceHechos: Contando hechos para la categoría ID: {}", id_categoria);
+        Long cantidad = this.repositoryHechos.contarHechosDeCategoria(id_categoria);
+        log.debug("Resultado del conteo para categoría {}: {}", id_categoria, cantidad);
+        return cantidad;
     }
 
     public List<EstadisticaCategoriaDTO> contarHechosDeCategorias(){
-        return this.repositoryHechos.contarHechosDeCategorias();
+        log.info("ServiceHechos: Solicitando estadísticas globales de todas las categorías");
+        List<EstadisticaCategoriaDTO> resultados = this.repositoryHechos.contarHechosDeCategorias();
+
+        if (resultados.isEmpty()) {
+            log.warn("ServiceHechos: La consulta de estadísticas de categorías devolvió una lista vacía");
+        } else {
+            log.debug("ServiceHechos: Se recuperaron {} registros de categorías", resultados.size());
+        }
+
+        return resultados;
     }
 
     public List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechosXProvinciaXCategoria(Long categoria) {
-        return this.repositoryHechos.obtenerCantidadDeHechosXProvinciaXCategoria(categoria);
+        log.info("ServiceHechos: Calculando hechos por provincia para la categoría ID: {}", categoria);
+        List<EstadisticaProviciaXCategoriaDTO> rta = this.repositoryHechos.obtenerCantidadDeHechosXProvinciaXCategoria(categoria);
+
+        if (rta.isEmpty()) {
+            log.info("ServiceHechos: No se encontraron registros de provincias para la categoría ID: {}", categoria);
+        }
+        log.info("ServiceHechos: Encontró Resultados ");
+        return rta;
     }
 
     public List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXDiaXCategoria(Long categoria) {
-        return this.repositoryHechos.obtenerCantidadDeHechosXDiaXCategoria(categoria);
+        log.info("ServiceHechos: Consultando distribución horaria para la categoría ID: {}", categoria);
+        List<EstadisticaCantidadHoraCateDTO> rta = this.repositoryHechos.obtenerCantidadDeHechosXDiaXCategoria(categoria);
+
+        if (rta.isEmpty()) {
+            log.warn("ServiceHechos: No hay datos horarios registrados para la categoría ID: {}", categoria);
+        } else {
+            log.info("ServiceHechos: Análisis horario obtenido con {} franjas registradas", rta.size());
+        }
+
+        return rta;
     }
 
     /*
