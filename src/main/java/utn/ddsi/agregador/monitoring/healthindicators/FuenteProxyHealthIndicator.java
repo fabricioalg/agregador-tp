@@ -37,7 +37,7 @@ public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicato
     }
 
     @Override
-    protected boolean estaDisponible() {
+    public boolean estaDisponible() {
         try {
             ResponseEntity<String> response =
                     restTemplate.getForEntity(url, String.class);

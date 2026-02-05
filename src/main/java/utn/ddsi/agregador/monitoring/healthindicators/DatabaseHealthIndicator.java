@@ -1,8 +1,11 @@
 package utn.ddsi.agregador.monitoring.healthindicators;
 
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component("database")
 public class DatabaseHealthIndicator extends AbstractDependencyHealthIndicator {
 
@@ -23,8 +26,17 @@ public class DatabaseHealthIndicator extends AbstractDependencyHealthIndicator {
     }
 
     @Override
-    protected boolean estaDisponible() {
-        Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
-        return result != null && result == 1;
+    public boolean estaDisponible() {
+        try {
+            Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+            boolean ok = result != null && result == 1;
+            if (!ok) {
+                log.error("Database health check returned unexpected result: {}", result);
+            }
+            return ok;
+        } catch (Exception ex) {
+            log.error("Database health check failed: {}", ex.getMessage(), ex);
+            return false;
+        }
     }
 }

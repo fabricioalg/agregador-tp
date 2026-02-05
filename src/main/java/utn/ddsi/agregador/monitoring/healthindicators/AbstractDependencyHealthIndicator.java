@@ -27,7 +27,7 @@ public abstract class AbstractDependencyHealthIndicator implements HealthIndicat
     protected abstract String dependencyName();
     protected abstract String downMessage();
 
-    protected abstract boolean estaDisponible();
+    public abstract boolean estaDisponible();
 
     public Health markDown() {
         return Health.down()

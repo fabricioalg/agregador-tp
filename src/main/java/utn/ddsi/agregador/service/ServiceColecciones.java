@@ -1,19 +1,18 @@
 package utn.ddsi.agregador.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
-import utn.ddsi.agregador.domain.fuentes.Fuente;
-import utn.ddsi.agregador.domain.hecho.Hecho;
 import utn.ddsi.agregador.repository.IRepositoryColecciones;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 public class ServiceColecciones {
+
     @Autowired
     private IRepositoryColecciones repositoryColecciones;
 //    /* PREGUNTA SERIA, ESTO SIRVE? para mi no atte Fabri
@@ -53,5 +52,12 @@ public class ServiceColecciones {
     public List<String> obtenerNombreDeColecciones() {
         return this.repositoryColecciones.obtenerNombresColecciones();
     }
-}
 
+    public void agregar(Coleccion coleccion) {
+        if (coleccion == null) {
+            throw new IllegalArgumentException("Coleccion es null");
+        }
+        repositoryColecciones.save(coleccion);
+        log.info("ServiceColecciones: Coleccion agregada: {}", coleccion);
+    }
+}
