@@ -1,29 +1,28 @@
 package utn.ddsi.agregador.monitoring.healthindicators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 
+@Slf4j
 public abstract class AbstractDependencyHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
         try {
             if (estaDisponible()) {
-                return Health.up()
-                        .withDetail(dependencyName(), "OK")
-                        .build();
+                return markUp();
             }
-           // return Health.status(200).withDetail(dependencyName(), downMessage())
-             //       .build();
-            return Health.status(Status.DOWN).build();
+
+            log.warn("Dependency '{}' reported DOWN: {}", dependencyName(), downMessage());
+            return markDown();
 
         } catch (Exception ex) {
-            //return Health.down()
-              //      .withDetail(dependencyName(), downMessage())
-                  //  .withException(ex)
-                //    .build();
-                return Health.status(Status.DOWN).build();
+            log.error("Error comprobando dependencia '{}': {}", dependencyName(), ex.getMessage(), ex);
+            return Health.down(ex)
+                    .withDetail(dependencyName(), downMessage())
+                    .build();
         }
     }
 

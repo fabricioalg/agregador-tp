@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.monitoring.healthindicators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.Duration;
 
+@Slf4j
 @Component("fuenteEstatica")
 public class FuenteEstaticaHealthIndicator extends AbstractDependencyHealthIndicator {
 
@@ -42,9 +44,20 @@ public class FuenteEstaticaHealthIndicator extends AbstractDependencyHealthIndic
             ResponseEntity<String> response =
                     restTemplate.getForEntity(url, String.class);
 
-            return response.getStatusCode().is2xxSuccessful();
+            boolean ok = response.getStatusCode().is2xxSuccessful();
+            if (!ok) {
+                log.warn("FuenteEstatica respondió con código {} para URL {}", response.getStatusCode(), url);
+            }else{
+                log.info("FuenteEstatica respondió correctamente con código {} para URL {}", response.getStatusCode(), url);
+            }
+
+            return ok;
 
         } catch (RestClientException ex) {
+            log.error("Error al verificar FuenteEstatica ({}): {}", url, ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.error("Excepción inesperada al verificar FuenteEstatica: {}", ex.getMessage(), ex);
             return false;
         }
     }

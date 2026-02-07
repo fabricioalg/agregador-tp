@@ -22,7 +22,7 @@ public class DatabaseHealthIndicator extends AbstractDependencyHealthIndicator {
 
     @Override
     protected String downMessage() {
-        return "Database no disponible";
+        return "Database no disponible o sin respuesta al SELECT 1";
     }
 
     @Override

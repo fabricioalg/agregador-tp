@@ -1,5 +1,6 @@
 package utn.ddsi.agregador.monitoring.healthindicators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.Duration;
 
+@Slf4j
 @Component("fuenteProxy")
 public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicator {
 
@@ -42,9 +44,19 @@ public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicato
             ResponseEntity<String> response =
                     restTemplate.getForEntity(url, String.class);
 
-            return response.getStatusCode().is2xxSuccessful();
+            boolean ok = response.getStatusCode().is2xxSuccessful();
+            if (!ok) {
+                log.warn("FuenteProxy respondió con código {} para URL {}", response.getStatusCode(), url);
+            }else{
+                log.info("FuenteProxy respondió correctamente con código {} para URL {}", response.getStatusCode(), url);
+            }
+            return ok;
 
         } catch (RestClientException ex) {
+            log.error("Error al verificar FuenteProxy ({}): {}", url, ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.error("Excepción inesperada al verificar FuenteProxy: {}", ex.getMessage(), ex);
             return false;
         }
     }
