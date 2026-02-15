@@ -79,11 +79,11 @@ public class Normalizador {
             normalizarFechas(hecho);
             normalizarCategoria(hecho, categoriasExistentes);
             normalizarUbicacion(hecho, provinciasExistentes);
-
+/*
             if(hecho.getUbicacion() == null){
                 continue;
             }
-
+*/
             String identificador = construirIdentificador(hecho);
             Hecho existente = hechosDepurados.get(identificador);
 

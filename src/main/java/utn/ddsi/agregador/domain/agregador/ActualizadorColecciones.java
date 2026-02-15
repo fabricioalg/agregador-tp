@@ -104,7 +104,7 @@ public class ActualizadorColecciones {
             eliminarHechosNoValidos(hechosEnCol, condiciones, condicionesFuentes, hechosTotales);
 
             // 2) Determinar hechos válidos a partir de todas las fuentes y condiciones
-            hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales, condicionesFuentes);
+            hechosFiltradosPorFuente = filtradorDeHechos.devolverHechosDeFuentes(hechosTotales, condicionesFuentes);
             List<Hecho> hechosFiltrados = filtradorDeHechos.devolverHechosAPartirDe(condiciones, hechosFiltradosPorFuente);
 
             // 3) Insertar los que falten (sólo los que no existan)
@@ -163,7 +163,7 @@ public class ActualizadorColecciones {
         if(hechosEnCol == null || hechosEnCol.isEmpty()) return;
 
         // Primero filtrar por fuentes como se hace normalmente
-        List<Hecho> hechosFiltradosPorFuente = filtradorDeHechos.devovelHechosDeFuentes(hechosTotales, condicionesFuentes);
+        List<Hecho> hechosFiltradosPorFuente = filtradorDeHechos.devolverHechosDeFuentes(hechosTotales, condicionesFuentes);
         // Luego aplicar las condiciones de pertenencia
         List<Hecho> hechosValidos = filtradorDeHechos.devolverHechosAPartirDe(condiciones, hechosFiltradosPorFuente);
         Set<Long> idsValidos = hechosValidos.stream().map(Hecho::getId_hecho).collect(Collectors.toSet());

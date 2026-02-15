@@ -100,18 +100,6 @@ class ActualizadorColeccionesTest {
         assertEquals("TituloNormal", resultado.get(0).getTitulo());
     }
     @Test
-    void deberiaProcesarSolicitudesDeEliminacionAntesDeActualizarColecciones() {
-        when(repositoryColecciones.findAll()).thenReturn(List.of());
-        when(actualizador.depurarHechos()).thenReturn(List.of());
-
-        actualizador.actualizarColecciones();
-
-        verify(gestorSolicitudes, times(1))
-                .procesarTodasLasSolicitudes();
-
-        verify(repositoryColecciones).findAll();
-    }
-    @Test
     void testActualizarColecciones_basico() {
         Hecho h1 = new Hecho();
         when(loader1.obtenerHechos()).thenReturn(List.of(h1));
@@ -134,98 +122,169 @@ class ActualizadorColeccionesTest {
 
         actualizador.actualizarColecciones();
 
-        verify(repositoryHechoXColeccion, times(2)).save(any(HechoXColeccion.class));
+        verify(repositoryHechoXColeccion, times(1)).save(any(HechoXColeccion.class));
 
-        verify(gestorSolicitudes).procesarTodasLasSolicitudes();
         verify(repositoryColecciones).saveAll(anyList());
     }
     @Test
-    void testActualizarColecciones_conHechosExistentesEnColeccion() {
+    void actualizarColecciones_agregaHechoNuevoCuandoNoExisteEnColeccion() {
+        // ---------- Arrange ----------
+
+        // Hechos
         Hecho hNuevo = new Hecho("Titulo nuevo", "Desc", null, null,
                 LocalDate.now(), null);
+        hNuevo.setId_hecho(2L);
+
         Hecho hExistente = new Hecho("Titulo existente", "Desc", null, null,
                 LocalDate.now(), null);
+        hExistente.setId_hecho(1L);
 
+        // Loaders
         when(loader1.obtenerHechos()).thenReturn(List.of(hNuevo));
         when(loader2.obtenerHechos()).thenReturn(Collections.emptyList());
 
+        // Normalizador
         when(normalizador.normalizar(anyList())).thenReturn(List.of(hNuevo));
 
+        // Repositorio de hechos
         when(repositoryHechos.findAll()).thenReturn(List.of(hExistente, hNuevo));
+        when(repositoryHechos.findFirstByTitulo(anyString())).thenReturn(null);
 
+        // Colección
         Coleccion coleccion = mock(Coleccion.class);
         when(coleccion.getId_coleccion()).thenReturn(100L);
-
         when(repositoryColecciones.findAll()).thenReturn(List.of(coleccion));
 
+        // Hechos ya presentes en la colección
         HechoXColeccion hxcExistente = new HechoXColeccion(hExistente, coleccion, false);
         when(repositoryHechoXColeccion.findByColeccion(100L))
                 .thenReturn(List.of(hxcExistente));
 
-        InterfaceCondicion c1 = mock(InterfaceCondicion.class);
-        when(repositoryColecciones.findByIdCondiciones(100L)).thenReturn(List.of(c1));
+        // Condiciones de pertenencia
+        InterfaceCondicion condicion = mock(InterfaceCondicion.class);
+        when(repositoryColecciones.findByIdCondiciones(100L))
+                .thenReturn(List.of(condicion));
 
-        when(filtrador.devolverHechosAPartirDe(anyList(), eq(List.of(hNuevo))))
+        // Fuentes (no interesan para este test)
+        when(repositoryFuentes.findFuentesByColeccion(100L))
+                .thenReturn(Collections.emptyList());
+
+        // Filtrador (IMPORTANTE: stubs generales)
+        when(filtrador.devolverHechosDeFuentes(anyList(), anyList()))
                 .thenReturn(List.of(hNuevo));
 
+        when(filtrador.devolverHechosAPartirDe(anyList(), anyList()))
+                .thenReturn(List.of(hNuevo));
+
+        // No existe aún la relación nuevo–colección
+        when(repositoryHechoXColeccion.findByConjunto(100L, 2L))
+                .thenReturn(null);
+
+        // ---------- Act ----------
         actualizador.actualizarColecciones();
 
-        verify(filtrador, never())
-                .devolverHechosAPartirDe(anyList(), eq(List.of(hExistente, hNuevo)));
+        // ---------- Assert ----------
 
-        verify(filtrador, times(1))
-                .devolverHechosAPartirDe(anyList(), eq(List.of(hNuevo)));
+        // Se agrega UNA sola relación Hecho–Colección
+        verify(repositoryHechoXColeccion, times(1))
+                .save(any(HechoXColeccion.class));
 
-        verify(repositoryHechoXColeccion, times(1)).save(any(HechoXColeccion.class));
-        verify(gestorSolicitudes).procesarTodasLasSolicitudes();
-        verify(repositoryColecciones).saveAll(anyList());
+        // Se persisten las colecciones
+        verify(repositoryColecciones, times(1))
+                .saveAll(anyList());
+
+        // No se procesa gestor de solicitudes (ya no es responsabilidad)
+        verifyNoInteractions(gestorSolicitudes);
     }
+
     @Test
-    void testActualizarColecciones_conDosColecciones() {
+    void actualizarColecciones_agregaHechosCorrespondientesEnDosColecciones() {
+        // ---------- Arrange ----------
+
+        // Hechos
         Hecho hNuevo1 = new Hecho("Nuevo1", "Desc", null, null, LocalDate.now(), null);
+        hNuevo1.setId_hecho(1L);
+
         Hecho hNuevo2 = new Hecho("Nuevo2", "Desc", null, null, LocalDate.now(), null);
+        hNuevo2.setId_hecho(2L);
 
         Hecho hExistente1 = new Hecho("Existente1", "Desc", null, null, LocalDate.now(), null);
+        hExistente1.setId_hecho(3L);
 
+        // Loaders
         when(loader1.obtenerHechos()).thenReturn(List.of(hNuevo1));
         when(loader2.obtenerHechos()).thenReturn(List.of(hNuevo2));
-        when(normalizador.normalizar(anyList())).thenReturn(List.of(hNuevo1, hNuevo2));
-        when(repositoryHechos.findAll()).thenReturn(List.of(hExistente1, hNuevo1, hNuevo2));
 
+        // Normalizador
+        when(normalizador.normalizar(anyList()))
+                .thenReturn(List.of(hNuevo1, hNuevo2));
+
+        // Repositorio de hechos
+        when(repositoryHechos.findAll())
+                .thenReturn(List.of(hExistente1, hNuevo1, hNuevo2));
+
+        when(repositoryHechos.findFirstByTitulo(anyString()))
+                .thenReturn(null);
+
+        // Colecciones
         Coleccion colA = mock(Coleccion.class);
-        Coleccion colB = mock(Coleccion.class);
-
         when(colA.getId_coleccion()).thenReturn(10L);
+
+        Coleccion colB = mock(Coleccion.class);
         when(colB.getId_coleccion()).thenReturn(20L);
 
-        when(repositoryColecciones.findAll()).thenReturn(List.of(colA, colB));
+        when(repositoryColecciones.findAll())
+                .thenReturn(List.of(colA, colB));
 
+        // Hechos ya existentes en la colección A
         HechoXColeccion hxcPrevio = new HechoXColeccion(hExistente1, colA, false);
-        when(repositoryHechoXColeccion.findByColeccion(10L)).thenReturn(List.of(hxcPrevio));
+        when(repositoryHechoXColeccion.findByColeccion(10L))
+                .thenReturn(List.of(hxcPrevio));
 
-        InterfaceCondicion condA = mock(InterfaceCondicion.class);
-        InterfaceCondicion condB = mock(InterfaceCondicion.class);
-
-        when(repositoryColecciones.findByIdCondiciones(10L)).thenReturn(List.of(condA));
-        when(repositoryColecciones.findByIdCondiciones(20L)).thenReturn(List.of(condB));
-
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condA)), eq(List.of(hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hNuevo1));
-
+        // Colección B comienza vacía
         when(repositoryHechoXColeccion.findByColeccion(20L))
                 .thenReturn(Collections.emptyList());
 
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condB)), eq(List.of(hExistente1, hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hExistente1, hNuevo2));
+        // Condiciones
+        InterfaceCondicion condA = mock(InterfaceCondicion.class);
+        InterfaceCondicion condB = mock(InterfaceCondicion.class);
 
-        when(filtrador.devolverHechosAPartirDe(eq(List.of(condB)), eq(List.of(hNuevo1, hNuevo2))))
-                .thenReturn(List.of(hNuevo2));
+        when(repositoryColecciones.findByIdCondiciones(10L))
+                .thenReturn(List.of(condA));
 
+        when(repositoryColecciones.findByIdCondiciones(20L))
+                .thenReturn(List.of(condB));
+
+        // Fuentes (irrelevantes para este test)
+        when(repositoryFuentes.findFuentesByColeccion(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        // Filtrador: stubs generales (clave para strict stubbing)
+        when(filtrador.devolverHechosDeFuentes(anyList(), anyList()))
+                .thenReturn(List.of(hNuevo1, hNuevo2));
+
+        when(filtrador.devolverHechosAPartirDe(anyList(), anyList()))
+                .thenReturn(List.of(hNuevo1, hNuevo2));
+
+        // Ninguna relación Hecho–Colección existe previamente
+        when(repositoryHechoXColeccion.findByConjunto(anyLong(), anyLong()))
+                .thenReturn(null);
+
+        // ---------- Act ----------
         actualizador.actualizarColecciones();
 
-        verify(repositoryHechoXColeccion, times(4)).save(any(HechoXColeccion.class));
+        // ---------- Assert ----------
 
-        verify(gestorSolicitudes).procesarTodasLasSolicitudes();
-        verify(repositoryColecciones).saveAll(anyList());
+        // Se agregan relaciones para los hechos nuevos en ambas colecciones
+        // (2 hechos nuevos × 2 colecciones = 4 relaciones)
+        verify(repositoryHechoXColeccion, times(4))
+                .save(any(HechoXColeccion.class));
+
+        // Se persisten las colecciones
+        verify(repositoryColecciones, times(1))
+                .saveAll(anyList());
+
+        // El gestor de solicitudes NO es responsabilidad de este componente
+        verifyNoInteractions(gestorSolicitudes);
     }
 }
