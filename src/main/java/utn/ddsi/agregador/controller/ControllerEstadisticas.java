@@ -1,7 +1,9 @@
 package utn.ddsi.agregador.controller;
 
 import jakarta.websocket.server.PathParam;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,7 @@ public class ControllerEstadisticas {
     //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
     @GetMapping("/hora")
     public List<EstadisticaCantidadHoraCateDTO > obtenerCantidadDeHechosXHoraXCategoria(
-            @RequestParam (value = "categoria")String categoria) {
+            @NonNull @RequestParam (value = "categoria")String categoria) {
         log.info("CONTROLLER : Obtener cantidad de hechos por hora y categoria: {}", categoria);
         log.debug("CONTROLLER : parametro categoria = {}", categoria);
         return this.service.obtenerCantidadDeHechosXHoraXCategoria(categoria);

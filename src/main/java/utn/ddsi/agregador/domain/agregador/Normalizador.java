@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.bcel.classfile.EnumElementValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ import utn.ddsi.agregador.repository.IRepositoryCategorias;
 import utn.ddsi.agregador.repository.IRepositoryProvincias;
 import utn.ddsi.agregador.repository.IRepositoryUbicacion;
 import utn.ddsi.agregador.utils.EnumTipoFuente;
-
+@Slf4j
 @Component
 public class Normalizador {
 
@@ -61,6 +62,9 @@ public class Normalizador {
     }
 
     public List<Hecho> normalizar(List<Hecho> hechos) {
+
+        log.debug("Iniciando normalización de {} hechos", (hechos != null ? hechos.size() : 0));
+
         List<Categoria> categoriasExistentes = repoCategoria.findAll();
         List<Provincia> provinciasExistentes = repoProvincia.findAll();
 
@@ -94,7 +98,7 @@ public class Normalizador {
                 combinarHechos(existente, hecho);
             }
         }
-
+        log.info("Normalización finalizada: {} hechos procesados y depurados", hechosDepurados.size());
         return new ArrayList<>(hechosDepurados.values());
     }
 
@@ -153,6 +157,7 @@ public class Normalizador {
 
         if(cate != null){
             //categoria.setNombre(canonico);
+            log.debug("Categoría '{}' normalizada y encontrada en BD", cate.getNombre());
             hecho.setCategoria(cate);
 
         } else {
@@ -160,6 +165,7 @@ public class Normalizador {
             nueva.setNombre(canonico);
             existentes.add(nueva);
             nueva = repoCategoria.save(nueva);
+            log.info("Nueva categoría creada: '{}'", nueva.getNombre());
             if(nueva.getId_categoria() == null) {
                 nueva = repoCategoria.findByNombre(nueva.getNombre());
             }
@@ -276,7 +282,7 @@ public class Normalizador {
 
                 // Guardamos para tener ID
                 provincia = repoProvincia.save(provincia);
-
+                log.info("Nueva provincia creada: '{}'", nombreFinal);
                 // Agregamos a la lista local para no re-crearla en el siguiente loop
                 existentes.add(provincia);
             }
@@ -293,6 +299,10 @@ public class Normalizador {
 
 
     private void combinarHechos(Hecho base, Hecho candidato) {
+
+        log.debug("Combinando hechos: '{}' con '{}'", base.getTitulo(), candidato.getTitulo());
+
+
         if (candidato.getDescripcion() != null && (base.getDescripcion() == null
                 || candidato.getDescripcion().length() > base.getDescripcion().length())) {
             base.setDescripcion(candidato.getDescripcion());

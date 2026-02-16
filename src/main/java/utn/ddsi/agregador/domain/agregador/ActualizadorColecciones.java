@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import utn.ddsi.agregador.domain.coleccion.Coleccion;
 import utn.ddsi.agregador.domain.coleccion.EvidenciaDeHecho;
 import utn.ddsi.agregador.domain.coleccion.HechoXColeccion;
@@ -22,6 +24,7 @@ import utn.ddsi.agregador.repository.IRepositoryHechoXColeccion;
 import utn.ddsi.agregador.repository.IRepositoryHechos;
 import utn.ddsi.agregador.utils.EnumEstadoHecho;
 
+@Slf4j
 @Data
 @Component
 public class ActualizadorColecciones {
@@ -45,23 +48,34 @@ public class ActualizadorColecciones {
         this.repoHechoxColeccion = repositoryHechoXColeccion;
         this.repositoryFuente = repositoryFuente;
     }
+
+
     public List<Hecho> traerHechosDeLoaders(){
+
+        log.debug("Iniciando obtención de hechos desde loaders");
+
         List<Hecho> hechosNuevos = new ArrayList<>();
         for(Loader loader : loaders){
-            try {
-                hechosNuevos.addAll(loader.obtenerHechos()); //Falta poner lo de la horas según corresponda al Loader
+
+            try {List<Hecho> hechosObtenidos = loader.obtenerHechos();
+                log.debug("Loader {}: {} hechos obtenidos", loader.getClass().getSimpleName(), hechosObtenidos.size());
+                hechosNuevos.addAll(hechosObtenidos);
+                //Falta poner lo de la horas según corresponda al Loader
             } catch (Exception e) {
+                log.error("Error al obtener hechos del loader {}: {}", loader.getClass().getSimpleName(), e.getMessage(), e);
                 // ignorar loader con error y seguir con los siguientes
             }
             }
+        log.debug("Total de hechos obtenidos de todos los loaders: {}", hechosNuevos.size());
         return hechosNuevos;
     }
 
     public List<Hecho> depurarHechos() {
+        log.debug("Iniciando depuración y normalización de hechos");
         List<Hecho> todosLosHechos = traerHechosDeLoaders();
         if (todosLosHechos == null || todosLosHechos.isEmpty()) return Collections.emptyList();
         List<Hecho> hechosNormalizados = normalizador.normalizar(todosLosHechos);
-
+        log.debug("Hechos normalizados: {}", hechosNormalizados.size());
         // guardar solo los nuevos (ejemplo si existe getExternalId)
         List<Hecho> aGuardar = new ArrayList<>();
         for (Hecho h : hechosNormalizados) {
@@ -74,12 +88,15 @@ public class ActualizadorColecciones {
             }
         }
         repositoryHechos.saveAll(aGuardar);
+        log.info("Se guardaron {} nuevos hechos", aGuardar.size());
         return hechosNormalizados;
     }
 
 
     @Transactional
     public void actualizarColecciones(){
+
+        log.info("Iniciando actualización de colecciones");
         depurarHechos(); //En este punto ya guardé los nuevos porloque en el findAll siguiente los trae
         List<Hecho> hechosTotales = repositoryHechos.findAll();
         List<Coleccion> colecciones = repositoryColecciones.findAll();
@@ -121,7 +138,9 @@ public class ActualizadorColecciones {
             }
         }
 
+
         repositoryColecciones.saveAll(colecciones);
+        log.info("Actualización de colecciones finalizada");
     }
 
 
@@ -181,6 +200,8 @@ public class ActualizadorColecciones {
 
     @Transactional
     public void ejecutarAlgoritmosDeConsenso() {
+
+        log.info("Iniciando ejecución de algoritmos de consenso");
 
         List<Coleccion> colecciones = repositoryColecciones.findAll();
 
@@ -242,5 +263,6 @@ public class ActualizadorColecciones {
             }
         }
         repositoryColecciones.saveAll(colecciones);
+        log.info("Algoritmos de consenso finalizados");
     }
 }
