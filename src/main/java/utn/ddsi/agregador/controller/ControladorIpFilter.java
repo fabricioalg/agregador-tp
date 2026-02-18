@@ -1,4 +1,4 @@
-package com.metamapa.controllers;
+package utn.ddsi.agregador.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
