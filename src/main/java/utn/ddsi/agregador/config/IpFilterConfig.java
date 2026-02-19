@@ -1,4 +1,4 @@
-package com.metamapa.config;
+package utn.ddsi.agregador.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
