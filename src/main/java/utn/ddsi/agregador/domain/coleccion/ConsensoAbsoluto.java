@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class ConsensoAbsoluto extends AlgoritmoDeConsenso {
     @Override
-    public boolean aplicar(EvidenciaDeHecho e, int totalFuentes) {
-        return e.getFuentesQueLoMencionan().size() == totalFuentes;
+    public boolean aplicar(EvidenciaDeHecho evidencia, int totalFuentes) {
+        return evidencia.getFuentesQueLoMencionan().size() == totalFuentes;
     }
 }

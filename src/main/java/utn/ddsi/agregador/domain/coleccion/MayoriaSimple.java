@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 public class MayoriaSimple extends AlgoritmoDeConsenso {
     @Override
-    public boolean aplicar(EvidenciaDeHecho e, int totalFuentes) {
+    public boolean aplicar(EvidenciaDeHecho evidencia, int totalFuentes) {
         int minimo = (int) Math.ceil(totalFuentes / 2.0);
-        return e.getFuentesQueLoMencionan().size() >= minimo;
+        return evidencia.getFuentesQueLoMencionan().size() >= minimo;
     }
 }
 /*
