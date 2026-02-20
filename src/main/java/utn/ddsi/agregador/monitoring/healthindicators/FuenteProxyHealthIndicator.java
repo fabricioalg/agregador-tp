@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.Duration;
 
+@Slf4j
 public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicator {
 
     private final RestTemplate restTemplate;
