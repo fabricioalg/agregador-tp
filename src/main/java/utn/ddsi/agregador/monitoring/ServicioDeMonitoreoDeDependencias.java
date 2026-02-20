@@ -25,16 +25,16 @@ public class ServicioDeMonitoreoDeDependencias {
     private final DatabaseHealthIndicator database;
     private final FuenteDinamicaHealthIndicator dinamica;
     private final FuenteEstaticaHealthIndicator estatica;
-    private final FuenteProxyHealthIndicator proxy;
+    //private final FuenteProxyHealthIndicator proxy;
 
     public ServicioDeMonitoreoDeDependencias(DatabaseHealthIndicator database,
                                              FuenteDinamicaHealthIndicator dinamica,
-                                             FuenteEstaticaHealthIndicator estatica,
-                                             FuenteProxyHealthIndicator proxy) {
+                                             FuenteEstaticaHealthIndicator estatica
+                                             ) {
         this.database = database;
         this.dinamica = dinamica;
         this.estatica = estatica;
-        this.proxy = proxy;
+        //this.proxy = proxy;
     }
 
     private void manejarFallaCritica() {
@@ -58,10 +58,10 @@ public class ServicioDeMonitoreoDeDependencias {
             boolean databaseOk = database.estaDisponible();
             boolean dinamicaOk = dinamica.estaDisponible();
             boolean estaticaOk = estatica.estaDisponible();
-            boolean proxyOk = proxy.estaDisponible();
+            //boolean proxyOk = proxy.estaDisponible();
 
-            log.debug("Estado dependencias - database: {}, dinamica: {}, estatica: {}, proxy: {}",
-                    databaseOk, dinamicaOk, estaticaOk, proxyOk);
+            log.debug("Estado dependencias - database: {}, dinamica: {}, estatica: {}",
+                    databaseOk, dinamicaOk, estaticaOk);
 
             if (!databaseOk) {
                 log.error("Dependencia crítica 'database' DOWN -> marcando y manejando");
@@ -84,20 +84,20 @@ public class ServicioDeMonitoreoDeDependencias {
                 estatica.markUp();
             }
 
-            if(!proxyOk) {
-                log.warn("Dependencia 'fuenteProxy' DOWN -> marcando");
-                proxy.markDown();
-            } else {
-                proxy.markUp();
-            }
+            //if(!proxyOk) {
+            //    log.warn("Dependencia 'fuenteProxy' DOWN -> marcando");
+            //    proxy.markDown();
+            //} else {
+            //    proxy.markUp();
+            //}
 
             if (!databaseOk || !dinamicaOk ) {
                 manejarFallaCritica();
             }
-            if(!estaticaOk || !proxyOk){
+            if(!estaticaOk ){
                 log.warn("Alerta: Fuente Estática o Proxy no disponibles. Se recomienda revisar estas dependencias.");
             }
-            if(databaseOk && dinamicaOk && estaticaOk && proxyOk){
+            if(databaseOk && dinamicaOk && estaticaOk){
                 fallasCriticos = 0; // resetear contador al recuperarse
                 log.info("Heartbeat OK – todas las dependencias UP");
             }
