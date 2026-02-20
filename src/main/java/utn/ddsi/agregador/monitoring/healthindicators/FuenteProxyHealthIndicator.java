@@ -15,7 +15,7 @@ import java.time.Duration;
 public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicator {
 
     private final RestTemplate restTemplate;
-    private final String url;
+    private final String healthUrl;
 
     public FuenteProxyHealthIndicator(
             RestTemplateBuilder builder,
@@ -25,7 +25,7 @@ public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicato
                 .setConnectTimeout(Duration.ofSeconds(2))
                 .setReadTimeout(Duration.ofSeconds(3))
                 .build();
-        this.url = url;
+        this.healthUrl = url + "/actuator/health";
     }
 
     @Override
@@ -42,18 +42,18 @@ public class FuenteProxyHealthIndicator extends AbstractDependencyHealthIndicato
     public boolean estaDisponible() {
         try {
             ResponseEntity<String> response =
-                    restTemplate.getForEntity(url, String.class);
+                    restTemplate.getForEntity(healthUrl, String.class);
 
             boolean ok = response.getStatusCode().is2xxSuccessful();
             if (!ok) {
-                log.warn("FuenteProxy respondió con código {} para URL {}", response.getStatusCode(), url);
+                log.warn("FuenteProxy respondió con código {} para URL {}", response.getStatusCode(), healthUrl);
             }else{
-                log.info("FuenteProxy respondió correctamente con código {} para URL {}", response.getStatusCode(), url);
+                log.info("FuenteProxy respondió correctamente con código {} para URL {}", response.getStatusCode(), healthUrl);
             }
             return ok;
 
         } catch (RestClientException ex) {
-            log.error("Error al verificar FuenteProxy ({}): {}", url, ex.getMessage());
+            log.error("Error al verificar FuenteProxy ({}): {}", healthUrl, ex.getMessage());
             return false;
         } catch (Exception ex) {
             log.error("Excepción inesperada al verificar FuenteProxy: {}", ex.getMessage(), ex);
