@@ -34,7 +34,7 @@ class LoaderDinamicoTest {
 
     private LoaderDinamico loaderDinamico;
 
-    private static final String URL_BASE = "http://localhost:8090/export";
+    private static final String URL_BASE = "http://localhost:8090";
 
     @BeforeEach
     void setUp() {
@@ -52,7 +52,7 @@ class LoaderDinamicoTest {
             new ResponseEntity<>(hechosDTO, HttpStatus.OK);
 
         when(restTemplate.exchange(
-            eq(URL_BASE + "/hechos"),
+            eq(URL_BASE + "/export/hechos"),
             eq(HttpMethod.GET),
             isNull(),
             eq(HechoFuenteDinamicaDTO[].class)
@@ -76,7 +76,7 @@ class LoaderDinamicoTest {
         assertEquals("Titulo 2", resultado.get(1).getTitulo());
 
         verify(restTemplate).exchange(
-            eq(URL_BASE + "/hechos"),
+            eq(URL_BASE + "/export/hechos"),
             eq(HttpMethod.GET),
             isNull(),
             eq(HechoFuenteDinamicaDTO[].class)
@@ -91,7 +91,7 @@ class LoaderDinamicoTest {
             new ResponseEntity<>(new HechoFuenteDinamicaDTO[0], HttpStatus.OK);
 
         when(restTemplate.exchange(
-            eq(URL_BASE + "/hechos"),
+            eq(URL_BASE + "/export/hechos"),
             eq(HttpMethod.GET),
             isNull(),
             eq(HechoFuenteDinamicaDTO[].class)
@@ -113,7 +113,7 @@ class LoaderDinamicoTest {
             new ResponseEntity<>(null, HttpStatus.OK);
 
         when(restTemplate.exchange(
-            eq(URL_BASE + "/hechos"),
+            eq(URL_BASE + "/export/hechos"),
             eq(HttpMethod.GET),
             isNull(),
             eq(HechoFuenteDinamicaDTO[].class)
@@ -132,7 +132,7 @@ class LoaderDinamicoTest {
     void obtenerHechos_conErrorDeConexion_lanzaRuntimeException() {
         // Arrange
         when(restTemplate.exchange(
-            eq(URL_BASE + "/hechos"),
+            eq(URL_BASE + "/export/hechos"),
             eq(HttpMethod.GET),
             isNull(),
             eq(HechoFuenteDinamicaDTO[].class)

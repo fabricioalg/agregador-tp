@@ -26,7 +26,7 @@ public class LoaderDinamico extends Loader {
     }
     @Override
     public List<Hecho> obtenerHechos() {
-        String urlCompleta = getRuta() + "/hechos";
+        String urlCompleta = getRuta() + "/export/hechos";
         log.info("Iniciando petición GET a fuente externa: {}", urlCompleta);
 
         try {
