@@ -89,7 +89,7 @@ public class Coleccion {
 //      List<Hecho> hechosConsensuados=this.algoritmoDeConsenso.aplicar(this.hechos,fuentes);
 //        return hechosConsensuados
 //  }
-
+/*
     public void aplicarConsenso(HechoXColeccion hxc, EvidenciaDeHecho evidencia) {
         if (algoritmoDeConsenso.aplicar(evidencia, fuentes.size())) {
             hxc.setConsensuado(Boolean.TRUE);
@@ -124,5 +124,5 @@ public class Coleccion {
                 .map(HechoXColeccion::getHecho)
                 .collect(Collectors.toList());
     }
-
+*/
 }
