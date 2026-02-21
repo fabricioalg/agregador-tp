@@ -137,8 +137,8 @@ public class ActualizadorColecciones {
 
             // 3) Insertar los que falten (sólo los que no existan)
             for (Hecho h : hechosFiltrados) {
-                HechoXColeccion hxc = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
-                if (hxc == null) {
+                List<HechoXColeccion> hxcList = this.repoHechoxColeccion.findByConjunto(coleccion.getId_coleccion(), h.getId_hecho());
+                if (hxcList.isEmpty()) {
                     // Si en la coleccion ya existe un hecho con mismo titulo y estado BAJA,
                     // marcar el nuevo hecho como BAJA antes de guardarlo
                     aplicarEstadoBajaSiCorresponde(h, coleccion.getId_coleccion(), hechosEnCol);

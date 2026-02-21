@@ -37,7 +37,7 @@ public interface IRepositoryHechoXColeccion extends JpaRepository<HechoXColeccio
     List<HechoXColeccion> findByColeccion(Long coleccionId);
 
     @Query("SELECT hc FROM HechoXColeccion hc where hc.coleccion.id_coleccion = :coleccionId and hc.hecho.id_hecho = :hechoId")
-    HechoXColeccion findByConjunto(Long coleccionId, Long hechoId);
+    List<HechoXColeccion> findByConjunto(Long coleccionId, Long hechoId);
 
     @Query("""
         SELECT new utn.ddsi.agregador.dto.MencionDeHecho(
