@@ -167,7 +167,7 @@ public class Normalizador {
             nueva = repoCategoria.save(nueva);
             log.info("Nueva categoría creada: '{}'", nueva.getNombre());
             if(nueva.getId_categoria() == null) {
-                nueva = repoCategoria.findByNombre(nueva.getNombre());
+                nueva = repoCategoria.findByNombre(nueva.getNombre());  // ya usa LIMIT 1 en la query
             }
             hecho.setCategoria(nueva);
 
@@ -399,7 +399,7 @@ public class Normalizador {
     }
 
     private Provincia buscarOCrearProvincia(String nombre) {
-        Provincia existente = this.repoProvincia.findByNombre(nombre);
+        Provincia existente = this.repoProvincia.findFirstByNombre(nombre);
 
         if (existente != null) {
             return existente;
@@ -415,7 +415,7 @@ public class Normalizador {
 
     private Provincia obtenerProvinciaExterior() {
         return provinciaCache.computeIfAbsent("EXTERIOR", key -> {
-            Provincia existente = this.repoProvincia.findByNombre("EXTERIOR");
+            Provincia existente = this.repoProvincia.findFirstByNombre("EXTERIOR");
 
             if (existente != null) {
                 return existente;

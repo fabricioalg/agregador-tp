@@ -13,5 +13,5 @@ public interface IRepositoryFuentes extends JpaRepository<Fuente, Long> {
 
     Fuente findByUrl(String url);
 
-    Fuente findByTipoFuente(EnumTipoFuente enumTipoFuente);
+    Fuente findFirstByTipoFuente(EnumTipoFuente enumTipoFuente);
 }

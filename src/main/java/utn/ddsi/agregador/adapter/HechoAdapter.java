@@ -100,7 +100,7 @@ public class HechoAdapter {
 
     public List<Hecho> adaptarHechosDeFuenteProxy(List<HechoFuenteProxyDTO> hechosDTO) {
 
-        Fuente fuente = this.repoFuente.findByTipoFuente(EnumTipoFuente.METAMAPA);
+        Fuente fuente = this.repoFuente.findFirstByTipoFuente(EnumTipoFuente.METAMAPA);
         if (fuente == null) {
             fuente = new Fuente();
             fuente.setTipoFuente(EnumTipoFuente.METAMAPA);
@@ -137,7 +137,7 @@ public class HechoAdapter {
     }
 
     public List<Hecho> adaptarHechosDeFuenteDinamica(List<HechoFuenteDinamicaDTO> hechosDTO) {
-        Fuente fuente = this.repoFuente.findByTipoFuente(EnumTipoFuente.DINAMICA);
+        Fuente fuente = this.repoFuente.findFirstByTipoFuente(EnumTipoFuente.DINAMICA);
         if (fuente == null) {
             fuente = new Fuente();
             fuente.setTipoFuente(EnumTipoFuente.DINAMICA);

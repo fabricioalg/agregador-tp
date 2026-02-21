@@ -47,7 +47,7 @@ class NormalizadorTest {
         repoProvincias = mock(IRepositoryProvincias.class);
         repoUbicacion = mock(IRepositoryUbicacion.class);
 
-        when(repoProvincias.findByNombre(anyString())).thenReturn(null);
+        when(repoProvincias.findFirstByNombre(anyString())).thenReturn(null);
         when(repoProvincias.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         normalizador = new Normalizador(clock, repoCategorias, repoProvincias, repoUbicacion);
@@ -66,7 +66,7 @@ class NormalizadorTest {
         Provincia cordoba = new Provincia();
         cordoba.setNombre("Cordoba");
         cordoba.setPais("Argentina");
-        when(repoProvincias.findByNombre("Cordoba")).thenReturn(cordoba);
+        when(repoProvincias.findFirstByNombre("Cordoba")).thenReturn(cordoba);
         when(repoProvincias.save(any())).thenReturn(cordoba);
 
         Hecho hecho = new Hecho();
@@ -190,7 +190,7 @@ class NormalizadorTest {
         });
 
         // --- Mock Provincia ---
-        when(repoProvincias.findByNombre("Ciudad Autonoma de Buenos Aires")).thenReturn(null);
+        when(repoProvincias.findFirstByNombre("Ciudad Autonoma de Buenos Aires")).thenReturn(null);
         Provincia caba = new Provincia();
         caba.setNombre("Ciudad Autonoma de Buenos Aires");
         caba.setPais("Argentina");

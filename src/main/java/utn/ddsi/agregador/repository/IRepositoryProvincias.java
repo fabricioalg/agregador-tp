@@ -12,5 +12,5 @@ public interface IRepositoryProvincias extends JpaRepository<Provincia,Long> {
     @Query("SELECT DISTINCT p.nombre FROM Provincia p")
     List<String> obtenerNombreDeProvincias();
 
-    Provincia findByNombre(String nombre);
+    Provincia findFirstByNombre(String nombre);
 }
