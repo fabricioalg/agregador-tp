@@ -29,7 +29,7 @@ public class Scheduler {
     @Scheduled(cron = "0 */15 * * * *")
     public void procesarSolcitudesSpam() {
         try {
-            log.debug("Scheduler: Iniciando procesamiento de solicitudes de eliminación");
+            log.info("Scheduler: Iniciando procesamiento de solicitudes de eliminación");
             actualizador.getGestorSolicitudes().procesarTodasLasSolicitudes();
         } catch (Exception e) {
             log.error("[Scheduler] Error al procesar Solicitud Spam: {}", e.getMessage());
@@ -39,7 +39,7 @@ public class Scheduler {
     public void ejecutarAlgoritmosDeConsenso() {
         try {
 
-            log.debug("Scheduler: Iniciando ejecución de algoritmos de consenso");
+            log.info("Scheduler: Iniciando ejecución de algoritmos de consenso");
             actualizador.ejecutarAlgoritmosDeConsenso();
         } catch (Exception e) {
             log.error("[Scheduler] Error al ejecutar Algoritmo de concenso: {}" , e.getMessage());
