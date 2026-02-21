@@ -52,13 +52,15 @@ public class ActualizadorColecciones {
 
     public List<Hecho> traerHechosDeLoaders(){
 
-        log.debug("Iniciando obtención de hechos desde loaders");
+        log.info("Iniciando obtención de hechos desde {} loaders: {}",
+                loaders.size(),
+                loaders.stream().map(l -> l.getClass().getSimpleName()).toList());
 
         List<Hecho> hechosNuevos = new ArrayList<>();
         for(Loader loader : loaders){
 
             try {List<Hecho> hechosObtenidos = loader.obtenerHechos();
-                log.debug("Loader {}: {} hechos obtenidos", loader.getClass().getSimpleName(), hechosObtenidos.size());
+                log.info("Loader {}: {} hechos obtenidos", loader.getClass().getSimpleName(), hechosObtenidos.size());
                 hechosNuevos.addAll(hechosObtenidos);
                 //Falta poner lo de la horas según corresponda al Loader
             } catch (Exception e) {
@@ -66,7 +68,7 @@ public class ActualizadorColecciones {
                 // ignorar loader con error y seguir con los siguientes
             }
             }
-        log.debug("Total de hechos obtenidos de todos los loaders: {}", hechosNuevos.size());
+        log.info("Total de hechos obtenidos de todos los loaders: {}", hechosNuevos.size());
         return hechosNuevos;
     }
 
@@ -85,6 +87,15 @@ public class ActualizadorColecciones {
                     !hechoguardado.getFuente().getId_fuente().equals(h.getFuente().getId_fuente())) {
                 h.setEstado(EnumEstadoHecho.ALTA);
                 aGuardar.add(h);
+            }
+        }
+        log.info("Intentando guardar {} hechos nuevos", aGuardar.size());
+        if (!aGuardar.isEmpty()) {
+            for (Hecho h : aGuardar) {
+                log.info("  -> Guardando hecho: {} | Fuente: {} | Ubicacion: {}",
+                    h.getTitulo(),
+                    h.getFuente() != null ? h.getFuente().getNombre() : "null",
+                    h.getUbicacion() != null ? "lat=" + h.getUbicacion().getLatitud() : "null");
             }
         }
         repositoryHechos.saveAll(aGuardar);

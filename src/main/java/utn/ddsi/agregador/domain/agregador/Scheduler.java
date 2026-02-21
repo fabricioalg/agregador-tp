@@ -18,9 +18,9 @@ public class Scheduler {
     @Scheduled(fixedRate = 3600000)
     public void ejecutarActualizacionPeriodica() {
         try {
-            log.debug("Scheduler: Iniciando actualización periódica de colecciones");
+            log.info("Scheduler: Iniciando actualización periódica de colecciones");
             actualizador.actualizarColecciones();
-
+            log.info("Scheduler: Actualización periódica completada");
         } catch (Exception e) {
             log.error("Scheduler: Error en actualización periódica: {}", e.getMessage(), e);
 
