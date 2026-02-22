@@ -26,10 +26,24 @@ import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Slf4j
 @RestController
 @RequestMapping("/estadisticas")
+@Tag(
+        name = "Estadísticas",
+        description = "Consultas estadísticas sobre hechos, colecciones, categorías y solicitudes"
+)
 public class ControllerEstadisticas {
+
     @Autowired
     private ServiceEstadisticas service;
 
@@ -37,66 +51,148 @@ public class ControllerEstadisticas {
         this.service = service;
     }
 
-    //De una coleccion, en que provincia se agrupan la mayor cantidad de hechos reportados?
-    @GetMapping("/provinciaxcol")                                                               //Antes era id discutir
-    public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadDeHechosXProvincia
-    (@RequestParam (value="coleccion") String nombreColeccion){
-       log.info("CONTROLLER : Obtener cantidad de hechos por provincia para coleccion: {}", nombreColeccion);
-       log.debug("CONTROLLER : parametro coleccion = {}", nombreColeccion);
-       return this.service.obtenerCantidadHechosDeColeccion(nombreColeccion);
+    @Operation(
+            summary = "Cantidad de hechos por provincia en una colección",
+            description = "Obtiene la cantidad de hechos agrupados por provincia para una colección determinada"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estadísticas obtenidas correctamente",
+                    content = @Content(
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = EstadisticaColeccionHechosXProvinciaDTO.class)
+                            )
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Parámetro de colección inválido"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @GetMapping("/provinciaxcol")
+    public List<EstadisticaColeccionHechosXProvinciaDTO> obtenerCantidadDeHechosXProvincia(
+            @Parameter(
+                    description = "titulo de la coleccion",
+                    example = "Colección Ambiental",
+                    required = true
+            )
+            @RequestParam(value = "coleccion") String nombreColeccion
+    ) {
+        log.info("CONTROLLER : Obtener cantidad de hechos por provincia para coleccion: {}", nombreColeccion);
+        return this.service.obtenerCantidadHechosDeColeccion(nombreColeccion);
     }
 
-    //Cual es la categoria con mayor cantidad de hechos reportados?
+    @Operation(
+            summary = "Cantidad de hechos por categoría",
+            description = "Obtiene la cantidad total de hechos agrupados por categoría"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estadísticas obtenidas correctamente",
+                    content = @Content(
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = EstadisticaCategoriaDTO.class)
+                            )
+                    )
+            )
+    })
     @GetMapping("/categoria")
     public List<EstadisticaCategoriaDTO> obtenerCantidadDeHechosXCategoria() {
         log.info("CONTROLLER : Obtener cantidad de hechos por categoria");
         return this.service.obtenerCantidadDeHechosXCategoria();
     }
 
-    //En que provincia se presenta la mayor cantidad de hechos de una cierta categora?
+    @Operation(
+            summary = "Cantidad de hechos por provincia y categoría",
+            description = "Obtiene la cantidad de hechos agrupados por provincia para una categoría específica"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estadística obtenida correctamente",
+                    content = @Content(
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = EstadisticaProviciaXCategoriaDTO.class)
+                            )
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Categoría inválida")
+    })
     @GetMapping("/provinciaxcat")
     public List<EstadisticaProviciaXCategoriaDTO> obtenerCantidadDeHechoXProvinciaXCategoria(
-            @RequestParam (value = "categoria") String categoria){
-       log.info("CONTROLLER : Obtener cantidad de hechos por provincia y categoria: {}", categoria);
-       log.debug("CONTROLLER : parametro categoria = {}", categoria);
-       return this.service.obtenerCantidadDeHechoXProvinciaXCategoria(categoria);
+            @Parameter(
+                    description = "Nombre de la categoría",
+                    example = "Incendios",
+                    required = true
+            )
+            @RequestParam(value = "categoria") String categoria
+    ) {
+        log.info("CONTROLLER : Obtener cantidad de hechos por provincia y categoria: {}", categoria);
+        return this.service.obtenerCantidadDeHechoXProvinciaXCategoria(categoria);
     }
 
-
-    //Chequeado
-    //A que hora del dia ocurren la mayor cantidad de hechos de una cierta categoria?
+    @Operation(
+            summary = "Cantidad de hechos por hora del día y categoría",
+            description = "Obtiene la cantidad de hechos ocurridos por hora del día para una categoría específica\n"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estadística obtenida correctamente",
+                    content = @Content(
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = EstadisticaCantidadHoraCateDTO.class)
+                            )
+                    )
+            )
+    })
     @GetMapping("/hora")
-    public List<EstadisticaCantidadHoraCateDTO > obtenerCantidadDeHechosXHoraXCategoria(
-            @NonNull @RequestParam (value = "categoria")String categoria) {
+    public List<EstadisticaCantidadHoraCateDTO> obtenerCantidadDeHechosXHoraXCategoria(
+            @Parameter(
+                    description = "Nombre de la categoría",
+                    example = "Accidentes",
+                    required = true
+            )
+            @NonNull @RequestParam(value = "categoria") String categoria
+    ) {
         log.info("CONTROLLER : Obtener cantidad de hechos por hora y categoria: {}", categoria);
-        log.debug("CONTROLLER : parametro categoria = {}", categoria);
         return this.service.obtenerCantidadDeHechosXHoraXCategoria(categoria);
     }
-    //Chequeado
-    //Cuantas solicitudes de eliminacion son spam?
+
+    @Operation(
+            summary = "Cantidad de solicitudes de eliminación consideradas spam",
+            description = "Obtiene estadísticas sobre solicitudes de eliminación marcadas como spam\n"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Estadística obtenida correctamente",
+                    content = @Content(
+                            schema = @Schema(implementation = EstadisticaSolicitudesDTO.class)
+                    )
+            )
+    })
     @GetMapping("/solicitudesSpam")
-    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes(){
+    public EstadisticaSolicitudesDTO obtenerCantidadSpamEnSolicitudes() {
         log.info("CONTROLLER : Obtener cantidad de solicitudes spam");
         return this.service.obtenerCantidadSpamEnSolicitudes();
     }
 
-    //--------------------OBTENER NOMBRES -------------------------
-    @GetMapping("/colecciones/nombre") //MEJORAR
-    public List<String> obtenerColecciones(){
-        log.info("CONTROLLER : Obtener nombres de colecciones");
+    @Operation(summary = "Obtener nombres de colecciones")
+    @GetMapping("/colecciones/nombre")
+    public List<String> obtenerColecciones() {
         return this.service.obtenerNombreColecciones();
     }
 
+    @Operation(summary = "Obtener nombres de provincias")
     @GetMapping("/provincias/nombre")
-    public List<String> obtenerProvincias(){
-        log.info("CONTROLLER : Obtener nombres de provincias");
+    public List<String> obtenerProvincias() {
         return this.service.obtenerNombreProvincias();
     }
 
+    @Operation(summary = "Obtener nombres de categorías")
     @GetMapping("/categorias/nombre")
-    public List<String> obtnerCategorias(){
-        log.info("CONTROLLER : Obtener nombres de categorias");
+    public List<String> obtnerCategorias() {
         return this.service.obtenerNombreCategorias();
     }
-
 }
